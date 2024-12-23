@@ -1,0 +1,142 @@
+@import "bootstrap-icons/font/bootstrap-icons.css";
+
+body {
+    font-family: "Arial", sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    font-weight: bold;
+}
+
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-weight: bold;
+    color: #007bff;
+}
+
+.nav-link {
+    color: #333;
+}
+
+.nav-link:hover {
+    color: #007bff;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+.footer {
+    background-color: #f8f9fa;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    padding: 10px 0;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.text-center {
+    text-align: center;
+}
+
+.container {
+    max-width: 900px;
+}
+
+.card {
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.card-body {
+    transition: background-color 0.3s ease;
+}
+
+.card:hover .card-body {
+    background-color: rgba(
+        0,
+        123,
+        255,
+        0.1
+    ); /* Azul claro para o hover do "Entrar" */
+}
+
+.card-footer {
+    transition: transform 0.3s ease;
+}
+
+.card:hover .card-footer {
+    transform: scale(1.1);
+}
+
+/* Cor de hover para o card "Criar Conta" */
+.card-criar-conta:hover .card-body {
+    background-color: rgba(
+        40,
+        167,
+        69,
+        0.1
+    ); /* Verde claro para o hover do "Criar Conta" */
+}
+
+/* Link de "Esqueceu a senha?" */
+.forgot-password {
+    margin-top: 10px;
+    display: inline-block;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.forgot-password:hover {
+    color: #b41111;
+    transform: scale(1.1);
+    transition: transform 0.3s ease;
+}
+
+.hover-effect:hover {
+    transform: scale(1.1);
+    transition: transform 0.3s ease;
+}
+
+#typing-effect {
+    display: inline-block;
+    border-right: 2px solid #000; /* Cursor animado */
+    animation: blink-caret 0.7s steps(2) infinite;
+}
+
+@keyframes blink-caret {
+    from {
+        border-color: transparent;
+    }
+    to {
+        border-color: black;
+    }
+}
