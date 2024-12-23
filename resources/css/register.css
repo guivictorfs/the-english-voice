@@ -1,0 +1,40 @@
+body {
+    font-family: "Arial", sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.form-container {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-title {
+    color: #198754;
+    font-weight: bold;
+}
+
+.link-buttons {
+    margin-top: 1rem;
+}
+
+.link-buttons a {
+    text-decoration: none;
+    margin: 0 0.5rem;
+}
+
+.link-buttons a i {
+    margin-right: 5px;
+}
+
+.footer {
+    background-color: #f8f9fa;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    padding: 10px 0;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+}

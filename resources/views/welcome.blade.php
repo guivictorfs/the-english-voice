@@ -35,19 +35,24 @@
 
             <!-- Card de Criar Conta -->
             <div class="col-md-6">
-                <div class="card shadow-lg border-0 rounded-3 card-criar-conta"
-                    style="cursor: pointer; transition: transform 0.3s ease;">
-                    <div class="card-body p-4">
-                        <h5 class="card-title text-success fs-4">Criar Conta</h5>
-                        <p class="card-text text-muted">Cadastre-se para começar a compartilhar seus conhecimentos.</p>
+                <a href="{{ route('register') }}" class="text-decoration-none">
+                    <div class="card shadow-lg border-0 rounded-3 card-criar-conta"
+                        style="cursor: pointer; transition: transform 0.3s ease;">
+                        <div class="card-body p-4">
+                            <h5 class="card-title text-success fs-4">Criar Conta</h5>
+                            <p class="card-text text-muted">Cadastre-se para começar a compartilhar seus conhecimentos.
+                            </p>
+                        </div>
+                        <div class="card-footer text-center bg-transparent border-0">
+                            <i class="bi bi-person-plus fs-2 text-success"></i>
+                        </div>
                     </div>
-                    <div class="card-footer text-center bg-transparent border-0">
-                        <i class="bi bi-person-plus fs-2 text-success"></i>
-                    </div>
-                </div>
+                </a>
             </div>
+
         </div>
     </div>
+
     <div class="container my-5">
         <h2 class="mb-4">Por que usar o The English Voice?</h2>
         <div class="row text-center">

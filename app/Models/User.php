@@ -2,18 +2,22 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
+    // Definir a chave primária
+    protected $primaryKey = 'user_id'; // Especifica que a chave primária é `user_id`
+
+    // Definir o tipo da chave primária (se for diferente de int)
+    protected $keyType = 'int'; // Define o tipo da chave primária, se necessário
+
     /**
-     * The attributes that are mass assignable.
+     * Atributos que podem ser preenchidos em massa.
      *
      * @var list<string>
      */
@@ -21,10 +25,13 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'ra',
+        'course_id',
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
+     * Atributos que devem ser ocultados na serialização.
      *
      * @var list<string>
      */
@@ -34,15 +41,12 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * Relacionamento com o curso (pertence a).
      *
-     * @return array<string, string>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    protected function casts(): array
+    public function course()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->belongsTo(Course::class, 'course_id', 'course_id');
     }
 }

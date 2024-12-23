@@ -7,6 +7,10 @@ body {
     padding: 0;
 }
 
+hr {
+    border-top: 20px solid #a60815 !important; /* Ajuste a espessura aqui */
+}
+
 h1 {
     font-weight: bold;
 }
@@ -80,12 +84,9 @@ h1 {
 }
 
 .card:hover .card-body {
-    background-color: rgba(
-        0,
-        123,
-        255,
-        0.1
-    ); /* Azul claro para o hover do "Entrar" */
+    background-color: rgba(0, 123, 255, 0.1);
+    border: solid 1px #1374f2;
+    border-radius: 0.5em;
 }
 
 .card-footer {
@@ -96,18 +97,15 @@ h1 {
     transform: scale(1.1);
 }
 
-/* Cor de hover para o card "Criar Conta" */
 .card-criar-conta:hover .card-body {
-    background-color: rgba(
-        40,
-        167,
-        69,
-        0.1
-    ); /* Verde claro para o hover do "Criar Conta" */
+    background-color: rgba(40, 167, 69, 0.1);
+    border: solid 1px #1f8c59;
+    border-radius: 0.5em;
 }
 
-/* Link de "Esqueceu a senha?" */
 .forgot-password {
+    position: relative;
+    overflow: hidden;
     margin-top: 10px;
     display: inline-block;
     text-decoration: none;
@@ -116,19 +114,37 @@ h1 {
 }
 
 .forgot-password:hover {
-    color: #b41111;
+    color: #a60815;
     transform: scale(1.1);
-    transition: transform 0.3s ease;
+    transition: transform 0.1s ease;
+}
+
+.forgot-password:hover::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+}
+
+.hover-effect {
+    position: relative;
+    overflow: hidden;
 }
 
 .hover-effect:hover {
-    transform: scale(1.1);
-    transition: transform 0.3s ease;
+    transform: scale(1.05);
+    transition: transform 0.8s ease;
+    border: solid 1px #1374f2;
+    border-radius: 0.5em;
+    box-shadow: inset 0 0 10px rgb(211, 230, 255); /* Sombra interna azul clara */
 }
 
 #typing-effect {
     display: inline-block;
-    border-right: 2px solid #000; /* Cursor animado */
+    border-right: 2px solid #000;
     animation: blink-caret 0.7s steps(2) infinite;
 }
 
