@@ -24,10 +24,25 @@ Route::get('register', function () {
 })->name('register');
 Route::post('register', [RegisterController::class, 'register']);
 
+// Redefinição de senha exibindo o link/token na tela
+Route::get('forgot-password-token', [\App\Http\Controllers\Auth\PasswordTokenController::class, 'showForm'])->name('password.token.form');
+Route::post('forgot-password-token', [\App\Http\Controllers\Auth\PasswordTokenController::class, 'generateLink'])->name('password.token.link');
+
+// Rotas AJAX para redefinição de senha personalizada
+Route::get('forgot-password-ajax', function() {
+    return view('auth.forgot_password_ajax');
+})->name('password.request.ajax');
+
+Route::get('reset-password-ajax/{token}', function($token) {
+    $email = request('email');
+    return view('auth.reset_password_ajax', compact('token', 'email'));
+})->name('password.reset.ajax');
+
+// Rotas padrão (backend Laravel)
 Route::get('forgot-password', [PasswordResetController::class, 'showLinkRequestForm'])->name('password.request');
-Route::post('forgot-password', [PasswordResetController::class, 'sendResetLinkEmail']);
+Route::post('forgot-password', [PasswordResetController::class, 'sendResetLinkEmail'])->name('password.email');
 Route::get('reset-password/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
-Route::post('reset-password', [PasswordResetController::class, 'reset']);
+Route::post('reset-password', [PasswordResetController::class, 'reset'])->name('password.update');
 
 
 

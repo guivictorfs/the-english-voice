@@ -15,7 +15,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->enum('role', ['Aluno', 'Professor', 'Admin']);
             $table->string('ra', 20)->unique()->nullable();
-            $table->foreignId('course_id')->constrained('courses', 'course_id');
+            $table->foreignId('course_id')->constrained('course', 'course_id');
             $table->string('password_reset_token')->nullable();
             $table->timestamp('token_expiration')->nullable();
             $table->timestamps();

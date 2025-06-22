@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Course extends Model
 {
+    protected $table = 'course';
     use HasFactory;
 
     // Definindo o nome da tabela
-    protected $table = 'course';
 
     // Definindo os campos que podem ser preenchidos
     protected $fillable = ['course_name'];

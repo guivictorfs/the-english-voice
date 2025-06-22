@@ -58,9 +58,9 @@ class RegisterController extends Controller
         $users = User::create([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
-            'password' => bcrypt($validatedData['password']),
+            'password' => Hash::make($validatedData['password']),
             'role' => $validatedData['role'],
-            'course' => $validatedData['course'],
+            'course_id' => \DB::table('course')->where('course_name', $validatedData['course'])->value('course_id'),
             'ra' => $validatedData['ra'], // Caso o tipo de usuário seja Aluno
         ]);
 
