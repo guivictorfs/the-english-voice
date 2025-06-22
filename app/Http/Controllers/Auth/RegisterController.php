@@ -17,8 +17,8 @@ class RegisterController extends Controller
 
     public function store(RegisterRequest $request)
     {
-        // Verificar se o curso existe na tabela `courses`
-        $course = Course::where('course_name', $request->course)->first(); // A consulta é feita na tabela courses
+        // Verificar se o curso existe na tabela `course`
+        $course = Course::where('course_name', $request->course)->first(); // A consulta é feita na tabela 'course' (singular)
 
         if (!$course) {
             // Se o curso não for encontrado
@@ -26,7 +26,7 @@ class RegisterController extends Controller
         }
 
         // Criar o usuário
-        $user = User::create([
+        $users = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
@@ -36,10 +36,10 @@ class RegisterController extends Controller
         ]);
 
         // Autenticar o usuário após o registro
-        auth()->login($user);
+        auth()->login($users);
 
-        // Redirecionar para o dashboard ou página inicial
-        return redirect()->route('dashboard')->with('success', 'Conta criada com sucesso!');
+        // Redirecionar de volta para a tela de cadastro com mensagem de sucesso
+        return redirect()->route('register')->with('success', 'Conta criada com sucesso!');
     }
 
     public function register(RegisterRequest $request)
@@ -54,17 +54,8 @@ class RegisterController extends Controller
             'ra' => 'nullable|alpha_num|max:20', // RA para Alunos
         ]);
 
-        // Validação adicional para Professores e Administradores
-        if ($validatedData['role'] === 'Professor' && $validatedData['course'] !== 'Professor') {
-            return back()->withErrors(['course' => 'O curso deve ser "Professor" para o tipo de usuário Professor.']);
-        }
-
-        if ($validatedData['role'] === 'Administrador' && $validatedData['course'] !== 'Administrador') {
-            return back()->withErrors(['course' => 'O curso deve ser "Administrador" para o tipo de usuário Administrador.']);
-        }
-
         // Criar o usuário no banco de dados
-        $user = User::create([
+        $users = User::create([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
             'password' => bcrypt($validatedData['password']),

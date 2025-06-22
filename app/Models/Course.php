@@ -10,7 +10,7 @@ class Course extends Model
     use HasFactory;
 
     // Definindo o nome da tabela
-    protected $table = 'courses';
+    protected $table = 'course';
 
     // Definindo os campos que podem ser preenchidos
     protected $fillable = ['course_name'];

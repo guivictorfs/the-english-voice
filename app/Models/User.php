@@ -10,11 +10,6 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    // Definir a chave primária
-    protected $primaryKey = 'user_id'; // Especifica que a chave primária é `user_id`
-
-    // Definir o tipo da chave primária (se for diferente de int)
-    protected $keyType = 'int'; // Define o tipo da chave primária, se necessário
 
     /**
      * Atributos que podem ser preenchidos em massa.

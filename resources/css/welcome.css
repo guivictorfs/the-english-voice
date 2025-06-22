@@ -2,59 +2,63 @@
 
 body {
     font-family: "Arial", sans-serif;
-    background-color: #f4f4f4;
     margin: 0;
     padding: 0;
+    background-image: url(../../public/IMG/background.jpg);
+    background-position: center;   
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255, 252, 232, 0.493);  
+    pointer-events: none;
+    z-index: 0;
+}
+
+body > * {
+    position: relative;
+    z-index: 1;
+}
+
+.navbar {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand img {
+    border-radius: 0.5em;
+    box-shadow: 0 0 5px #5fa1f7;
+}
+
+.navbar-nav .nav-link {
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 2px; 
+    transition: color 0.3s ease;
 }
 
 hr {
-    border-top: 20px solid #a60815 !important; /* Ajuste a espessura aqui */
+    border: 0;
+    height: 2px;
+    background: linear-gradient(to right, transparent, #007bff, transparent);
+    margin: 40px 0;
+    opacity: 1;
 }
 
 h1 {
     font-weight: bold;
 }
 
-.navbar {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.navbar-brand {
-    font-weight: bold;
-    color: #007bff;
-}
-
-.nav-link {
-    color: #333;
-}
-
-.nav-link:hover {
-    color: #007bff;
-}
-
-.btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
-}
-
-.btn-primary:hover {
-    background-color: #0056b3;
-    border-color: #004085;
-}
-
-.btn-success {
-    background-color: #28a745;
-    border-color: #28a745;
-}
-
-.btn-success:hover {
-    background-color: #218838;
-    border-color: #1e7e34;
-}
-
 .footer {
     background-color: #f8f9fa;
-    position: fixed;
     bottom: 0;
     width: 100%;
     padding: 10px 0;
@@ -66,6 +70,12 @@ h1 {
 }
 
 .container {
+    background-color: #f8f9fa;
+    border-radius: 1em;
+    text-align: center;
+}
+
+.container-title {
     max-width: 900px;
 }
 
@@ -87,6 +97,7 @@ h1 {
     background-color: rgba(0, 123, 255, 0.1);
     border: solid 1px #1374f2;
     border-radius: 0.5em;
+    box-shadow: inset 0 0 10px #1374f2;
 }
 
 .card-footer {
@@ -101,32 +112,7 @@ h1 {
     background-color: rgba(40, 167, 69, 0.1);
     border: solid 1px #1f8c59;
     border-radius: 0.5em;
-}
-
-.forgot-password {
-    position: relative;
-    overflow: hidden;
-    margin-top: 10px;
-    display: inline-block;
-    text-decoration: none;
-    font-weight: bold;
-    transition: color 0.3s ease;
-}
-
-.forgot-password:hover {
-    color: #a60815;
-    transform: scale(1.1);
-    transition: transform 0.1s ease;
-}
-
-.forgot-password:hover::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
+    box-shadow: inset 0 0 10px #1f8c59;
 }
 
 .hover-effect {
@@ -136,10 +122,24 @@ h1 {
 
 .hover-effect:hover {
     transform: scale(1.05);
-    transition: transform 0.8s ease;
+    transition: transform 0.3s ease;
     border: solid 1px #1374f2;
     border-radius: 0.5em;
-    box-shadow: inset 0 0 10px rgb(211, 230, 255); /* Sombra interna azul clara */
+    box-shadow: inset 0 0 12px rgb(211, 230, 255);    
+}
+
+.card-esqueceu-senha:hover .card-body {
+    background-color: rgba(220, 53, 69, 0.1);
+    border: solid 1px #dc3545;
+    border-radius: 0.5em;
+    box-shadow: inset 0 0 10px #dc3545;
+}
+
+.card-ajuda:hover .card-body {
+    background-color: rgba(255, 193, 7, 0.1);
+    border: solid 1px #ffc107;
+    border-radius: 0.5em;
+    box-shadow: inset 0 0 10px #ffc107;
 }
 
 #typing-effect {
@@ -155,4 +155,32 @@ h1 {
     to {
         border-color: black;
     }
+}
+
+.social-link {
+    text-decoration: none;
+    color: #1374f2;
+}
+
+.social-link:hover {
+    text-decoration: none;
+}
+
+.social-link i {
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.social-link:hover i {
+    transform: scale(1.1);
+    color: #007bff;
+}
+
+.img-svg {    
+    border-radius: 1em;
+    max-width: 25em;
+    box-shadow: 0 0 10px #5fa1f7;
+}
+
+.img-logo {
+    max-width: 50em;
 }

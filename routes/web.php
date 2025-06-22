@@ -10,12 +10,18 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
+Route::get('/help', function () {
+    return view('help');
+})->name('help');
 
 
-Route::get('login', [RegisterController::class, 'showLoginForm'])->name('login');
-Route::post('login', [RegisterController::class, 'login']);
 
-Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::get('login', [\App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
+Route::post('login', [\App\Http\Controllers\Auth\LoginController::class, 'login']);
+
+Route::get('register', function () {
+    return view('auth.register');
+})->name('register');
 Route::post('register', [RegisterController::class, 'register']);
 
 Route::get('forgot-password', [PasswordResetController::class, 'showLinkRequestForm'])->name('password.request');
@@ -33,7 +39,7 @@ Route::get('/logout', function () {
     session()->invalidate();  // Limpa a sessão
     session()->regenerateToken();  // Gera novo token
     return redirect()->route('home');  // Redireciona para a página inicial ou outra rota
-});
+})->name('logout');
 
 Route::post('/validate-code', function (Illuminate\Http\Request $request) {
     $role = $request->input('role');
@@ -46,3 +52,8 @@ Route::post('/validate-code', function (Illuminate\Http\Request $request) {
 
     return response()->json(['valid' => false], 401);
 });
+
+// Dashboard (protegido por autenticação)
+Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
+    ->middleware('auth')
+    ->name('dashboard');
