@@ -160,9 +160,9 @@ $(document).ready(function() {
 @endsection
 
                 @if($articles->count())
-                    <div class="list-group">
+                    <div>
                         @foreach($articles as $article)
-                            <div class="list-group-item mb-4">
+                            <div class="artigo-card">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <h5 class="mb-1">{{ $article->title }}</h5>
                                     <form method="POST" action="{{ route('artigos.denunciar', $article->article_id) }}" onsubmit="return confirm('Tem certeza que deseja denunciar este artigo?');">
@@ -190,7 +190,7 @@ $(document).ready(function() {
 
                                 {{-- Exibe conteúdo ou PDF --}}
                                 @if(isset($article->content) && $article->content !== null && trim($article->content) !== '')
-                                    <div class="mb-2">{!! Str::limit($article->content, 400) !!}</div>
+                                    <div class="mb-2 mt-2 text-start">{!! Str::limit($article->content, 400) !!}</div>
                                 @else
                                     @php
                                         $file = DB::table('file_upload')

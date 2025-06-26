@@ -53,6 +53,15 @@ hr {
     opacity: 1;
 }
 
+.artigo-card {
+    border: 1px solid #111;
+    border-radius: 0.65em;
+    margin-bottom: 1.5rem;
+    box-shadow: none;
+    background: #fff;
+    padding: 1.2rem 1.2rem 1rem 1.2rem;
+}
+
 h1 {
     font-weight: bold;
 }
