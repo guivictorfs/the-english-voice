@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Artigo;
+use Smalot\PdfParser\Parser;
 
 class ArtigoController extends Controller
 {
@@ -41,14 +42,41 @@ class ArtigoController extends Controller
                 'pdf' => 'required|mimes:pdf|max:5120',
                 'autores' => 'required|array|min:1',
             ]);
-
+        
             $pdfPath = $request->file('pdf')->store('artigos', 'public');
             $fileName = $request->file('pdf')->getClientOriginalName();
+            $pdfFullPath = storage_path('app/public/' . $pdfPath);
+        
+            // Extrai o texto do PDF
+            try {
+                $parser = new Parser();
+                $pdf = $parser->parseFile($pdfFullPath);
+                $text = $pdf->getText();
+        
+                // Lista simples de palavras proibidas
+                $palavrasPath = storage_path('app/palavras_proibidas.txt');
 
+                if (file_exists($palavrasPath)) {
+                    $palavrasProibidas = array_map('trim', file($palavrasPath));
+                } else {
+                    $palavrasProibidas = []; // Se não existir, não bloqueia nada
+                }
+        
+                foreach ($palavrasProibidas as $palavra) {
+                    if (stripos($text, $palavra) !== false) {
+                        Storage::disk('public')->delete($pdfPath);
+                        return back()->withErrors(['O PDF contém palavras inadequadas.']);
+                    }
+                }
+        
+            } catch (\Exception $e) {
+                return back()->withErrors(['Erro ao processar o PDF: ' . $e->getMessage()]);
+            }
+        
             $artigo = Artigo::create([
                 'title' => $request->titulo,
             ]);
-
+        
             DB::table('file_upload')->insert([
                 'article_id' => $artigo->article_id,
                 'file_name' => $fileName,
