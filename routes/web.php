@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\KeywordController;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\PasswordResetController;
+use App\Http\Controllers\ForbiddenWordController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -91,3 +92,9 @@ Route::post('/validate-code', function (Illuminate\Http\Request $request) {
 Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
     ->middleware('auth')
     ->name('dashboard');
+
+Route::middleware(['auth'])->prefix('admin')->group(function () {
+    Route::get('/forbidden_words', [ForbiddenWordController::class, 'index'])->name('forbidden_words.index');
+    Route::post('/forbidden_words', [ForbiddenWordController::class, 'store'])->name('forbidden_words.store');
+    Route::delete('/forbidden_words/{id}', [ForbiddenWordController::class, 'destroy'])->name('forbidden_words.destroy');
+});

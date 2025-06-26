@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Artigo;
 use Smalot\PdfParser\Parser;
+use App\Models\ForbiddenWord;
 
 class ArtigoController extends Controller
 {
@@ -54,13 +55,7 @@ class ArtigoController extends Controller
                 $text = $pdf->getText();
         
                 // Lista simples de palavras proibidas
-                $palavrasPath = storage_path('app/palavras_proibidas.txt');
-
-                if (file_exists($palavrasPath)) {
-                    $palavrasProibidas = array_map('trim', file($palavrasPath));
-                } else {
-                    $palavrasProibidas = []; // Se não existir, não bloqueia nada
-                }
+                $palavrasProibidas = ForbiddenWord::pluck('word')->toArray();
         
                 foreach ($palavrasProibidas as $palavra) {
                     if (stripos($text, $palavra) !== false) {
