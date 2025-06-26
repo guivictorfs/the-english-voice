@@ -14,9 +14,10 @@ class Article extends Model
     protected $fillable = ['title', 'status', 'approved_by', 'average_rating'];
 
     // Relacionamento com o(s) autor(es)
-    public function author()
+    public function authors()
     {
-        // Ajuste conforme sua estrutura de relacionamento
-        return $this->belongsToMany(User::class, 'article_author', 'article_id', 'user_id');
+        // Ajustado para refletir a estrutura real da tabela article_author
+        return $this->belongsToMany(User::class, 'article_author', 'article_id', 'id')
+            ->withPivot('author_type', 'created_at');
     }
 }

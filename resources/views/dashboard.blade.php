@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     @vite('resources/css/welcome.css')
+    @vite('resources/js/app.js')
 </head>
 <body>
     <!-- Navbar -->
@@ -46,18 +47,41 @@
                 @if($articles->count())
                     <div class="list-group">
                         @foreach($articles as $article)
-                            <div class="list-group-item mb-3">
+                            <div class="list-group-item mb-4">
                                 <h5 class="mb-1">{{ $article->title }}</h5>
                                 <p class="mb-1 text-muted">
                                     Por
-                                    @if($article->author && $article->author->count())
-                                        {{ $article->author->pluck('name')->join(', ') }}
+                                    @if($article->authors && $article->authors->count())
+                                        {{ $article->authors->pluck('name')->join(', ') }}
                                     @else
                                         Autor desconhecido
                                     @endif
                                     em {{ $article->created_at->format('d/m/Y H:i') }}
                                 </p>
-                                <p class="mb-1">{{ Str::limit($article->content ?? '', 120) }}</p>
+                                <div class="mb-2">{!! Str::limit($article->content ?? '', 400) !!}</div>
+
+                                @if(empty($article->content))
+                                    @php
+                                        // Só busca PDF se não houver conteúdo digitado
+                                        $file = DB::table('file_upload')
+                                            ->where('article_id', $article->article_id)
+                                            ->orderByDesc('created_at')
+                                            ->first();
+                                        $pdfPath = $file ? $file->file_path : null;
+                                    @endphp
+                                    @if($pdfPath)
+                                        <div class="mb-2">
+                                            <strong>Caminho PDF:</strong> <code>{{ $pdfPath }}</code><br>
+                                            <a href="{{ asset('storage/' . $pdfPath) }}" target="_blank" class="btn btn-sm btn-outline-primary">Abrir PDF em nova aba</a>
+                                        </div>
+                                        <iframe 
+                                            src="{{ asset('storage/' . $pdfPath) }}" 
+                                            width="100%" 
+                                            height="400px" 
+                                            style="border:1px solid #ccc;">
+                                        </iframe>
+                                    @endif
+                                @endif
                             </div>
                         @endforeach
                     </div>
@@ -75,5 +99,5 @@
         </div>
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+    </body>
 </html>

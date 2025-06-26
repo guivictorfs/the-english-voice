@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\KeywordController;
+// use App\Http\Controllers\Api\AuthorController;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\PasswordResetController;
@@ -9,6 +11,12 @@ use App\Http\Controllers\Auth\PasswordResetController;
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
+
+// API autocomplete keywords
+Route::get('/api/keywords', [KeywordController::class, 'index']);
+
+// (Opcional) API autocomplete authors
+// Route::get('/api/authors', [AuthorController::class, 'index']);
 
 Route::get('/help', function () {
     return view('help');
@@ -55,6 +63,17 @@ Route::get('/logout', function () {
     session()->regenerateToken();  // Gera novo token
     return redirect()->route('home');  // Redireciona para a página inicial ou outra rota
 })->name('logout');
+
+// Página para postar artigo
+Route::get('/artigos/postar', function () {
+    return view('artigo_postar');
+})->middleware('auth')->name('artigos.postar');
+
+// (Opcional) Rota para processar o envio do artigo
+Route::post('/artigos', [App\Http\Controllers\ArtigoController::class, 'store'])->middleware('auth')->name('artigos.store');
+
+// Visualizar artigo (PDF)
+Route::get('/artigos/{article}/visualizar', [App\Http\Controllers\ArtigoController::class, 'visualizar'])->middleware('auth')->name('artigos.visualizar');
 
 Route::post('/validate-code', function (Illuminate\Http\Request $request) {
     $role = $request->input('role');

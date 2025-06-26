@@ -123,4 +123,8 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'aliases' => [
+        'Profanity' => Askedio\Laravel5ProfanityFilter\Facades\Profanity::class,
+    ],
+
 ];
