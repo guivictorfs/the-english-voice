@@ -76,12 +76,20 @@
         $selectedTags = [$selectedTags];
     }
 @endphp
-@if(request('tag'))
+@if(request('tag') || request('author'))
     <div class="mb-3 d-flex align-items-center">
-        <span class="me-2 text-secondary"><i class="fas fa-filter"></i> Tag filtrada:</span>
-        <span class="badge bg-primary text-light me-2" style="font-size:1em;">
-            {{ request('tag') }}
-        </span>
+        @if(request('tag'))
+            <span class="me-2 text-secondary"><i class="fas fa-filter"></i> Tag filtrada:</span>
+            <span class="badge bg-primary text-light me-2" style="font-size:1em;">
+                {{ request('tag') }}
+            </span>
+        @endif
+        @if(request('author'))
+            <span class="me-2 text-secondary"><i class="fas fa-user"></i> Autor filtrado:</span>
+            <span class="badge bg-success text-light me-2" style="font-size:1em;">
+                {{ request('author') }}
+            </span>
+        @endif
         <a href="{{ route('dashboard') }}" class="btn btn-outline-danger btn-sm ms-2" title="Limpar filtro">
             <i class="fas fa-times me-1"></i> Limpar filtro
         </a>
@@ -90,7 +98,7 @@
 <!-- Botão para abrir modal de filtro -->
 <div class="mb-4">
     <button class="btn btn-outline-primary d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#modalFiltroTags">
-        <i class="fas fa-tags me-2"></i> Filtrar por tags
+        <i class="fas fa-tags me-2"></i> Filtrar
     </button>
 </div>
 <!-- Modal de filtro de tags -->
@@ -103,12 +111,24 @@
       </div>
       <form method="GET" action="{{ route('dashboard') }}">
         <div class="modal-body">
-          <select name="tag" class="form-select w-100">
-    <option value="">Selecione uma palavra-chave...</option>
-    @foreach(App\Models\Keyword::orderBy('name')->get() as $keyword)
-        <option value="{{ $keyword->name }}" {{ request('tag') == $keyword->name ? 'selected' : '' }}>{{ $keyword->name }}</option>
-    @endforeach
-</select>
+          <div class="mb-3">
+            <label for="filtro-tag" class="form-label">Filtrar por palavra-chave (tag):</label>
+            <select id="filtro-tag" name="tag" class="form-select w-100">
+                <option value="">Selecione uma palavra-chave...</option>
+                @foreach(App\Models\Keyword::orderBy('name')->get() as $keyword)
+                    <option value="{{ $keyword->name }}" {{ request('tag') == $keyword->name ? 'selected' : '' }}>{{ $keyword->name }}</option>
+                @endforeach
+            </select>
+          </div>
+          <div>
+            <label for="filtro-autor" class="form-label">Filtrar por autor:</label>
+            <select id="filtro-autor" name="author" class="form-select w-100">
+                <option value="">Selecione um autor...</option>
+                @foreach(App\Models\User::orderBy('name')->get() as $user)
+                    <option value="{{ $user->name }}" {{ request('author') == $user->name ? 'selected' : '' }}>{{ $user->name }}</option>
+                @endforeach
+            </select>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="submit" class="btn btn-outline-primary">
@@ -158,7 +178,9 @@ $(document).ready(function() {
                                 <p class="mb-1 text-muted">
                                     Por
                                     @if($article->authors && $article->authors->count())
-                                        {{ $article->authors->pluck('name')->join(', ') }}
+                                        @foreach($article->authors as $i => $author)
+                                            <a href="{{ route('dashboard', ['author' => $author->name]) }}" class="text-decoration-none fw-bold text-success" title="Filtrar por {{ $author->name }}">{{ $author->name }}</a>@if($i < $article->authors->count() - 1), @endif
+                                        @endforeach
                                     @else
                                         Autor desconhecido
                                     @endif

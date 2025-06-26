@@ -19,7 +19,15 @@ class DashboardController extends Controller
                 $q->where('name', $tag);
             });
         }
+
+        $author = $request->query('author');
+        if ($author) {
+            $query->whereHas('authors', function($q) use ($author) {
+                $q->where('name', $author);
+            });
+        }
+
         $articles = $query->orderByDesc('created_at')->get();
-        return view('dashboard', ['articles' => $articles, 'tag' => $tag]);
+        return view('dashboard', ['articles' => $articles, 'tag' => $tag, 'author' => $author]);
     }
 }
