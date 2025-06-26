@@ -67,7 +67,7 @@
     <div class="container mt-5 mb-5">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <h2 class="mb-4"><i class="fas fa-book-open"></i> Textos Postados</h2>
+                <h2 class="mb-2 mt-3"><i class="fas fa-book-open"></i> Artigos Postados</h2>
 
 <!-- Tags selecionadas (acima da lista) -->
 @php
@@ -154,7 +154,43 @@ $(document).ready(function() {
         allowClear: true,
         width: '100%'
     });
+});
+// Exibe campo para motivo personalizado ao selecionar 'Outro' no modal denúncia
+document.addEventListener('DOMContentLoaded', function() {
+    // Habilita/desabilita botão de submit do modal denúncia
+    $(document).on('input change', 'select[id^="motivo-"]', function() {
+        var id = $(this).attr('id').replace('motivo-', '');
+        var motivo = $('#motivo-' + id).val();
+        var btn = $('#btnEnviarDenuncia-' + id);
+        if (motivo && motivo !== '') {
+            btn.prop('disabled', false);
+        } else {
+            btn.prop('disabled', true);
+        }
+    });
 
+    // Ao abrir o modal, dispara evento change manualmente para garantir estado correto do botão
+    $(document).on('shown.bs.modal', '.modal', function () {
+        var modal = $(this);
+        var motivoSelect = modal.find('select[id^="motivo-"]');
+        motivoSelect.trigger('change');
+    });
+
+    // Validação extra no submit do formulário de denúncia
+    $(document).on('submit', 'form[action*="artigos/denunciar"]', function(e) {
+        var form = $(this);
+        var motivo = form.find('select[name="motivo"]').val();
+        var outroMotivo = form.find('textarea[name="outro_motivo"]');
+        if(motivo === 'Outro') {
+            if(!outroMotivo.val() || !outroMotivo.val().trim()) {
+                alert('Por favor, descreva o motivo da denúncia.');
+                outroMotivo.focus();
+                e.preventDefault();
+                form.find('button[type="submit"]').prop('disabled', false);
+                return false;
+            }
+        }
+    });
 });
 </script>
 @endsection
@@ -165,15 +201,47 @@ $(document).ready(function() {
                             <div class="artigo-card">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <h5 class="mb-1">{{ $article->title }}</h5>
-                                    <form method="POST" action="{{ route('artigos.denunciar', $article->article_id) }}" onsubmit="return confirm('Tem certeza que deseja denunciar este artigo?');">
-                                        @csrf
-                                        <button type="submit" class="btn btn-sm btn-danger" title="Denunciar artigo">
-                                            <i class="fas fa-flag"></i> Denunciar
-                                        </button>
-                                        @if(isset($article->denuncias) && $article->denuncias > 0)
-                                            <span class="badge bg-warning text-dark ms-2">{{ $article->denuncias }} denúncia{{ $article->denuncias > 1 ? 's' : '' }}</span>
-                                        @endif
-                                    </form>
+                                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#modalDenuncia-{{ $article->article_id }}" title="Denunciar artigo">
+    <i class="fas fa-flag"></i> Denunciar
+</button>
+@if(isset($article->denuncias) && $article->denuncias > 0)
+    <span class="badge bg-warning text-dark ms-2">{{ $article->denuncias }} denúncia{{ $article->denuncias > 1 ? 's' : '' }}</span>
+@endif
+
+<!-- Modal Denúncia -->
+<div class="modal fade" id="modalDenuncia-{{ $article->article_id }}" tabindex="-1" aria-labelledby="modalDenunciaLabel-{{ $article->article_id }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="{{ route('artigos.denunciar', $article->article_id) }}">
+        @csrf
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalDenunciaLabel-{{ $article->article_id }}"><i class="fas fa-flag text-danger me-2"></i>Motivo da denúncia</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="motivo-{{ $article->article_id }}" class="form-label">Selecione o motivo:</label>
+            <select class="form-select" name="motivo" id="motivo-{{ $article->article_id }}" required>
+              <option value="">Escolha...</option>
+              <option value="Palavra inadequada">Palavra inadequada</option>
+              <option value="Conteúdo ofensivo">Conteúdo ofensivo</option>
+              <option value="Plágio">Plágio</option>
+              <option value="Outro">Outro</option>
+            </select>
+          </div>
+          <div class="mb-3" id="outroMotivoDiv-{{ $article->article_id }}">
+    <label for="outroMotivo-{{ $article->article_id }}" class="form-label">Descreva o motivo (opcional):</label>
+    <textarea class="form-control" name="outro_motivo" id="outroMotivo-{{ $article->article_id }}" rows="3"></textarea>
+</div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-danger" id="btnEnviarDenuncia-{{ $article->article_id }}">Enviar denúncia</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
                                 </div>
                                 <p class="mb-1 text-muted">
                                     Por
