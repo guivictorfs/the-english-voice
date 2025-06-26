@@ -39,6 +39,11 @@
         </div>
     </nav>
 
+    @php
+        use Illuminate\Support\Facades\DB;
+        use Illuminate\Support\Str;
+    @endphp
+
     <!-- Conteúdo principal -->
     <div class="container mt-5 mb-5">
         <div class="row justify-content-center">
@@ -58,28 +63,32 @@
                                     @endif
                                     em {{ $article->created_at->format('d/m/Y H:i') }}
                                 </p>
-                                <div class="mb-2">{!! Str::limit($article->content ?? '', 400) !!}</div>
 
-                                @if(empty($article->content))
+                                {{-- Exibe conteúdo ou PDF --}}
+                                @if(!empty($article->content))
+                                    <div class="mb-2">{!! Str::limit($article->content, 400) !!}</div>
+                                @else
                                     @php
-                                        // Só busca PDF se não houver conteúdo digitado
                                         $file = DB::table('file_upload')
                                             ->where('article_id', $article->article_id)
                                             ->orderByDesc('created_at')
                                             ->first();
-                                        $pdfPath = $file ? $file->file_path : null;
                                     @endphp
-                                    @if($pdfPath)
+                                    @if($file)
                                         <div class="mb-2">
-                                            <strong>Caminho PDF:</strong> <code>{{ $pdfPath }}</code><br>
-                                            <a href="{{ asset('storage/' . $pdfPath) }}" target="_blank" class="btn btn-sm btn-outline-primary">Abrir PDF em nova aba</a>
+                                            <strong>Arquivo PDF:</strong>
+                                            <a href="{{ asset('storage/' . $file->file_path) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                Abrir PDF
+                                            </a>
                                         </div>
                                         <iframe 
-                                            src="{{ asset('storage/' . $pdfPath) }}" 
+                                            src="{{ asset('storage/' . $file->file_path) }}" 
                                             width="100%" 
                                             height="400px" 
                                             style="border:1px solid #ccc;">
                                         </iframe>
+                                    @else
+                                        <div class="text-muted">Nenhum arquivo disponível.</div>
                                     @endif
                                 @endif
                             </div>
@@ -98,6 +107,7 @@
             <span class="text-muted">&copy; {{ date('Y') }} The English Voice. Todos os direitos reservados.</span>
         </div>
     </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
+</body>
 </html>
