@@ -7,13 +7,19 @@ use App\Models\Article;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         // Busca os artigos mais recentes, com autor se houver relação
-        $articles = Article::with(['authors'])
-            ->where('status', 'Aprovado')
-            ->orderByDesc('created_at')
-            ->get();
-        return view('dashboard', compact('articles'));
+        $query = Article::with(['authors', 'keywords'])
+            ->where('status', 'Aprovado');
+
+        $tag = $request->query('tag');
+        if ($tag) {
+            $query->whereHas('keywords', function($q) use ($tag) {
+                $q->where('name', $tag);
+            });
+        }
+        $articles = $query->orderByDesc('created_at')->get();
+        return view('dashboard', ['articles' => $articles, 'tag' => $tag]);
     }
 }

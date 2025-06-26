@@ -1,7 +1,5 @@
 import "./bootstrap";
-import "bootstrap"; // Importando o Bootstrap JS
-import "bootstrap/dist/css/bootstrap.min.css"; // Importando o Bootstrap CSS
-import Filter from "bad-words";
+import Filter from "bad-words/lib/filter";
 
 // Filtro de palavras ofensivas
 const filter = new Filter();

@@ -13,6 +13,12 @@ class Article extends Model
     protected $primaryKey = 'article_id';
     protected $fillable = ['title', 'content', 'status', 'denuncias', 'approved_by', 'average_rating'];
 
+    // Relacionamento com keywords/tags
+    public function keywords()
+    {
+        return $this->belongsToMany(Keyword::class, 'article_keyword', 'article_id', 'keyword_id');
+    }
+
     // Relacionamento com o(s) autor(es)
     public function authors()
     {

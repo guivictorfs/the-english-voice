@@ -17,13 +17,13 @@ body::before {
     height: 100vh;
     background: rgba(255, 252, 232, 0.493);  
     pointer-events: none;
-    z-index: 0;
+    z-index: -1;
 }
 
-body > * {
+/* body > * {
     position: relative;
     z-index: 1;
-}
+} */
 
 .navbar {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);

@@ -97,6 +97,10 @@ Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'ind
     ->name('dashboard');
 
 Route::middleware(['auth'])->prefix('admin')->group(function () {
+    // Painel de tags/keywords
+    Route::get('/keywords', [\App\Http\Controllers\KeywordController::class, 'index'])->name('keywords.index');
+    Route::post('/keywords', [\App\Http\Controllers\KeywordController::class, 'store'])->name('keywords.store');
+    Route::delete('/keywords/{id}', [\App\Http\Controllers\KeywordController::class, 'destroy'])->name('keywords.destroy');
     // Revisão de artigos denunciados
     Route::get('/artigos_pendentes', [\App\Http\Controllers\ArtigoController::class, 'pendentes'])->name('admin.artigos.pendentes');
     Route::post('/artigos/{article}/aprovar', [\App\Http\Controllers\ArtigoController::class, 'aprovar'])->name('admin.artigos.aprovar');

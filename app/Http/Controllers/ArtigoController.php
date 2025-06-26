@@ -147,17 +147,11 @@ class ArtigoController extends Controller
         // Relaciona keywords
         foreach ($keywordsArr as $kw) {
             if (!$kw) continue;
-            $keywordId = DB::table('keyword')->where('name', $kw)->value('keyword_id');
-            if (!$keywordId) {
-                $keywordId = DB::table('keyword')->insertGetId([
-                    'name' => $kw,
-                    'created_at' => now(),
-                    'updated_at' => now()
-                ]);
-            }
+            $kw = trim($kw);
+            $keyword = \App\Models\Keyword::firstOrCreate(['name' => $kw]);
             DB::table('article_keyword')->updateOrInsert([
                 'article_id' => $artigo->article_id,
-                'keyword_id' => $keywordId
+                'keyword_id' => $keyword->keyword_id
             ], [
                 'created_at' => now(),
                 'updated_at' => now()

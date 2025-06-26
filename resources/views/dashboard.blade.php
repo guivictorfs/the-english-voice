@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     @vite('resources/css/welcome.css')
-    @vite('resources/js/app.js')
+    {{-- @vite('resources/js/app.js') Removido para evitar erro de JS quebrado no dashboard --}}
 </head>
 <body>
     <!-- Navbar -->
@@ -68,6 +68,77 @@
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <h2 class="mb-4"><i class="fas fa-book-open"></i> Textos Postados</h2>
+
+<!-- Tags selecionadas (acima da lista) -->
+@php
+    $selectedTags = request('tags');
+    if (is_string($selectedTags)) {
+        $selectedTags = [$selectedTags];
+    }
+@endphp
+@if(request('tag'))
+    <div class="mb-3 d-flex align-items-center">
+        <span class="me-2 text-secondary"><i class="fas fa-filter"></i> Tag filtrada:</span>
+        <span class="badge bg-primary text-light me-2" style="font-size:1em;">
+            {{ request('tag') }}
+        </span>
+        <a href="{{ route('dashboard') }}" class="btn btn-outline-danger btn-sm ms-2" title="Limpar filtro">
+            <i class="fas fa-times me-1"></i> Limpar filtro
+        </a>
+    </div>
+@endif
+<!-- Botão para abrir modal de filtro -->
+<div class="mb-4">
+    <button class="btn btn-outline-primary d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#modalFiltroTags">
+        <i class="fas fa-tags me-2"></i> Filtrar por tags
+    </button>
+</div>
+<!-- Modal de filtro de tags -->
+<div class="modal fade" id="modalFiltroTags" tabindex="-1" aria-labelledby="modalFiltroTagsLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalFiltroTagsLabel"><i class="fas fa-tags me-2 text-primary"></i>Filtrar artigos por tags</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <form method="GET" action="{{ route('dashboard') }}">
+        <div class="modal-body">
+          <select name="tag" class="form-select w-100">
+    <option value="">Selecione uma palavra-chave...</option>
+    @foreach(App\Models\Keyword::orderBy('name')->get() as $keyword)
+        <option value="{{ $keyword->name }}" {{ request('tag') == $keyword->name ? 'selected' : '' }}>{{ $keyword->name }}</option>
+    @endforeach
+</select>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-outline-primary">
+            <i class="fas fa-filter me-1"></i> Aplicar filtro
+          </button>
+          @if(request('tags'))
+            <a href="{{ route('dashboard') }}" class="btn btn-outline-danger" title="Remover filtro de tags">
+              <i class="fas fa-times me-1"></i> Limpar filtro
+            </a>
+          @endif
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+@section('scripts')
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#dashboard-tags').select2({
+        placeholder: 'Filtrar por tag...',
+        allowClear: true,
+        width: '100%'
+    });
+
+});
+</script>
+@endsection
+
                 @if($articles->count())
                     <div class="list-group">
                         @foreach($articles as $article)
@@ -93,6 +164,7 @@
                                     @endif
                                     em {{ $article->created_at->format('d/m/Y H:i') }}
                                 </p>
+
 
                                 {{-- Exibe conteúdo ou PDF --}}
                                 @if(isset($article->content) && $article->content !== null && trim($article->content) !== '')
@@ -121,6 +193,14 @@
                                         <div class="text-muted">Nenhum arquivo disponível.</div>
                                     @endif
                                 @endif
+
+                                @if($article->keywords && $article->keywords->count())
+                                    <div class="mt-2">
+                                        @foreach($article->keywords as $kw)
+                                            <a href="{{ route('dashboard', ['tag' => $kw->name]) }}" class="badge bg-info text-dark me-1 text-decoration-none" title="Filtrar pela tag '{{ $kw->name }}'">{{ $kw->name }}</a>
+                                        @endforeach
+                                    </div>
+                                @endif
                             </div>
                         @endforeach
                     </div>
@@ -138,6 +218,20 @@
         </div>
     </footer>
 
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#dashboard-tags').select2({
+                placeholder: 'Filtrar por tag...',
+                allowClear: true,
+                width: '100%'
+            });
+        });
+        if (typeof bootstrap === 'undefined') {
+            alert('Bootstrap JS NÃO carregado!');
+        }
+    </script>
 </body>
 </html>
