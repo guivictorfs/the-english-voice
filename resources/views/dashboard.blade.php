@@ -44,6 +44,25 @@
         use Illuminate\Support\Str;
     @endphp
 
+    <!-- Feedback visual de sucesso/erro -->
+    <div class="container mt-4">
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+            </div>
+        @endif
+        @if($errors->any())
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                @foreach($errors->all() as $error)
+                    {{ $error }}<br>
+                @endforeach
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+            </div>
+        @endif
+    </div>
+
     <!-- Conteúdo principal -->
     <div class="container mt-5 mb-5">
         <div class="row justify-content-center">
@@ -53,7 +72,18 @@
                     <div class="list-group">
                         @foreach($articles as $article)
                             <div class="list-group-item mb-4">
-                                <h5 class="mb-1">{{ $article->title }}</h5>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-1">{{ $article->title }}</h5>
+                                    <form method="POST" action="{{ route('artigos.denunciar', $article->article_id) }}" onsubmit="return confirm('Tem certeza que deseja denunciar este artigo?');">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-danger" title="Denunciar artigo">
+                                            <i class="fas fa-flag"></i> Denunciar
+                                        </button>
+                                        @if(isset($article->denuncias) && $article->denuncias > 0)
+                                            <span class="badge bg-warning text-dark ms-2">{{ $article->denuncias }} denúncia{{ $article->denuncias > 1 ? 's' : '' }}</span>
+                                        @endif
+                                    </form>
+                                </div>
                                 <p class="mb-1 text-muted">
                                     Por
                                     @if($article->authors && $article->authors->count())
@@ -65,7 +95,7 @@
                                 </p>
 
                                 {{-- Exibe conteúdo ou PDF --}}
-                                @if(!empty($article->content))
+                                @if(isset($article->content) && $article->content !== null && trim($article->content) !== '')
                                     <div class="mb-2">{!! Str::limit($article->content, 400) !!}</div>
                                 @else
                                     @php

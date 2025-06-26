@@ -11,7 +11,7 @@ class Article extends Model
 
     protected $table = 'article'; // Nome correto da tabela
     protected $primaryKey = 'article_id';
-    protected $fillable = ['title', 'status', 'approved_by', 'average_rating'];
+    protected $fillable = ['title', 'content', 'status', 'denuncias', 'approved_by', 'average_rating'];
 
     // Relacionamento com o(s) autor(es)
     public function authors()

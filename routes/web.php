@@ -76,6 +76,9 @@ Route::post('/artigos', [App\Http\Controllers\ArtigoController::class, 'store'])
 // Visualizar artigo (PDF)
 Route::get('/artigos/{article}/visualizar', [App\Http\Controllers\ArtigoController::class, 'visualizar'])->middleware('auth')->name('artigos.visualizar');
 
+// Denunciar artigo
+Route::post('/artigos/{article}/denunciar', [App\Http\Controllers\ArtigoController::class, 'denunciar'])->middleware('auth')->name('artigos.denunciar');
+
 Route::post('/validate-code', function (Illuminate\Http\Request $request) {
     $role = $request->input('role');
     $code = $request->input('code');
@@ -94,6 +97,10 @@ Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'ind
     ->name('dashboard');
 
 Route::middleware(['auth'])->prefix('admin')->group(function () {
+    // Revisão de artigos denunciados
+    Route::get('/artigos_pendentes', [\App\Http\Controllers\ArtigoController::class, 'pendentes'])->name('admin.artigos.pendentes');
+    Route::post('/artigos/{article}/aprovar', [\App\Http\Controllers\ArtigoController::class, 'aprovar'])->name('admin.artigos.aprovar');
+    Route::delete('/artigos/{article}/excluir', [\App\Http\Controllers\ArtigoController::class, 'excluir'])->name('admin.artigos.excluir');
     Route::get('/forbidden_words', [ForbiddenWordController::class, 'index'])->name('forbidden_words.index');
     Route::post('/forbidden_words', [ForbiddenWordController::class, 'store'])->name('forbidden_words.store');
     Route::delete('/forbidden_words/{id}', [ForbiddenWordController::class, 'destroy'])->name('forbidden_words.destroy');

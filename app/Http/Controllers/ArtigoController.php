@@ -6,12 +6,47 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use App\Models\Artigo;
+use App\Models\Article;
 use Smalot\PdfParser\Parser;
 use App\Models\ForbiddenWord;
 
 class ArtigoController extends Controller
 {
+    /**
+     * Lista artigos denunciados (status 'Pendente') para revisão
+     */
+    public function pendentes()
+    {
+        $articles = Article::with(['authors'])
+            ->where('status', 'Pendente')
+            ->orderByDesc('denuncias')
+            ->orderByDesc('created_at')
+            ->get();
+        return view('admin.artigos_pendentes', compact('articles'));
+    }
+
+    /**
+     * Aprova artigo denunciado (status volta para 'Aprovado' e zera denúncias)
+     */
+    public function aprovar($article_id)
+    {
+        $article = Article::findOrFail($article_id);
+        $article->status = 'Aprovado';
+        $article->denuncias = 0;
+        $article->save();
+        return redirect()->route('admin.artigos.pendentes')->with('success', 'Artigo aprovado com sucesso!');
+    }
+
+    /**
+     * Exclui artigo denunciado
+     */
+    public function excluir($article_id)
+    {
+        $article = Article::findOrFail($article_id);
+        $article->delete();
+        return redirect()->route('admin.artigos.pendentes')->with('success', 'Artigo excluído com sucesso!');
+    }
+
     public function store(Request $request)
     {
         $tipo = $request->input('tipo_formulario');
@@ -68,8 +103,10 @@ class ArtigoController extends Controller
                 return back()->withErrors(['Erro ao processar o PDF: ' . $e->getMessage()]);
             }
         
-            $artigo = Artigo::create([
+            $artigo = Article::create([
                 'title' => $request->titulo,
+                'status' => 'Aprovado',
+                'denuncias' => 0,
             ]);
         
             DB::table('file_upload')->insert([
@@ -89,9 +126,11 @@ class ArtigoController extends Controller
                 'autores' => 'required|array|min:1',
             ]);
 
-            $artigo = Artigo::create([
+            $artigo = Article::create([
                 'title' => $request->titulo,
                 'content' => $request->conteudo,
+                'status' => 'Aprovado',
+                'denuncias' => 0,
             ]);
         }
 
@@ -144,5 +183,19 @@ class ArtigoController extends Controller
             'artigo' => $artigo,
             'pdfPath' => $file ? $file->file_path : null
         ]);
+    }
+
+    /**
+     * Denunciar artigo: incrementa denuncias e coloca status 'Pendente' se chegar a 5
+     */
+    public function denunciar($article_id)
+    {
+        $article = Article::findOrFail($article_id);
+        $article->denuncias = $article->denuncias + 1;
+        if ($article->denuncias >= 5) {
+            $article->status = 'Pendente';
+        }
+        $article->save();
+        return redirect()->back()->with('success', 'Artigo denunciado com sucesso!');
     }
 }

@@ -7,7 +7,7 @@
             <i class="bi bi-check-circle-fill me-2" style="font-size: 1.5rem;"></i>
             <div>
                 <strong>Artigo enviado com sucesso!</strong><br>
-                <span class="small">Seu artigo foi postado e está aguardando revisão ou publicação.</span>
+                <span class="small">Seu artigo foi postado com sucesso.</span>
             </div>
         </div>
     @endif
