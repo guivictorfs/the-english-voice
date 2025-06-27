@@ -252,7 +252,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     @else
                                         Autor desconhecido
                                     @endif
-                                    em {{ $article->created_at->format('d/m/Y H:i') }}
+                                    em {{ $article->created_at->setTimezone('America/Sao_Paulo')->format('d/m/Y H:i') }}
                                 </p>
 
 

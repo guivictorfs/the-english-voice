@@ -70,7 +70,7 @@
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <span><i class="fas fa-user"></i> {{ $report->user ? $report->user->name : 'Aluno desconhecido' }}</span>
                         <span class="ms-3"><i class="fas fa-comment"></i> {{ $report->motivo }}</span>
-                        <span class="text-muted small">{{ $report->created_at->format('d/m/Y H:i') }}</span>
+                        <span class="text-muted small">{{ $report->created_at->setTimezone('America/Sao_Paulo')->format('d/m/Y H:i') }}</span>
                     </li>
                 @endforeach
             </ul>
@@ -90,7 +90,7 @@
                                     @else
                                         Autor desconhecido
                                     @endif
-                                    em {{ $article->created_at->format('d/m/Y H:i') }}
+                                    em {{ $article->created_at->setTimezone('America/Sao_Paulo')->format('d/m/Y H:i') }}
                                 </div>
                             </div>
                             <div>
@@ -187,7 +187,7 @@
                         @else
                             Autor desconhecido
                         @endif
-                        em {{ $article->created_at->format('d/m/Y H:i') }}
+                        em {{ $article->created_at->setTimezone('America/Sao_Paulo')->format('d/m/Y H:i') }}
                     </p>
                     @if(isset($article->content) && $article->content !== null && trim($article->content) !== '')
                         <div class="mb-2">{!! Str::limit($article->content, 400) !!}</div>
@@ -225,7 +225,7 @@
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
                                         <span><i class="fas fa-user"></i> {{ $report->user ? $report->user->name : 'Aluno desconhecido' }}</span>
                                         <span class="ms-3"><i class="fas fa-comment"></i> {{ $report->motivo }}</span>
-                                        <span class="text-muted small">{{ $report->created_at->format('d/m/Y H:i') }}</span>
+                                        <span class="text-muted small">{{ $report->created_at->setTimezone('America/Sao_Paulo')->format('d/m/Y H:i') }}</span>
                                     </li>
                                 @endforeach
                             </ul>
