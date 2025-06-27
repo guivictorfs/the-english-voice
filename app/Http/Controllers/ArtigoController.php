@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Article;
 use Smalot\PdfParser\Parser;
@@ -15,6 +16,62 @@ use App\Models\ArticleReport;
 
 class ArtigoController extends Controller
 {
+    /**
+     * Exibe o formulário de edição do artigo
+     */
+    public function edit($id)
+    {
+        $article = \App\Models\Article::with('authors')->findOrFail($id);
+        $user = auth()->user();
+        $isAuthor = $article->authors->contains('id', $user->id);
+        $isProfessorOrAdmin = in_array($user->role, ['Professor', 'Admin']);
+        if (!$isAuthor && !$isProfessorOrAdmin) abort(403);
+        return view('artigos.edit', compact('article'));
+    }
+
+    /**
+     * Processa a edição do artigo
+     */
+    public function update(\Illuminate\Http\Request $request, $id)
+    {
+        $article = \App\Models\Article::with('authors')->findOrFail($id);
+        $user = auth()->user();
+        $isAuthor = $article->authors->contains('id', $user->id);
+        $isProfessorOrAdmin = in_array($user->role, ['Professor', 'Admin']);
+        if (!$isAuthor && !$isProfessorOrAdmin) abort(403);
+
+        $validated = $request->validate([
+            'title' => 'required|max:255',
+            'content' => 'nullable',
+        ]);
+        $oldContent = $article->content;
+        $oldTitle = $article->title;
+
+        // Validação de palavras proibidas
+        $forbiddenWords = \App\Models\ForbiddenWord::pluck('word')->toArray();
+        $foundWords = [];
+        foreach ($forbiddenWords as $fw) {
+            if (stripos($validated['title'], $fw) !== false || (isset($validated['content']) && stripos($validated['content'], $fw) !== false)) {
+                $foundWords[] = $fw;
+            }
+        }
+        if (count($foundWords) > 0) {
+            return back()->withErrors(['O artigo contém palavras proibidas: ' . implode(', ', $foundWords)])->withInput();
+        }
+
+        $article->update($validated);
+
+        // Salva histórico
+        DB::table('article_history')->insert([
+            'article_id' => $article->article_id,
+            'changed_by' => $user->id,
+            'change_type' => 'Edição',
+            'change_description' => 'Título anterior: ' . $oldTitle . ' | Conteúdo anterior: ' . ($oldContent ?? ''),
+            'created_at' => now()
+        ]);
+
+        return redirect()->route('dashboard')->with('success', 'Artigo editado com sucesso!');
+    }
     /**
      * Lista artigos denunciados (status 'Pendente') para revisão
      */
@@ -74,6 +131,26 @@ class ArtigoController extends Controller
                     $keywordsArr = array_map('trim', explode(',', $keywordsInput));
                 }
             }
+        }
+
+        // Validação de palavras proibidas no título, conteúdo e keywords
+        $forbiddenWords = \App\Models\ForbiddenWord::pluck('word')->toArray();
+        $foundWords = [];
+        $titulo = $request->input('titulo', '');
+        $conteudo = $request->input('conteudo', '');
+        foreach ($forbiddenWords as $fw) {
+            if (stripos($titulo, $fw) !== false || stripos($conteudo, $fw) !== false) {
+                $foundWords[] = $fw;
+            } else {
+                foreach ($keywordsArr as $kw) {
+                    if (stripos($kw, $fw) !== false) {
+                        $foundWords[] = $fw;
+                    }
+                }
+            }
+        }
+        if (count($foundWords) > 0) {
+            return back()->withErrors(['O artigo contém palavras proibidas: ' . implode(', ', array_unique($foundWords))])->withInput();
         }
 
         // Envio via PDF (sem validação de conteúdo)

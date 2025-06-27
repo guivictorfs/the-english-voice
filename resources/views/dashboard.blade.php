@@ -200,8 +200,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         @foreach($articles as $article)
                             <div class="artigo-card p-3">
     <!-- 1. Título -->
-    <div class="mb-2">
-    <span class="display-6 fw-bold text-center d-block" style="font-size:2rem;">{{ $article->title }}</span>
+    <div class="mb-2 d-flex justify-content-between align-items-center">
+    <span class="display-6 fw-bold text-center d-block w-100 text-break" style="font-size:2rem;">{{ $article->title }}</span>
+    @php
+        $isAuthor = $article->authors->contains('id', auth()->id());
+        $isProfessorOrAdmin = in_array(auth()->user()->role, ['Professor', 'Admin']);
+    @endphp
+    @if($isAuthor || $isProfessorOrAdmin)
+        <a href="{{ route('artigos.edit', $article->article_id) }}" class="btn btn-sm btn-outline-primary ms-2" title="Editar artigo">
+            <i class="fas fa-edit"></i> Editar
+        </a>
+    @endif
 </div>
     <hr class="my-2">
     <!-- 2. Metadados -->
@@ -218,7 +227,7 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
     <hr class="my-2">
     <!-- 3. Conteúdo -->
-    <div class="mb-2">
+    <div class="mb-2 text-break" style="min-height: 2.5rem;">
         @if(isset($article->content) && $article->content !== null && trim($article->content) !== '')
             <div class="text-start">{!! Str::limit($article->content, 400) !!}</div>
         @else

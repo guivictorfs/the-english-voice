@@ -80,6 +80,10 @@ Route::post('/artigos', [App\Http\Controllers\ArtigoController::class, 'store'])
 // Visualizar artigo (PDF)
 Route::get('/artigos/{article}/visualizar', [App\Http\Controllers\ArtigoController::class, 'visualizar'])->middleware('auth')->name('artigos.visualizar');
 
+// Editar artigo
+Route::get('/artigos/{article}/edit', [App\Http\Controllers\ArtigoController::class, 'edit'])->middleware('auth')->name('artigos.edit');
+Route::post('/artigos/{article}/edit', [App\Http\Controllers\ArtigoController::class, 'update'])->middleware('auth')->name('artigos.update');
+
 // Denunciar artigo
 Route::post('/artigos/{article}/denunciar', [App\Http\Controllers\ArtigoController::class, 'denunciar'])->middleware('auth')->name('artigos.denunciar');
 
