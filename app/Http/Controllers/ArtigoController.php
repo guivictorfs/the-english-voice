@@ -11,6 +11,7 @@ use Smalot\PdfParser\Parser;
 use App\Models\ForbiddenWord;
 use App\Notifications\ArtigoDenunciadoNotification;
 use App\Models\User;
+use App\Models\ArticleReport;
 
 class ArtigoController extends Controller
 {
@@ -20,11 +21,13 @@ class ArtigoController extends Controller
     public function pendentes()
     {
         $articles = Article::with(['authors'])
-            ->where('status', 'Pendente')
+            ->where('denuncias', '>=', 1)
             ->orderByDesc('denuncias')
             ->orderByDesc('created_at')
             ->get();
-        return view('admin.artigos_pendentes', compact('articles'));
+        // Buscar denúncias agrupadas por artigo
+        $reports = \App\Models\ArticleReport::with('user')->get()->groupBy('article_id');
+        return view('admin.artigos_pendentes', compact('articles', 'reports'));
     }
 
     /**
@@ -195,12 +198,24 @@ class ArtigoController extends Controller
     {
         $article = Article::findOrFail($article_id);
         $motivo = $request->input('motivo', 'Motivo não informado');
+        $userId = Auth::id();
+        // Checa se já existe denúncia desse aluno para esse artigo
+        $jaDenunciou = ArticleReport::where('article_id', $article_id)->where('user_id', $userId)->exists();
+        if ($jaDenunciou) {
+            return redirect()->back()->withErrors(['Você já denunciou este artigo.']);
+        }
+        // Salva a denúncia
+        ArticleReport::create([
+            'article_id' => $article_id,
+            'user_id' => $userId,
+            'motivo' => $motivo,
+        ]);
+        // Incrementa contador e notifica autores
         $article->denuncias = $article->denuncias + 1;
         if ($article->denuncias >= 5) {
             $article->status = 'Pendente';
         }
         $article->save();
-        // Notifica todos os autores
         $autorIds = DB::table('article_author')->where('article_id', $article_id)->pluck('id');
         $autores = User::whereIn('id', $autorIds)->get();
         foreach ($autores as $autor) {

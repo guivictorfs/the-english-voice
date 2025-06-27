@@ -51,7 +51,39 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <strong>{{ $article->title }}</strong>
-                                <span class="badge bg-warning text-dark ms-2">{{ $article->denuncias }} denúncia{{ $article->denuncias > 1 ? 's' : '' }}</span>
+                                <button type="button" class="badge bg-warning text-dark ms-2 border-0" data-bs-toggle="modal" data-bs-target="#modalDenuncias-{{ $article->article_id }}">
+    {{ $article->denuncias }} denúncia{{ $article->denuncias > 1 ? 's' : '' }}
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="modalDenuncias-{{ $article->article_id }}" tabindex="-1" aria-labelledby="modalDenunciasLabel-{{ $article->article_id }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalDenunciasLabel-{{ $article->article_id }}">Denúncias para: {{ $article->title }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        @if(isset($reports[$article->article_id]) && $reports[$article->article_id]->count())
+            <ul class="list-group">
+                @foreach($reports[$article->article_id] as $report)
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-user"></i> {{ $report->user ? $report->user->name : 'Aluno desconhecido' }}</span>
+                        <span class="ms-3"><i class="fas fa-comment"></i> {{ $report->motivo }}</span>
+                        <span class="text-muted small">{{ $report->created_at->format('d/m/Y H:i') }}</span>
+                    </li>
+                @endforeach
+            </ul>
+        @else
+            <div class="text-muted">Nenhuma denúncia registrada.</div>
+        @endif
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
                                 <div class="text-muted small">
                                     Por @if($article->authors && $article->authors->count())
                                         {{ $article->authors->pluck('name')->join(', ') }}
@@ -102,6 +134,8 @@
             <div class="alert alert-info">Nenhum artigo pendente de revisão.</div>
         @endif
     </div>
+    <!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
 
@@ -180,6 +214,22 @@
                         @else
                             <div class="text-muted">Nenhum arquivo disponível.</div>
                         @endif
+                    @endif
+
+                    {{-- Lista de denúncias --}}
+                    @if(isset($reports[$article->article_id]) && $reports[$article->article_id]->count())
+                        <div class="mt-3">
+                            <strong>Denúncias recebidas:</strong>
+                            <ul class="list-group list-group-flush">
+                                @foreach($reports[$article->article_id] as $report)
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span><i class="fas fa-user"></i> {{ $report->user ? $report->user->name : 'Aluno desconhecido' }}</span>
+                                        <span class="ms-3"><i class="fas fa-comment"></i> {{ $report->motivo }}</span>
+                                        <span class="text-muted small">{{ $report->created_at->format('d/m/Y H:i') }}</span>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
                     @endif
                 </div>
             @endforeach
