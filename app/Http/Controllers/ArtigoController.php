@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Article;
 use Smalot\PdfParser\Parser;
 use App\Models\ForbiddenWord;
+use App\Notifications\ArtigoDenunciadoNotification;
+use App\Models\User;
 
 class ArtigoController extends Controller
 {
@@ -189,14 +191,21 @@ class ArtigoController extends Controller
     /**
      * Denunciar artigo: incrementa denuncias e coloca status 'Pendente' se chegar a 5
      */
-    public function denunciar($article_id)
+    public function denunciar(Request $request, $article_id)
     {
         $article = Article::findOrFail($article_id);
+        $motivo = $request->input('motivo', 'Motivo não informado');
         $article->denuncias = $article->denuncias + 1;
         if ($article->denuncias >= 5) {
             $article->status = 'Pendente';
         }
         $article->save();
+        // Notifica todos os autores
+        $autorIds = DB::table('article_author')->where('article_id', $article_id)->pluck('id');
+        $autores = User::whereIn('id', $autorIds)->get();
+        foreach ($autores as $autor) {
+            $autor->notify(new ArtigoDenunciadoNotification($article->title, $motivo, $article->article_id));
+        }
         return redirect()->back()->with('success', 'Artigo denunciado com sucesso!');
     }
 }
