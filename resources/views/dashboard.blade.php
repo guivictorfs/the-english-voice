@@ -34,7 +34,7 @@
                     <li class="nav-item me-2">
                         <form class="d-flex align-items-center" method="GET" action="{{ route('dashboard') }}" style="gap:0.25rem;">
                             <input class="form-control form-control-sm me-2" type="search" name="q" placeholder="Pesquisar artigos..." aria-label="Pesquisar" value="{{ request('q') }}" style="min-width: 180px;">
-                            <button class="btn btn-sm btn-outline-secondary" type="submit"><i class="fas fa-search"></i></button>
+                            <button class="btn btn-sm btn-outline-primary" type="submit"><i class="fas fa-search"></i></button>
                             @if(request('q'))
                                 @php
                                     $query = request()->except('q');
@@ -45,7 +45,7 @@
                         </form>
                     </li>
                     <li class="nav-item">
-                        <a class="btn btn-outline-primary ms-2" href="{{ route('logout') }}">Sair</a>
+                        <a class="btn btn-outline-danger ms-2" href="{{ route('logout') }}">Sair</a>
                     </li>
                 </ul>
             </div>

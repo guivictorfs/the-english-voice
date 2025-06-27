@@ -42,6 +42,15 @@ class DashboardController extends Controller
         }
 
         $articles = $query->orderByDesc('created_at')->get();
+
+        // Carrega média e total de avaliações para cada artigo
+        foreach ($articles as $article) {
+            $media = \App\Models\Avaliacao::where('artigo_id', $article->article_id)->avg('nota');
+            $total = \App\Models\Avaliacao::where('artigo_id', $article->article_id)->count();
+            $article->media_avaliacoes = $media ? round($media, 2) : null;
+            $article->total_avaliacoes = $total;
+        }
+
         return view('dashboard', [
             'articles' => $articles,
             'tag' => $tag,
