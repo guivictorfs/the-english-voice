@@ -39,7 +39,9 @@
 
         <div class="mb-3">
             <label for="content" class="form-label">Conteúdo</label>
-            <textarea class="form-control" id="content" name="content" rows="8">{{ old('content', $article->content) }}</textarea>
+            <div id="editor" style="height: 300px;">{!! old('content', $article->content) !!}</div>
+            <input type="hidden" name="content" id="conteudo-hidden">
+
         </div>
         <button type="submit" class="btn btn-success">Salvar Alterações</button>
         <a href="{{ route('dashboard') }}" class="btn btn-secondary ms-2">Cancelar</a>
@@ -58,6 +60,8 @@
         }
         .ql-editor {
             background: #fff;
+            border: 1px solid #ced4da;
+            border-radius: 0.375rem;
         }
         /* Tagify placeholder e layout */
         .tagify {
@@ -105,11 +109,28 @@
         // Tagify
         var input = document.querySelector('input[name=keywords]');
         if(input) { new Tagify(input); }
-        // Quill (opcional, só se for usar editor avançado)
-        // var quill = new Quill('#editor', { theme: 'snow' });
-        // $('#form-artigo').on('submit', function() {
-        //     $('#conteudo').val(quill.root.innerHTML);
-        // });
+        // Quill com toolbar avançada
+        var quill = new Quill('#editor', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'font': [] }, { 'size': [] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'script': 'sub'}, { 'script': 'super' }],
+                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                    ['blockquote', 'code-block'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'indent': '-1'}, { 'indent': '+1' }],
+                    [{ 'direction': 'rtl' }, { 'align': [] }],
+                    ['link', 'image', 'video', 'formula'],
+                    ['clean']
+                ]
+            }
+        });
+        // Preencher o campo hidden ao submeter
+        $('form').on('submit', function() {
+            $('#conteudo-hidden').val(quill.root.innerHTML);
+        });
     </script>
 @endpush
 

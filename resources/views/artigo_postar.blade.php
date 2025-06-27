@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-5">
+<div class="container mt-5 mb-5 pb-4">
     {{-- Alertas --}}
     @if(session('success'))
         <div class="alert alert-success d-flex align-items-center" role="alert">
@@ -40,7 +40,7 @@
         </div>
     @endif
 
-    <h2 class="mb-4">Postar Artigo</h2>
+    <h2 class="pb-4 pt-4">Postar Artigo</h2>
 
     {{-- Escolha entre escrever ou upload --}}
     <div class="row mb-4">
@@ -66,12 +66,12 @@
         <input type="hidden" name="tipo_formulario" value="escrever">
 
         <div class="mb-3">
-            <label for="titulo" class="form-label">Título</label>
+            <label for="titulo" class="form-label fs-4"><b>Título</b></label>
             <input type="text" class="form-control" id="titulo" name="titulo" required>
         </div>
 
         <div class="mb-4">
-            <label for="autores" class="form-label">Autores</label>
+            <label for="autores" class="form-label fs-4"><b>Autores</b></label>
             <select id="autores" name="autores[]" class="form-control" multiple required style="width:100%">
                 @foreach(App\Models\User::orderBy('name')->get() as $user)
                     <option value="{{ $user->id }}" {{ (collect(old('autores', []))->contains($user->id)) ? 'selected' : '' }}>{{ $user->name }} ({{ $user->role }})</option>
@@ -81,17 +81,17 @@
         </div>
 
         <div class="mb-3">
-            <label for="keywords" class="form-label">Keywords</label>
+            <label for="keywords" class="form-label fs-4"><b>Keywords</b></label>
             <input name="keywords" id="keywords" class="form-control" placeholder="Ex: Grammar, Vocabulary, Reading, Writing, Speaking, Listening" value="{{ old('keywords') }}">
             <small class="form-text text-muted">Digite uma palavra-chave e pressione <b>Enter</b> ou <b>vírgula</b> para adicionar.</small>
         </div>
 
         <div class="mb-3">
-            <label for="editor" class="form-label">Conteúdo</label>
-            <div id="editor" style="height: 300px;"></div>
-            <div class="mt-2"><span id="char-count" class="text-muted">Caracteres: 0/50</span></div>
-            <input type="hidden" name="conteudo" id="conteudo">
+            <label for="editor" class="form-label fs-4"><b>Conteúdo</b></label>
+            <div id="editor-artigo" style="height: 300px;"></div>
+            <input type="hidden" name="conteudo" id="conteudo-hidden">
         </div>
+        <div class="mt-2"><span id="char-count" class="text-muted">Caracteres: 0/50</span></div>
 
         <button type="submit" class="btn btn-primary" id="submit-artigo" disabled>Postar artigo</button>
     </form>
@@ -148,26 +148,39 @@ document.addEventListener('DOMContentLoaded', function() {
     const cardUpload = document.getElementById('card-upload');
     const formArtigo = document.getElementById('form-artigo');
     const formPDF = document.getElementById('form-pdf');
-    let quill;
 
-    // Função robusta para inicializar o Quill apenas se necessário
-    function initQuillIfNeeded() {
-        if (!quill && !formArtigo.classList.contains('d-none')) {
-            quill = new Quill('#editor', { theme: 'snow' });
-            const charCount = document.getElementById('char-count');
-            const submitBtn = document.getElementById('submit-artigo');
-            function updateCharCount() {
-                const chars = quill.getText().replace(/\s/g, '').length;
-                charCount.textContent = `Caracteres: ${chars}/50`;
-                submitBtn.disabled = chars < 50;
-            }
-            quill.on('text-change', updateCharCount);
-            updateCharCount();
-            formArtigo.addEventListener('submit', () => {
-                document.getElementById('conteudo').value = quill.root.innerHTML;
-            });
+    // Quill com toolbar avançada
+    var quill = new Quill('#editor-artigo', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                [{ 'font': [] }, { 'size': [] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ 'color': [] }, { 'background': [] }],
+                [{ 'script': 'sub'}, { 'script': 'super' }],
+                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                ['blockquote', 'code-block'],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'indent': '-1'}, { 'indent': '+1' }],
+                [{ 'direction': 'rtl' }, { 'align': [] }],
+                ['link', 'image', 'video', 'formula'],
+                ['clean']
+            ]
         }
+    });
+    // Preencher o campo hidden ao submeter
+    $('#form-artigo').on('submit', function() {
+        $('#conteudo-hidden').val(quill.root.innerHTML);
+    });
+    // Atualizar contador de caracteres
+    var charCount = document.getElementById('char-count');
+    var submitBtn = document.getElementById('submit-artigo');
+    function updateCharCount() {
+        var chars = quill.getText().replace(/\s/g, '').length;
+        charCount.textContent = `Caracteres: ${chars}/50`;
+        submitBtn.disabled = chars < 50;
     }
+    quill.on('text-change', updateCharCount);
+    updateCharCount();
 
     // Alternância dos cards
     cardEscrever.addEventListener('click', () => {
@@ -175,7 +188,6 @@ document.addEventListener('DOMContentLoaded', function() {
         formPDF.classList.add('d-none');
         cardEscrever.classList.add('border-3','border-primary');
         cardUpload.classList.remove('border-3','border-success');
-        initQuillIfNeeded();
     });
     cardUpload.addEventListener('click', () => {
         formPDF.classList.remove('d-none');
@@ -183,9 +195,6 @@ document.addEventListener('DOMContentLoaded', function() {
         cardUpload.classList.add('border-3','border-success');
         cardEscrever.classList.remove('border-3','border-primary');
     });
-
-    // Inicializa Quill já se o form estiver visível ao carregar
-    initQuillIfNeeded();
 
     // Select2 para autores
     $('#autores, #autores-pdf').select2({
@@ -315,11 +324,28 @@ document.addEventListener('DOMContentLoaded', function() {
         // Tagify
         var input = document.querySelector('input[name=keywords]');
         if(input) { new Tagify(input); }
-        // Quill (opcional, só se for usar editor avançado)
-        // var quill = new Quill('#editor', { theme: 'snow' });
-        // $('#form-artigo').on('submit', function() {
-        //     $('#conteudo').val(quill.root.innerHTML);
-        // });
+        // Quill com toolbar avançada
+        var quill = new Quill('#editor', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'font': [] }, { 'size': [] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'script': 'sub'}, { 'script': 'super' }],
+                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                    ['blockquote', 'code-block'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'indent': '-1'}, { 'indent': '+1' }],
+                    [{ 'direction': 'rtl' }, { 'align': [] }],
+                    ['link', 'image', 'video', 'formula'],
+                    ['clean']
+                ]
+            }
+        });
+        // Preencher o campo hidden ao submeter
+        $('#form-artigo').on('submit', function() {
+            $('#conteudo-hidden').val(quill.root.innerHTML);
+        });
     </script>
 @endpush
 
