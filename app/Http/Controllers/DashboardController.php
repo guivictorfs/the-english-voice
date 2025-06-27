@@ -27,7 +27,26 @@ class DashboardController extends Controller
             });
         }
 
+        $q = $request->query('q');
+        if ($q) {
+            $query->where(function($sub) use ($q) {
+                $sub->where('title', 'like', "%$q%")
+                     ->orWhere('content', 'like', "%$q%")
+                     ->orWhereHas('authors', function($authorQ) use ($q) {
+                         $authorQ->where('name', 'like', "%$q%") ;
+                     })
+                     ->orWhereHas('keywords', function($tagQ) use ($q) {
+                         $tagQ->where('name', 'like', "%$q%") ;
+                     });
+            });
+        }
+
         $articles = $query->orderByDesc('created_at')->get();
-        return view('dashboard', ['articles' => $articles, 'tag' => $tag, 'author' => $author]);
+        return view('dashboard', [
+            'articles' => $articles,
+            'tag' => $tag,
+            'author' => $author,
+            'q' => $q,
+        ]);
     }
 }

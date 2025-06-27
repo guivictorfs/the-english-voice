@@ -18,7 +18,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item underline">
                         <a class="nav-link active" href="{{ route('dashboard') }}">Dashboard</a>
                     </li>
@@ -30,6 +30,19 @@
                     </li>
                     <li class="nav-item underline">
                         <a class="nav-link" href="#">Contato</a>
+                    </li>
+                    <li class="nav-item me-2">
+                        <form class="d-flex align-items-center" method="GET" action="{{ route('dashboard') }}" style="gap:0.25rem;">
+                            <input class="form-control form-control-sm me-2" type="search" name="q" placeholder="Pesquisar artigos..." aria-label="Pesquisar" value="{{ request('q') }}" style="min-width: 180px;">
+                            <button class="btn btn-sm btn-outline-secondary" type="submit"><i class="fas fa-search"></i></button>
+                            @if(request('q'))
+                                @php
+                                    $query = request()->except('q');
+                                    $url = route('dashboard') . ($query ? ('?' . http_build_query($query)) : '');
+                                @endphp
+                                <a href="{{ $url }}" class="btn btn-sm btn-outline-danger ms-1" title="Limpar pesquisa"><i class="fas fa-times"></i></a>
+                            @endif
+                        </form>
                     </li>
                     <li class="nav-item">
                         <a class="btn btn-outline-primary ms-2" href="{{ route('logout') }}">Sair</a>
@@ -195,13 +208,22 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 @endsection
 
+                @php
+                    $highlight = request('q');
+                    if (!function_exists('highlight')) {
+                        function highlight($text, $term) {
+                            if (!$term || !is_string($term)) return $text;
+                            return preg_replace('/(' . preg_quote($term, '/') . ')/i', '<mark>$1</mark>', e($text));
+                        }
+                    }
+                @endphp
                 @if($articles->count())
                     <div>
                         @foreach($articles as $article)
                             <div class="artigo-card p-3">
     <!-- 1. Título -->
     <div class="mb-2 d-flex justify-content-between align-items-center">
-    <span class="display-6 fw-bold text-center d-block w-100 text-break" style="font-size:2rem;">{{ $article->title }}</span>
+    <span class="display-6 fw-bold text-center d-block w-100 text-break" style="font-size:2rem;">{!! highlight($article->title, $highlight) !!}</span>
     @php
         $isAuthor = $article->authors->contains('id', auth()->id());
         $isProfessorOrAdmin = in_array(auth()->user()->role, ['Professor', 'Admin']);
@@ -223,41 +245,16 @@ document.addEventListener('DOMContentLoaded', function() {
         @else
             Autor desconhecido
         @endif
-        em {{ $article->created_at->setTimezone('America/Sao_Paulo')->format('d/m/Y H:i') }}
+        em {{ $article->created_at->setTimezone('America/Sao_Paulo')->format('d/m/Y') }}, às {{ $article->created_at->setTimezone('America/Sao_Paulo')->format('H:i') }}
     </div>
     <hr class="my-2">
-    <!-- 3. Conteúdo -->
-    <div class="mb-2 text-break" style="min-height: 2.5rem;">
-        @if(isset($article->content) && $article->content !== null && trim($article->content) !== '')
-            <div class="text-start">{!! Str::limit($article->content, 400) !!}</div>
-        @else
-            @php
-                $file = DB::table('file_upload')
-                    ->where('article_id', $article->article_id)
-                    ->orderByDesc('created_at')
-                    ->first();
-            @endphp
-            @if($file)
-                <div class="mb-2">
-                    <strong>Arquivo PDF:</strong>
-                    <a href="{{ asset('storage/' . $file->file_path) }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                        Abrir PDF
-                    </a>
-                </div>
-                <iframe 
-                    src="{{ asset('storage/' . $file->file_path) }}" 
-                    width="100%" 
-                    height="400px" 
-                    style="border:1px solid #ccc;">
-                </iframe>
-            @else
-                <div class="text-muted">Nenhum arquivo disponível.</div>
-            @endif
-        @endif
-    </div>
+    @if($article->content)
+        <div class="mb-3 text-break overflow-hidden text-truncate text-start ps-3 pe-3" style="max-height: 5.5rem; white-space: pre-line;">{!! highlight(Str::limit(strip_tags($article->content), 400), $highlight) !!}</div>
+    @endif
+
     <hr class="my-2">
     <!-- 4. Avaliação -->
-    <div class="mb-2">
+    <div class="mb-2 ps-3 pe-3">
         <x-avaliacao-estrelas :artigo="$article" />
     </div>
     <hr class="my-2">
@@ -320,7 +317,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         @endforeach
                     </div>
                 @else
-                    <div class="alert alert-info">Nenhum texto postado ainda.</div>
+                    <div class="alert alert-info">
+                        @if(request('q'))
+                            <i class="fas fa-search me-2"></i>Nenhum artigo encontrado para <strong>"{{ request('q') }}"</strong>.
+                        @else
+                            Nenhum artigo encontrado.
+                        @endif
+                    </div>
                 @endif
             </div>
         </div>
