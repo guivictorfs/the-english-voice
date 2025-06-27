@@ -136,10 +136,11 @@ class ArtigoController extends Controller
 
         // Relaciona autores
         foreach ($autores as $i => $autorId) {
+            $tipoAutor = $i === 0 ? 'Principal' : 'Secundário'; // Mapear 'Coautor' para 'Secundário'
             DB::table('article_author')->insert([
                 'article_id' => $artigo->article_id,
                 'id' => $autorId,
-                'author_type' => $i === 0 ? 'Principal' : 'Coautor',
+                'author_type' => $tipoAutor,
                 'created_at' => now(),
             ]);
         }

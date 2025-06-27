@@ -82,7 +82,7 @@
 
         <div class="mb-3">
             <label for="keywords" class="form-label">Keywords</label>
-            <input name="keywords" id="keywords" class="form-control" placeholder="Digite e pressione Enter ou vírgula">
+            <input name="keywords" id="keywords" class="form-control" placeholder="Ex: Grammar, Vocabulary, Reading, Writing, Speaking, Listening">
             <small class="form-text text-muted">Digite uma palavra-chave e pressione <b>Enter</b> ou <b>vírgula</b> para adicionar.</small>
         </div>
 
