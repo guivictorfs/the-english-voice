@@ -198,100 +198,115 @@ document.addEventListener('DOMContentLoaded', function() {
                 @if($articles->count())
                     <div>
                         @foreach($articles as $article)
-                            <div class="artigo-card">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <h5 class="mb-1">{{ $article->title }}</h5>
-                                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#modalDenuncia-{{ $article->article_id }}" title="Denunciar artigo">
-    <i class="fas fa-flag"></i> Denunciar
-</button>
-@if(isset($article->denuncias) && $article->denuncias > 0)
-    <span class="badge bg-warning text-dark ms-2">{{ $article->denuncias }} denúncia{{ $article->denuncias > 1 ? 's' : '' }}</span>
-@endif
-
-<!-- Modal Denúncia -->
-<div class="modal fade" id="modalDenuncia-{{ $article->article_id }}" tabindex="-1" aria-labelledby="modalDenunciaLabel-{{ $article->article_id }}" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <form method="POST" action="{{ route('artigos.denunciar', $article->article_id) }}">
-        @csrf
-        <div class="modal-header">
-          <h5 class="modal-title" id="modalDenunciaLabel-{{ $article->article_id }}"><i class="fas fa-flag text-danger me-2"></i>Motivo da denúncia</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-        </div>
-        <div class="modal-body">
-          <div class="mb-3">
-            <label for="motivo-{{ $article->article_id }}" class="form-label">Selecione o motivo:</label>
-            <select class="form-select" name="motivo" id="motivo-{{ $article->article_id }}" required>
-              <option value="">Escolha...</option>
-              <option value="Palavra inadequada">Palavra inadequada</option>
-              <option value="Conteúdo ofensivo">Conteúdo ofensivo</option>
-              <option value="Plágio">Plágio</option>
-              <option value="Outro">Outro</option>
-            </select>
-          </div>
-          <div class="mb-3" id="outroMotivoDiv-{{ $article->article_id }}">
-    <label for="outroMotivo-{{ $article->article_id }}" class="form-label">Descreva o motivo (opcional):</label>
-    <textarea class="form-control" name="outro_motivo" id="outroMotivo-{{ $article->article_id }}" rows="3"></textarea>
+                            <div class="artigo-card p-3">
+    <!-- 1. Título -->
+    <div class="mb-2">
+    <span class="display-6 fw-bold text-center d-block" style="font-size:2rem;">{{ $article->title }}</span>
 </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-danger" id="btnEnviarDenuncia-{{ $article->article_id }}">Enviar denúncia</button>
-        </div>
-      </form>
+    <hr class="my-2">
+    <!-- 2. Metadados -->
+    <div class="mb-2 text-muted" style="font-size: 1rem;">
+        Por
+        @if($article->authors && $article->authors->count())
+            @foreach($article->authors as $i => $author)
+                <a href="{{ route('dashboard', ['author' => $author->name]) }}" class="text-decoration-none fw-bold text-success" title="Filtrar por {{ $author->name }}">{{ $author->name }}</a>@if($i < $article->authors->count() - 1), @endif
+            @endforeach
+        @else
+            Autor desconhecido
+        @endif
+        em {{ $article->created_at->setTimezone('America/Sao_Paulo')->format('d/m/Y H:i') }}
     </div>
-  </div>
+    <hr class="my-2">
+    <!-- 3. Conteúdo -->
+    <div class="mb-2">
+        @if(isset($article->content) && $article->content !== null && trim($article->content) !== '')
+            <div class="text-start">{!! Str::limit($article->content, 400) !!}</div>
+        @else
+            @php
+                $file = DB::table('file_upload')
+                    ->where('article_id', $article->article_id)
+                    ->orderByDesc('created_at')
+                    ->first();
+            @endphp
+            @if($file)
+                <div class="mb-2">
+                    <strong>Arquivo PDF:</strong>
+                    <a href="{{ asset('storage/' . $file->file_path) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                        Abrir PDF
+                    </a>
+                </div>
+                <iframe 
+                    src="{{ asset('storage/' . $file->file_path) }}" 
+                    width="100%" 
+                    height="400px" 
+                    style="border:1px solid #ccc;">
+                </iframe>
+            @else
+                <div class="text-muted">Nenhum arquivo disponível.</div>
+            @endif
+        @endif
+    </div>
+    <hr class="my-2">
+    <!-- 4. Avaliação -->
+    <div class="mb-2">
+        <x-avaliacao-estrelas :artigo="$article" />
+    </div>
+    <hr class="my-2">
+    <!-- 5. Bloco de denúncia -->
+    <div class="denuncia-bloco mb-2">
+        <x-ja-denunciado :article-id="$article->article_id" />
+        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#modalDenuncia-{{ $article->article_id }}" title="Denunciar artigo">
+            <i class="fas fa-flag"></i> Denunciar
+        </button>
+        @if(isset($article->denuncias) && $article->denuncias > 0)
+            <span class="badge bg-warning text-dark ms-2">{{ $article->denuncias }} denúncia{{ $article->denuncias > 1 ? 's' : '' }}</span>
+        @endif
+
+        <!-- Modal Denúncia -->
+        <div class="modal fade" id="modalDenuncia-{{ $article->article_id }}" tabindex="-1" aria-labelledby="modalDenunciaLabel-{{ $article->article_id }}" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <form method="POST" action="{{ route('artigos.denunciar', $article->article_id) }}">
+                @csrf
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalDenunciaLabel-{{ $article->article_id }}"><i class="fas fa-flag text-danger me-2"></i>Motivo da denúncia</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="motivo-{{ $article->article_id }}" class="form-label">Selecione o motivo:</label>
+                <select class="form-select" name="motivo" id="motivo-{{ $article->article_id }}" required>
+                  <option value="">Escolha...</option>
+                  <option value="Palavra inadequada">Palavra inadequada</option>
+                  <option value="Conteúdo ofensivo">Conteúdo ofensivo</option>
+                  <option value="Plágio">Plágio</option>
+                  <option value="Outro">Outro</option>
+                </select>
+              </div>
+              <div class="mb-3" id="outroMotivoDiv-{{ $article->article_id }}">
+                <label for="outroMotivo-{{ $article->article_id }}" class="form-label">Descreva o motivo (opcional):</label>
+                <textarea class="form-control" name="outro_motivo" id="outroMotivo-{{ $article->article_id }}" rows="3"></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <button type="submit" class="btn btn-danger" id="btnEnviarDenuncia-{{ $article->article_id }}">Enviar denúncia</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
 </div>
-                                </div>
-                                <p class="mb-1 text-muted">
-                                    Por
-                                    @if($article->authors && $article->authors->count())
-                                        @foreach($article->authors as $i => $author)
-                                            <a href="{{ route('dashboard', ['author' => $author->name]) }}" class="text-decoration-none fw-bold text-success" title="Filtrar por {{ $author->name }}">{{ $author->name }}</a>@if($i < $article->authors->count() - 1), @endif
-                                        @endforeach
-                                    @else
-                                        Autor desconhecido
-                                    @endif
-                                    em {{ $article->created_at->setTimezone('America/Sao_Paulo')->format('d/m/Y H:i') }}
-                                </p>
-                                {{-- Exibe conteúdo ou PDF --}}
-                                @if(isset($article->content) && $article->content !== null && trim($article->content) !== '')
-                                    <div class="mb-2 mt-2 text-start">{!! Str::limit($article->content, 400) !!}</div>
-                                @else
-                                    @php
-                                        $file = DB::table('file_upload')
-                                            ->where('article_id', $article->article_id)
-                                            ->orderByDesc('created_at')
-                                            ->first();
-                                    @endphp
-                                    @if($file)
-                                        <div class="mb-2">
-                                            <strong>Arquivo PDF:</strong>
-                                            <a href="{{ asset('storage/' . $file->file_path) }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                                Abrir PDF
-                                            </a>
-                                        </div>
-                                        <iframe 
-                                            src="{{ asset('storage/' . $file->file_path) }}" 
-                                            width="100%" 
-                                            height="400px" 
-                                            style="border:1px solid #ccc;">
-                                        </iframe>
-                                    @else
-                                        <div class="text-muted">Nenhum arquivo disponível.</div>
-                                    @endif
-                                @endif
 
-                                <!-- Avaliação por estrelas -->
-                                <x-avaliacao-estrelas :artigo="$article" />
-
-                                @if($article->keywords && $article->keywords->count())
-                                    <div class="mt-2">
-                                        @foreach($article->keywords as $kw)
-                                            <a href="{{ route('dashboard', ['tag' => $kw->name]) }}" class="badge bg-info text-dark me-1 text-decoration-none" title="Filtrar pela tag '{{ $kw->name }}'">{{ $kw->name }}</a>
-                                        @endforeach
-                                    </div>
-                                @endif
+@if($article->keywords && $article->keywords->count())
+    <hr class="my-2">
+    <div class="mt-2">
+        <span class="text-secondary fw-bold me-2" style="letter-spacing:1px;">Tags:</span>
+        @foreach($article->keywords as $kw)
+            <a href="{{ route('dashboard', ['tag' => $kw->name]) }}" class="badge bg-info text-dark me-1 text-decoration-none" title="Filtrar pela tag '{{ $kw->name }}'">{{ $kw->name }}</a>
+        @endforeach
+    </div>
+@endif
                             </div>
                         @endforeach
                     </div>
