@@ -81,6 +81,7 @@ h1 {
     background-color: #0b5ed7;
     border-color: #0a58ca;
     transform: translateY(-1px);
+    box-sizing: border-box;
 }
 
 /* Links */
@@ -92,6 +93,7 @@ a {
 
 a:hover {
     color: #0a58ca;
+    box-sizing: border-box;
 }
 
 /* Links adicionais */
@@ -103,6 +105,7 @@ a:hover {
 .link-option:hover {
     color: #0a58ca;
     transform: scale(1.1);
+    box-sizing: border-box;
 }
 
 /* Checkbox */

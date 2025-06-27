@@ -57,6 +57,11 @@ Route::post('forgot-password', [PasswordResetController::class, 'sendResetLinkEm
 Route::get('reset-password/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
 Route::post('reset-password', [PasswordResetController::class, 'reset'])->name('password.update');
 
+// Painel do aluno - Meus Artigos
+use App\Http\Controllers\StudentController;
+Route::middleware(['auth'])->get('/students/account', [StudentController::class, 'account'])->name('students.account');
+Route::middleware(['auth'])->delete('/artigos/{article}/excluir', [StudentController::class, 'destroy'])->name('artigos.excluir');
+
 
 
 Route::get('/register', [RegisterController::class, 'create'])->name('register');

@@ -26,16 +26,6 @@
                     <i class="fas fa-star text-warning me-2"></i> Sua avaliação atual: <strong>{{ $notaUsuario }} estrela{{ $notaUsuario > 1 ? 's' : '' }}</strong>
                 </div>
             @endif
-            @if(session('success'))
-                <div class="alert alert-success mt-3 mb-0 py-2 px-3" role="alert">
-                    <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
-                </div>
-            @endif
-@if(session('success'))
-    <div class="alert alert-success mt-3 mb-0 py-2 px-3" role="alert">
-        <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
-    </div>
-@endif
         </div>
     </div>
 </div>

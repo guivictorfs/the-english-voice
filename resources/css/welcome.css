@@ -20,6 +20,19 @@ body::before {
     z-index: -1;
 }
 
+/* Corrige efeito de empurrar no hover das funcionalidades */
+.funcionalidade-btn {
+    border: 2px solid transparent;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.funcionalidade-btn:hover, .funcionalidade-btn.active {
+    border-color: #ffc107;
+    box-shadow: 0 0 8px #ffe06688;
+    background: rgba(255, 193, 7, 0.08);
+}
+
 /* body > * {
     position: relative;
     z-index: 1;
@@ -43,6 +56,7 @@ body::before {
     border-bottom: 2px solid #007bff;
     padding-bottom: 2px; 
     transition: color 0.3s ease;
+    box-sizing: border-box;
 }
 
 hr {
@@ -96,6 +110,7 @@ h1 {
 .card:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
 }
 
 .card-body {
@@ -107,6 +122,7 @@ h1 {
     border: solid 1px #1374f2;
     border-radius: 0.5em;
     box-shadow: inset 0 0 10px #1374f2;
+    box-sizing: border-box;
 }
 
 .card-footer {
@@ -115,6 +131,7 @@ h1 {
 
 .card:hover .card-footer {
     transform: scale(1.1);
+    box-sizing: border-box;
 }
 
 .card-criar-conta:hover .card-body {
@@ -122,6 +139,7 @@ h1 {
     border: solid 1px #1f8c59;
     border-radius: 0.5em;
     box-shadow: inset 0 0 10px #1f8c59;
+    box-sizing: border-box;
 }
 
 .hover-effect {
@@ -134,7 +152,8 @@ h1 {
     transition: transform 0.3s ease;
     border: solid 1px #1374f2;
     border-radius: 0.5em;
-    box-shadow: inset 0 0 12px rgb(211, 230, 255);    
+    box-shadow: inset 0 0 12px rgb(211, 230, 255);   
+    box-sizing: border-box;
 }
 
 .card-esqueceu-senha:hover .card-body {
@@ -142,6 +161,7 @@ h1 {
     border: solid 1px #dc3545;
     border-radius: 0.5em;
     box-shadow: inset 0 0 10px #dc3545;
+    box-sizing: border-box;
 }
 
 .card-ajuda:hover .card-body {
@@ -149,6 +169,7 @@ h1 {
     border: solid 1px #ffc107;
     border-radius: 0.5em;
     box-shadow: inset 0 0 10px #ffc107;
+    box-sizing: border-box;
 }
 
 #typing-effect {
@@ -182,6 +203,7 @@ h1 {
 .social-link:hover i {
     transform: scale(1.1);
     color: #007bff;
+    box-sizing: border-box;
 }
 
 .img-svg {    
