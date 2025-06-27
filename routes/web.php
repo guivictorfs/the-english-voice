@@ -8,10 +8,14 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\ForbiddenWordController;
+use App\Http\Controllers\AvaliacaoController;
 
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
+
+// Sistema de Avaliação de Artigos
+Route::post('/avaliacao', [AvaliacaoController::class, 'store'])->name('avaliacao.store');
 
 // API autocomplete keywords
 Route::get('/api/keywords', [KeywordController::class, 'index']);

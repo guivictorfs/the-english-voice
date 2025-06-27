@@ -216,6 +216,9 @@
                         @endif
                     @endif
 
+                    <!-- Avaliação por estrelas -->
+                    <x-avaliacao-estrelas :artigo="$article" />
+
                     {{-- Lista de denúncias --}}
                     @if(isset($reports[$article->article_id]) && $reports[$article->article_id]->count())
                         <div class="mt-3">

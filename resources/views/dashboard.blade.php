@@ -254,8 +254,6 @@ document.addEventListener('DOMContentLoaded', function() {
                                     @endif
                                     em {{ $article->created_at->setTimezone('America/Sao_Paulo')->format('d/m/Y H:i') }}
                                 </p>
-
-
                                 {{-- Exibe conteúdo ou PDF --}}
                                 @if(isset($article->content) && $article->content !== null && trim($article->content) !== '')
                                     <div class="mb-2 mt-2 text-start">{!! Str::limit($article->content, 400) !!}</div>
@@ -283,6 +281,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                         <div class="text-muted">Nenhum arquivo disponível.</div>
                                     @endif
                                 @endif
+
+                                <!-- Avaliação por estrelas -->
+                                <x-avaliacao-estrelas :artigo="$article" />
 
                                 @if($article->keywords && $article->keywords->count())
                                     <div class="mt-2">
