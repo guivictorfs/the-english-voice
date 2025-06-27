@@ -144,7 +144,7 @@
                     </div>
 
                     <!-- RA -->
-                    <div class="mb-3" id="ra-container" style="display: none;">
+                    <div class="mb-3">
                         <label for="ra" class="form-label"><i class="fas fa-id-badge"></i> RA</label>
                         <input type="text" name="ra" id="ra" class="form-control" placeholder="Digite seu RA"
                             maxlength="20" value="{{ old('ra') }}">
