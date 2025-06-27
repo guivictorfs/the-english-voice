@@ -222,7 +222,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         @foreach($articles as $article)
                             <div class="artigo-card p-3">
     <!-- 1. Título -->
-    <div class="mb-2 d-flex justify-content-between align-items-center">
+    @php $mainAuthor = $article->authors->first(); $avatar = $mainAuthor && $mainAuthor->profile_photo ? asset('storage/'.$mainAuthor->profile_photo) : 'https://via.placeholder.com/50x50?text=Avatar'; @endphp
+<div class="mb-2 d-flex justify-content-between align-items-center">
+        <img src="{{ $avatar }}" alt="Avatar" class="rounded-circle me-3 d-none d-md-block" style="width:50px;height:50px;object-fit:cover;">
     <span class="display-6 fw-bold text-center d-block w-100 text-break" style="font-size:2rem;">{!! highlight($article->title, $highlight) !!}</span>
     @php
         $isAuthor = $article->authors->contains('id', auth()->id());

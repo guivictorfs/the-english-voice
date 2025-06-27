@@ -23,6 +23,6 @@ class AvaliacaoController extends Controller
             ]
         );
 
-        return redirect()->back()->with('success', 'Avaliação registrada com sucesso!');
+        return redirect()->back()->with('success_'.$request->artigo_id, 'Avaliação registrada com sucesso!');
     }
 }
