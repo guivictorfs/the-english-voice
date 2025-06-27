@@ -94,6 +94,7 @@
                                 </div>
                             </div>
                             <div>
+                                <a href="{{ route('artigos.edit', $article->article_id) }}" class="btn btn-primary btn-sm me-1"><i class="fas fa-edit"></i> Editar</a>
                                 <form action="{{ route('admin.artigos.aprovar', $article->article_id) }}" method="POST" class="d-inline">
                                     @csrf
                                     <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-check"></i> Aprovar</button>
