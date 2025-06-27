@@ -64,12 +64,33 @@ Route::middleware(['auth'])->delete('/artigos/{article}/excluir', [StudentContro
 
 // Perfil do aluno
 Route::middleware(['auth'])->get('/students/profile', [StudentController::class, 'profile'])->name('students.profile');
+
+// Painel do Administrador
+Route::middleware('auth')->prefix('admin')->name('admin.')->group(function(){
+    Route::get('/', function(){ return view('admin.admin_panel'); })->name('panel');
+
+    Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
+    Route::get('/users/{id}/edit', [\App\Http\Controllers\Admin\UserController::class, 'edit'])->name('users.edit');
+    Route::get('/users/{id}/logs', [\App\Http\Controllers\Admin\UserController::class, 'logs'])->name('users.logs');
+    Route::post('/users/{id}', [\App\Http\Controllers\Admin\UserController::class, 'update'])->name('users.update');
+    Route::get('/articles', [\App\Http\Controllers\Admin\AdminPanelController::class, 'articles'])->name('articles.index');
+    Route::get('/reports', [\App\Http\Controllers\Admin\AdminPanelController::class, 'reports'])->name('reports.index');
+    Route::get('/courses', [\App\Http\Controllers\Admin\AdminPanelController::class, 'courses'])->name('courses.index');
+    Route::get('/keywords', [\App\Http\Controllers\Admin\AdminPanelController::class, 'keywords'])->name('keywords.index');
+    Route::get('/logs', [\App\Http\Controllers\Admin\AdminPanelController::class, 'logs'])->name('logs.index');
+});
 Route::middleware(['auth'])->post('/students/profile', [StudentController::class, 'updateProfile'])->name('students.profile.update');
 
 
 
 Route::get('/register', [RegisterController::class, 'create'])->name('register');
 Route::post('/register', [RegisterController::class, 'store']);
+
+// Redirecionamento pós-login conforme role
+Route::middleware(['auth', \App\Http\Middleware\RoleRedirect::class])->get('/home', function(){
+    // fallback caso middleware não redirecione
+    return view('welcome');
+});
 
 Route::get('/logout', function () {
     auth()->logout();  // Desloga o usuário
