@@ -62,6 +62,10 @@ use App\Http\Controllers\StudentController;
 Route::middleware(['auth'])->get('/students/account', [StudentController::class, 'account'])->name('students.account');
 Route::middleware(['auth'])->delete('/artigos/{article}/excluir', [StudentController::class, 'destroy'])->name('artigos.excluir');
 
+// Perfil do aluno
+Route::middleware(['auth'])->get('/students/profile', [StudentController::class, 'profile'])->name('students.profile');
+Route::middleware(['auth'])->post('/students/profile', [StudentController::class, 'updateProfile'])->name('students.profile.update');
+
 
 
 Route::get('/register', [RegisterController::class, 'create'])->name('register');

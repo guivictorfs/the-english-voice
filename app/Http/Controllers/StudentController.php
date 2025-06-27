@@ -54,4 +54,54 @@ DB::raw('(SELECT ROUND(AVG(rating),1) FROM vote WHERE vote.article_id = article.
         }
         return view('students.account', compact('articles'));
     }
+
+    // Mostra formulário de edição de perfil
+    public function profile()
+    {
+        $user = Auth::user();
+        $courses = DB::table('course')->orderBy('course_name')->pluck('course_name', 'course_id');
+        return view('students.profile_edit', compact('user', 'courses'));
+    }
+
+    // Atualiza dados do perfil
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            
+            'password' => 'nullable|confirmed|min:8',
+        ]);
+
+        $data = $request->only('name', 'email');
+        // Foto de perfil
+        if ($request->hasFile('photo')) {
+            $request->validate(['photo'=>'image|mimes:jpg,jpeg,png|max:2048']);
+            $path = $request->file('photo')->store('profile_photos', 'public');
+            // opcional: deletar foto antiga
+            if ($user->profile_photo) {
+                \Storage::disk('public')->delete($user->profile_photo);
+            }
+            $data['profile_photo'] = $path;
+        }
+        if ($request->filled('password')) {
+            $data['password'] = bcrypt($request->password);
+        }
+        // Detecta alterações para log
+        foreach ($data as $field => $newValue) {
+            $oldValue = $user->{$field};
+            if ($oldValue != $newValue) {
+                DB::table('user_changes')->insert([
+                    'user_id'   => $user->id,
+                    'field'     => $field,
+                    'old_value' => $oldValue,
+                    'new_value' => $newValue,
+                    'changed_at'=> now(),
+                ]);
+            }
+        }
+        DB::table('users')->where('id', $user->id)->update($data);
+        return redirect()->route('students.profile')->with('success', 'Perfil atualizado com sucesso!');
+    }
 }

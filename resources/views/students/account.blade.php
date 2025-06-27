@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-@php use Illuminate\Support\Facades\DB; use Illuminate\Support\Str; use Carbon\Carbon; @endphp
+@php use Illuminate\Support\Facades\DB; use Illuminate\Support\Str; use Carbon\Carbon; use Illuminate\Support\Facades\Auth; @endphp
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,7 +36,14 @@
     </nav>
 
     <div class="container mt-5">
-        <h2 class="mb-4"><i class="fas fa-book"></i> Meus Artigos Postados</h2>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex align-items-center gap-3">
+                @php $photo = Auth::user()->profile_photo; @endphp
+                <img src="{{ $photo ? asset('storage/'.$photo) : 'https://via.placeholder.com/60x60?text=Avatar' }}" alt="Foto de Perfil" class="rounded-circle" style="width:60px;height:60px;object-fit:cover;">
+                <h2 class="m-0"><i class="fas fa-book"></i> Meus Artigos Postados</h2>
+            </div>
+            <a href="{{ route('students.profile') }}" class="btn btn-sm btn-outline-primary"><i class="fas fa-user"></i> Editar Perfil</a>
+        </div>
         @if(session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
