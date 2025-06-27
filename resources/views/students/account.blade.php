@@ -59,7 +59,7 @@
     <i class="fas fa-flag"></i> {{ $article->denuncias ?? 0 }}
 </span>
 <span class="badge bg-warning text-dark ms-2" title="Média das avaliações">
-    <i class="fas fa-star"></i> {{ $article->media_nota !== null ? $article->media_nota : '-' }}
+    <i class="fas fa-star"></i> {{ $article->media_avaliacoes !== null ? $article->media_avaliacoes : '-' }}
 </span>
 <!-- DEBUG: denuncias={{ $article->denuncias }}, media_nota={{ $article->media_nota }} -->
                             </div>

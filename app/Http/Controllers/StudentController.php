@@ -40,11 +40,18 @@ class StudentController extends Controller
     ->select(
         'article.*',
         'article_author.author_type',
-        DB::raw("(SELECT COUNT(*) FROM article_request WHERE article_request.article_id = article.article_id AND article_request.request_type = 'Exclusão') as denuncias"),
+        DB::raw('COALESCE(article.denuncias,0) as denuncias'),
 DB::raw('(SELECT ROUND(AVG(rating),1) FROM vote WHERE vote.article_id = article.article_id) as media_nota')
     )
     ->orderByDesc('article.created_at')
     ->get();
+        // Calcula média e total de avaliações de cada artigo
+        foreach ($articles as $article) {
+            $media = DB::table('avaliacoes')->where('artigo_id', $article->article_id)->avg('nota');
+            $total = DB::table('avaliacoes')->where('artigo_id', $article->article_id)->count();
+            $article->media_avaliacoes = $media ? round($media, 2) : null;
+            $article->total_avaliacoes = $total;
+        }
         return view('students.account', compact('articles'));
     }
 }
