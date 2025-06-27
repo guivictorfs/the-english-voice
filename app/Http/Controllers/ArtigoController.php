@@ -145,6 +145,12 @@ class ArtigoController extends Controller
             ]);
         }
 
+        // Notifica autores do artigo
+        $usuarios = \App\Models\User::whereIn('id', $autores)->get();
+        foreach ($usuarios as $usuario) {
+            $usuario->notify(new \App\Notifications\ArtigoPostadoNotification($artigo->title));
+        }
+
         // Relaciona keywords
         foreach ($keywordsArr as $kw) {
             if (!$kw) continue;
