@@ -75,7 +75,13 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function(){
     Route::post('/users/{id}', [\App\Http\Controllers\Admin\UserController::class, 'update'])->name('users.update');
     Route::get('/articles', [\App\Http\Controllers\Admin\AdminPanelController::class, 'articles'])->name('articles.index');
     Route::get('/reports', [\App\Http\Controllers\Admin\AdminPanelController::class, 'reports'])->name('reports.index');
-    Route::get('/courses', [\App\Http\Controllers\Admin\AdminPanelController::class, 'courses'])->name('courses.index');
+    // Rotas de cursos
+    Route::get('/courses', [\App\Http\Controllers\Admin\CourseController::class, 'index'])->name('courses.index');
+    Route::post('/courses', [\App\Http\Controllers\Admin\CourseController::class, 'store'])->name('courses.store');
+    // fallback para edição via POST caso PUT não seja suportado
+    Route::post('/courses/{id}', [\App\Http\Controllers\Admin\CourseController::class, 'update'])->name('courses.update');
+    Route::put('/courses/{id}', [\App\Http\Controllers\Admin\CourseController::class, 'update'])->name('courses.update.put');
+    Route::delete('/courses/{id}', [\App\Http\Controllers\Admin\CourseController::class, 'destroy'])->name('courses.destroy');
     Route::get('/keywords', [\App\Http\Controllers\Admin\AdminPanelController::class, 'keywords'])->name('keywords.index');
     Route::get('/logs', [\App\Http\Controllers\Admin\AdminPanelController::class, 'logs'])->name('logs.index');
 });

@@ -14,18 +14,9 @@
                 </div>
             </a>
         </div>
-        <!-- Artigos -->
-        <div class="col-md-4">
-            <a href="{{ route('admin.artigos.pendentes') }}" class="text-decoration-none text-dark">
-                <div class="card shadow-sm h-100 text-center p-4">
-                    <i class="fas fa-newspaper fa-3x text-success mb-3"></i>
-                    <h5 class="card-title">Gerenciar Artigos</h5>
-                </div>
-            </a>
-        </div>
         <!-- Denúncias -->
         <div class="col-md-4">
-            <a href="{{ route('admin.reports.index') }}" class="text-decoration-none text-dark">
+            <a href="{{ route('admin.artigos.pendentes') }}" class="text-decoration-none text-dark">
                 <div class="card shadow-sm h-100 text-center p-4">
                     <i class="fas fa-flag fa-3x text-danger mb-3"></i>
                     <h5 class="card-title">Denúncias</h5>
@@ -34,7 +25,7 @@
         </div>
         <!-- Cursos -->
         <div class="col-md-4">
-            <a href="{{ route('admin.courses.index') }}" class="text-decoration-none text-dark">
+            <a href="{{ url('/admin/courses') }}" class="text-decoration-none text-dark">
                 <div class="card shadow-sm h-100 text-center p-4">
                     <i class="fas fa-graduation-cap fa-3x text-info mb-3"></i>
                     <h5 class="card-title">Cursos</h5>

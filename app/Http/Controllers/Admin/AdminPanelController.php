@@ -3,7 +3,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\Article;
+use App\Models\ArticleReport;
+use App\Models\User;
 
 class AdminPanelController extends Controller
 {
@@ -13,7 +15,46 @@ class AdminPanelController extends Controller
         return view('admin.users.index', compact('users'));
     }
     public function articles(){ return view('admin.section', ['title' => 'Gerenciar Artigos']); }
-    public function reports() { return view('admin.section', ['title' => 'Denúncias']); }
+    public function reports()
+    {
+        // Contagem de artigos por status
+        $articleStatusCounts = \App\Models\Article::whereIn('status', ['pending', 'approved', 'rejected', 'review'])
+            ->groupBy('status')
+            ->selectRaw('status, count(*) as count')
+            ->get()
+            ->pluck('count', 'status')
+            ->toArray();
+
+        // Contagem de usuários por role
+        $userRoleCounts = \App\Models\User::whereIn('role', ['student', 'teacher', 'admin'])
+            ->groupBy('role')
+            ->selectRaw('role, count(*) as count')
+            ->get()
+            ->pluck('count', 'role')
+            ->toArray();
+
+// Removendo temporariamente a seção de avaliações por nota
+        $ratingCounts = [];
+
+        // Denúncias pendentes
+        $reports = \App\Models\ArticleReport::with(['article', 'article.authors', 'user'])
+            ->orderByDesc('created_at')
+            ->paginate(10);
+
+        // Artigos pendentes de aprovação
+        $pendingArticles = \App\Models\Article::where('status', 'pending')
+            ->with('author')
+            ->orderByDesc('created_at')
+            ->paginate(10);
+
+        return view('admin.reports', compact(
+            'articleStatusCounts',
+            'userRoleCounts',
+            'ratingCounts',
+            'reports',
+            'pendingArticles'
+        ));
+    }
     public function courses() { return view('admin.section', ['title' => 'Cursos']); }
     public function keywords(){ return view('admin.section', ['title' => 'Palavras-chave']); }
     public function logs(Request $request)

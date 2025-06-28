@@ -7,11 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Course extends Model
 {
-    protected $table = 'course';
     use HasFactory;
 
-    // Definindo o nome da tabela
+    protected $table = 'course';
+    protected $primaryKey = 'course_id';
+    public $incrementing = true;
+    public $timestamps = false;
+    protected $keyType = 'int';
 
-    // Definindo os campos que podem ser preenchidos
+    // Campos preenchíveis
     protected $fillable = ['course_name'];
+
 }
