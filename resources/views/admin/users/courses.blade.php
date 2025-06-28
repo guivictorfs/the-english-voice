@@ -8,7 +8,7 @@
     </div>
 
     {{-- Adicionar Curso --}}
-    <div class="card mb-4">
+    <div class="card mb-4" style="box-shadow:none !important; border: 1px solid #dee2e6 !important;">
         <div class="card-header">
             <h5 class="mb-0">Adicionar Novo Curso</h5>
         </div>
@@ -27,7 +27,7 @@
     </div>
 
     {{-- Lista de Cursos --}}
-    <div class="card">
+    <div class="card" style="box-shadow:none !important; border: 1px solid #dee2e6 !important;">
         <div class="card-header">
             <h5 class="mb-0">Cursos Existentes</h5>
         </div>
@@ -48,9 +48,34 @@
                                 <td>{{ $course->course_name }}</td>
                                 <td class="text-center">
                                     <button class="btn btn-sm btn-warning me-1" data-bs-toggle="modal" data-bs-target="#editCourseModal" onclick="setEditAction({{ $course->course_id }}, '{{ addslashes($course->course_name) }}')"><i class="fas fa-edit"></i></button>
-                                    <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteCourseModal" onclick="setDeleteAction({{ $course->course_id }})"><i class="fas fa-trash"></i></button>
+                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalExcluirCurso-{{ $course->course_id }}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                 </td>
                             </tr>
+                            <!-- Modal de confirmação de exclusão do curso -->
+                            <div class="modal fade" id="modalExcluirCurso-{{ $course->course_id }}" tabindex="-1" aria-labelledby="modalExcluirCursoLabel-{{ $course->course_id }}" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-danger text-white">
+                                            <h5 class="modal-title" id="modalExcluirCursoLabel-{{ $course->course_id }}">Excluir Curso</h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <strong>ATENÇÃO:</strong> Esta ação é <span class="text-danger">permanente e irreversível</span>.<br>
+                                            Tem certeza que deseja excluir este curso para sempre?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                            <form action="{{ route('admin.courses.destroy', $course->course_id) }}" method="POST" class="d-inline m-0 p-0">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger">Excluir definitivamente</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         @empty
                             <tr>
                                 <td colspan="3" class="text-center">Nenhum curso cadastrado.</td>
@@ -60,29 +85,6 @@
                 </table>
             </div>
         </div>
-    </div>
-</div>
-<!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteCourseModal" tabindex="-1">
-    <div class="modal-dialog">
-        <form id="deleteCourseForm" method="POST">
-            @csrf
-            @method('DELETE')
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-danger">Excluir Curso</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <strong>ATENÇÃO:</strong> Esta ação é <span class="text-danger">permanente e irreversível</span>.<br>
-                    Tem certeza que deseja excluir este curso para sempre?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-danger">Excluir</button>
-                </div>
-            </div>
-        </form>
     </div>
 </div>
 

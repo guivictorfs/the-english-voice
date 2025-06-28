@@ -77,7 +77,7 @@
             <div class="row g-4">
                 <!-- Card de Entrar -->
                 <div class="col-md-6">
-                    <div class="card shadow-lg border-0 rounded-3"
+                    <div class="card-effect shadow-lg border-0 rounded-3"
                         style="cursor: pointer; transition: transform 0.3s ease;">
                         <div class="card-body p-4">
                             <h5 class="card-title text-primary fs-4">Entrar</h5>
@@ -94,7 +94,7 @@
                 <!-- Card de Criar Conta -->
                 <div class="col-md-6">
                     <a href="{{ route('register') }}" class="text-decoration-none">
-                        <div class="card shadow-lg border-0 rounded-3 card-criar-conta"
+                        <div class="card-effect shadow-lg border-0 rounded-3 card-criar-conta"
                             style="cursor: pointer; transition: transform 0.3s ease;">
                             <div class="card-body p-4">
                                 <h5 class="card-title text-success fs-4">Criar Conta</h5>
@@ -112,7 +112,7 @@
                 <!-- Card de Esqueceu a Senha -->
                 <div class="col-md-6">
                     <a href="{{ route('password.request') }}" class="text-decoration-none">
-                        <div class="card shadow-lg border-0 rounded-3 card-esqueceu-senha"
+                        <div class="card-effect shadow-lg border-0 rounded-3 card-esqueceu-senha"
                             style="cursor: pointer; transition: transform 0.3s ease;">
                             <div class="card-body p-4">
                                 <h5 class="card-title text-danger fs-4">Esqueceu a Senha?</h5>
@@ -128,7 +128,7 @@
                 <!-- Card de Ajuda -->
                 <div class="col-md-6">
                     <a href="{{ route('password.request') }}" class="text-decoration-none">
-                        <div class="card shadow-lg border-0 rounded-3 card-ajuda"
+                        <div class="card-effect shadow-lg border-0 rounded-3 card-ajuda"
                             style="cursor: pointer; transition: transform 0.3s ease;">
                             <div class="card-body p-4">
                                 <h5 class="card-title text-warning fs-4">Ajuda</h5>

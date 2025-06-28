@@ -102,12 +102,12 @@ h1 {
     max-width: 900px;
 }
 
-.card {
+.card-effect {
     cursor: pointer;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.card:hover {
+.card-effect:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     box-sizing: border-box;
@@ -117,7 +117,7 @@ h1 {
     transition: background-color 0.3s ease;
 }
 
-.card:hover .card-body {
+.card-effect:hover .card-body {
     background-color: rgba(0, 123, 255, 0.1);
     border: solid 1px #1374f2;
     border-radius: 0.5em;
@@ -129,7 +129,7 @@ h1 {
     transition: transform 0.3s ease;
 }
 
-.card:hover .card-footer {
+.card-effect:hover .card-footer {
     transform: scale(1.1);
     box-sizing: border-box;
 }
