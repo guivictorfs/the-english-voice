@@ -10,25 +10,48 @@
     @vite('resources/css/welcome.css')
 </head>
 <body>
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm pb-3 pt-3">
         <div class="container">
-            <a class="navbar-brand fw-bold text-primary" href="/">The English Voice</a>
+            <a class="navbar-brand fw-bold text-primary" href="#">The English Voice</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item underline">
-                        <a class="nav-link active" href="/students/account">Meus Artigos</a>
+                        <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
                     </li>
                     <li class="nav-item underline">
-                        <a class="nav-link" href="/dashboard">Painel Geral</a>
+                        <a class="nav-link active" href="{{ route('students.account') }}">Meus Artigos</a>
                     </li>
                     <li class="nav-item underline">
-                        <a class="nav-link" href="/help">Ajuda</a>
+                        <a class="nav-link" href="{{ route('artigos.postar') }}">Postar Artigo</a>
+                    </li>
+                    <li class="nav-item underline">
+                        <a class="nav-link" href="{{ route('articles.favorites') }}">Favoritos</a>
+                    </li>
+                    <li class="nav-item underline">
+                        <a class="nav-link" href="{{ route('help') }}">Ajuda</a>
+                    </li>
+                    <li class="nav-item underline">
+                        <a class="nav-link" href="{{ route('students.profile') }}">Conta</a>
+                    </li>
+                    <li class="nav-item me-2">
+                        <form class="d-flex align-items-center" method="GET" action="{{ route('dashboard') }}" style="gap:0.25rem;">
+                            <input class="form-control form-control-sm me-2" type="search" name="q" placeholder="Pesquisar artigos..." aria-label="Pesquisar" value="{{ request('q') }}" style="min-width: 180px;">
+                            <button class="btn btn-sm btn-outline-primary" type="submit"><i class="fas fa-search"></i></button>
+                            @if(request('q'))
+                                @php
+                                    $query = request()->except('q');
+                                    $url = route('dashboard') . ($query ? ('?' . http_build_query($query)) : '');
+                                @endphp
+                                <a href="{{ $url }}" class="btn btn-sm btn-outline-danger ms-1" title="Limpar pesquisa"><i class="fas fa-times"></i></a>
+                            @endif
+                        </form>
                     </li>
                     <li class="nav-item">
-                        <a class="btn btn-outline-primary ms-2" href="{{ route('logout') }}">Sair</a>
+                        <a class="btn btn-outline-danger ms-2" href="{{ route('logout') }}">Sair</a>
                     </li>
                 </ul>
             </div>

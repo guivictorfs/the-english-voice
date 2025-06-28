@@ -46,12 +46,12 @@
                         </button>
                     </div>
 
-                    <!-- Links Adicionais -->
-                    <div class="text-center mt-3">
-                        <a href="{{ route('login') }}" class="text-decoration-none">
-                            <i class="fas fa-sign-in-alt me-1"></i>Voltar para login
-                        </a>
+                    <!-- Links para início e login -->
+                    <div class="mt-4 text-center d-flex justify-content-center gap-2">
+                        <a href="{{ url('/') }}" class="btn btn-outline-secondary"><i class="fas fa-home me-1"></i> Início</a>
+                        <a href="{{ route('login') }}" class="btn btn-outline-primary"><i class="fas fa-sign-in-alt me-1"></i> Login</a>
                     </div>
+
                 </form>
             </div>
         </div>

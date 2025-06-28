@@ -23,13 +23,19 @@
                         <a class="nav-link active" href="{{ route('dashboard') }}">Dashboard</a>
                     </li>
                     <li class="nav-item underline">
-                        <a class="nav-link" href="#">Artigos</a>
+                        <a class="nav-link" href="{{ route('students.account') }}">Meus Artigos</a>
                     </li>
                     <li class="nav-item underline">
-                        <a class="nav-link" href="#">Sobre</a>
+                        <a class="nav-link" href="{{ route('artigos.postar') }}">Postar Artigo</a>
                     </li>
                     <li class="nav-item underline">
-                        <a class="nav-link" href="#">Contato</a>
+                        <a class="nav-link" href="{{ route('articles.favorites') }}">Favoritos</a>
+                    </li>
+                    <li class="nav-item underline">
+                        <a class="nav-link" href="{{ route('help') }}">Ajuda</a>
+                    </li>
+                    <li class="nav-item underline">
+                        <a class="nav-link" href="{{ route('students.profile') }}">Conta</a>
                     </li>
                     <li class="nav-item me-2">
                         <form class="d-flex align-items-center" method="GET" action="{{ route('dashboard') }}" style="gap:0.25rem;">

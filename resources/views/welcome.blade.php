@@ -24,10 +24,13 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item underline">
-                        <a class="nav-link active" href="#">Início</a>
+                        <a class="nav-link active" href="{{ url('/') }}">Início</a>
                     </li>
                     <li class="nav-item underline">
-                        <a class="nav-link" href="#">Artigos</a>
+                        <a class="nav-link" href="{{ route('login') }}">Artigos</a>
+                    </li>
+                    <li class="nav-item underline">
+                        <a class="nav-link" href="{{ route('help') }}">Ajuda</a>
                     </li>
                     <li class="nav-item underline">
                         <a class="nav-link" href="#">Sobre</a>
@@ -77,18 +80,20 @@
             <div class="row g-4">
                 <!-- Card de Entrar -->
                 <div class="col-md-6">
-                    <div class="card-effect shadow-lg border-0 rounded-3"
-                        style="cursor: pointer; transition: transform 0.3s ease;">
-                        <div class="card-body p-4">
-                            <h5 class="card-title text-primary fs-4">Entrar</h5>
-                            <p class="card-text text-muted">Acesse sua conta para gerenciar seus artigos, mensagens e
-                                mais.
-                            </p>
+                    <a href="{{ route('login') }}" class="text-decoration-none">
+                        <div class="card-effect shadow-lg border-0 rounded-3 card-entrar"
+                            style="cursor: pointer; transition: transform 0.3s ease;">
+                            <div class="card-body p-4">
+                                <h5 class="card-title text-primary fs-4">Entrar</h5>
+                                <p class="card-text text-muted">Acesse sua conta para gerenciar seus artigos, mensagens e
+                                    mais.
+                                </p>
+                            </div>
+                            <div class="card-footer text-center bg-transparent border-0">
+                                <i class="bi bi-box-arrow-in-right fs-2 text-primary"></i>
+                            </div>
                         </div>
-                        <div class="card-footer text-center bg-transparent border-0">
-                            <i class="bi bi-box-arrow-in-right fs-2 text-primary"></i>
-                        </div>
-                    </div>
+                    </a>
                 </div>
 
                 <!-- Card de Criar Conta -->
@@ -127,7 +132,7 @@
 
                 <!-- Card de Ajuda -->
                 <div class="col-md-6">
-                    <a href="{{ route('password.request') }}" class="text-decoration-none">
+                    <a href="{{ route('help') }}" class="text-decoration-none">
                         <div class="card-effect shadow-lg border-0 rounded-3 card-ajuda"
                             style="cursor: pointer; transition: transform 0.3s ease;">
                             <div class="card-body p-4">
