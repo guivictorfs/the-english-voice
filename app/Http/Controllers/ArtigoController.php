@@ -37,7 +37,12 @@ class ArtigoController extends Controller
                 $notaUsuario = $avaliacao->nota;
             }
         }
-        return view('artigos.show', compact('article', 'notaUsuario'));
+        $ultimaDenuncia = \\App\\Models\\ArticleReport::where('article_id', $article->article_id)
+    ->where('user_id', auth()->id())
+    ->latest('created_at')
+    ->first();
+$jaDenunciou = $ultimaDenuncia && $ultimaDenuncia->created_at > $article->updated_at;
+return view('artigos.show', compact('article', 'notaUsuario', 'jaDenunciou'));
     }
     /**
      * Exibe o formulário de edição do artigo
@@ -83,6 +88,11 @@ class ArtigoController extends Controller
         }
 
         $article->update($validated);
+
+        // Zera denúncias ao editar
+        $article->denuncias = 0;
+        $article->status = 'Aprovado'; // Opcional: volta para aprovado automaticamente ao editar
+        $article->save();
 
         // Salva histórico
         DB::table('article_history')->insert([
