@@ -2,7 +2,7 @@
     <div class="card shadow-sm border-0" style="background: #f8f9fa;">
         <div class="card-body text-center">
             <h5 class="mb-3 text-primary"><i class="fas fa-star me-2"></i>Como você avalia este artigo?</h5>
-            <form action="{{ route('avaliacao.store') }}" method="POST" class="d-flex flex-column align-items-center">
+            <form action="{{ route('avaliacao.store') }}" method="POST" class="d-flex flex-column align-items-center form-avaliacao" data-artigo="{{ $artigo->article_id }}">
                 @csrf
                 <input type="hidden" name="artigo_id" value="{{ $artigo->article_id }}">
                 <div class="mb-3 rating-stars justify-content-center d-flex flex-row-reverse">

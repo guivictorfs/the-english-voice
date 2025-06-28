@@ -26,4 +26,12 @@ class Article extends Model
         return $this->belongsToMany(User::class, 'article_author', 'article_id', 'id')
             ->withPivot('author_type', 'created_at');
     }
+
+    /**
+     * Usuários que favoritaram este artigo
+     */
+    public function favoritedBy()
+    {
+        return $this->belongsToMany(User::class, 'favorite', 'article_id', 'user_id')->withTimestamps();
+    }
 }

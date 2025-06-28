@@ -116,6 +116,11 @@ Route::post('/artigos', [App\Http\Controllers\ArtigoController::class, 'store'])
 // Visualizar artigo (PDF)
 Route::get('/artigos/{article}/visualizar', [App\Http\Controllers\ArtigoController::class, 'visualizar'])->middleware('auth')->name('artigos.visualizar');
 
+// Exibir artigo individual
+Route::get('/artigos/{article}', [App\Http\Controllers\ArtigoController::class, 'show'])
+    ->middleware('auth')
+    ->name('artigos.show');
+
 // Editar artigo
 Route::get('/artigos/{article}/edit', [App\Http\Controllers\ArtigoController::class, 'edit'])->middleware('auth')->name('artigos.edit');
 Route::post('/artigos/{article}/edit', [App\Http\Controllers\ArtigoController::class, 'update'])->middleware('auth')->name('artigos.update');
@@ -139,6 +144,13 @@ Route::post('/validate-code', function (Illuminate\Http\Request $request) {
 Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
     ->middleware('auth')
     ->name('dashboard');
+
+// Favoritar/desfavoritar artigos e listar favoritos
+Route::middleware(['auth'])->group(function () {
+    Route::post('/artigos/{article}/favorite', [\App\Http\Controllers\FavoriteController::class, 'store'])->name('articles.favorite');
+    Route::delete('/artigos/{article}/favorite', [\App\Http\Controllers\FavoriteController::class, 'destroy'])->name('articles.unfavorite');
+    Route::get('/favoritos', [\App\Http\Controllers\FavoriteController::class, 'index'])->name('articles.favorites');
+});
 
 Route::middleware(['auth'])->prefix('admin')->group(function () {
     // Painel de tags/keywords

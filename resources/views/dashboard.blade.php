@@ -57,24 +57,7 @@
         use Illuminate\Support\Str;
     @endphp
 
-    <!-- Feedback visual de sucesso/erro -->
-    <div class="container mt-4">
-        @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-            </div>
-        @endif
-        @if($errors->any())
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="fas fa-exclamation-triangle me-2"></i>
-                @foreach($errors->all() as $error)
-                    {{ $error }}<br>
-                @endforeach
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-            </div>
-        @endif
-    </div>
+
 
     <!-- Conteúdo principal -->
     <div class="container mt-5 mb-5">
@@ -220,21 +203,58 @@ document.addEventListener('DOMContentLoaded', function() {
                 @if($articles->count())
                     <div>
                         @foreach($articles as $article)
-                            <div class="artigo-card p-3">
+    <div class="artigo-card p-3">
+    <!-- Feedback visual de sucesso/erro para favoritos -->
+    @if(session('success') && session('fav_article_id') == $article->article_id)
+        <div class="alert alert-success alert-dismissible fade show mb-2" role="alert">
+            <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+        </div>
+    @endif
+    @if(session('error') && session('fav_article_id') == $article->article_id)
+        <div class="alert alert-danger alert-dismissible fade show mb-2" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i> {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+        </div>
+    @endif
     <!-- 1. Título -->
-    @php $mainAuthor = $article->authors->first(); $avatar = $mainAuthor && $mainAuthor->profile_photo ? asset('storage/'.$mainAuthor->profile_photo) : 'https://via.placeholder.com/50x50?text=Avatar'; @endphp
+    @php 
+        $mainAuthor = $article->authors->first(); 
+        $avatar = $mainAuthor && $mainAuthor->profile_photo ? asset('storage/'.$mainAuthor->profile_photo) : 'https://via.placeholder.com/50x50?text=Avatar';
+        $isFavorited = auth()->user()->favorites->contains($article->article_id);
+    @endphp
 <div class="mb-2 d-flex justify-content-between align-items-center">
-        <img src="{{ $avatar }}" alt="Avatar" class="rounded-circle me-3 d-none d-md-block" style="width:50px;height:50px;object-fit:cover;">
+    <img src="{{ $avatar }}" alt="Avatar" class="rounded-circle me-3 d-none d-md-block" style="width:50px;height:50px;object-fit:cover;">
     <span class="display-6 fw-bold text-center d-block w-100 text-break" style="font-size:2rem;">{!! highlight($article->title, $highlight) !!}</span>
     @php
         $isAuthor = $article->authors->contains('id', auth()->id());
         $isProfessorOrAdmin = in_array(auth()->user()->role, ['Professor', 'Admin']);
     @endphp
-    @if($isAuthor || $isProfessorOrAdmin)
-        <a href="{{ route('artigos.edit', $article->article_id) }}" class="btn btn-sm btn-outline-primary ms-2" title="Editar artigo">
-            <i class="fas fa-edit"></i> Editar
-        </a>
-    @endif
+    <div class="ms-2 d-flex align-items-center gap-1">
+        <!-- Botão de Favoritar -->
+        @if($isFavorited)
+    <form action="{{ route('articles.unfavorite', $article->article_id) }}" method="POST" class="form-favorito d-inline" data-artigo="{{ $article->article_id }}">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="btn btn-sm btn-outline-warning px-2 py-1" title="Remover dos favoritos">
+            <i class="fas fa-star text-warning"></i>
+        </button>
+    </form>
+@else
+    <form action="{{ route('articles.favorite', $article->article_id) }}" method="POST" class="form-favorito d-inline" data-artigo="{{ $article->article_id }}">
+        @csrf
+        <button type="submit" class="btn btn-sm btn-outline-warning px-2 py-1" title="Salvar nos favoritos">
+            <i class="far fa-star"></i>
+        </button>
+    </form>
+@endif
+        <!-- Botão de Editar -->
+        @if($isAuthor || $isProfessorOrAdmin)
+            <a href="{{ route('artigos.edit', $article->article_id) }}" class="btn btn-sm btn-outline-primary ms-1" title="Editar artigo">
+                <i class="fas fa-edit"></i> Editar
+            </a>
+        @endif
+    </div>
 </div>
     <hr class="my-2">
     <!-- 2. Metadados -->
@@ -367,5 +387,103 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Bootstrap JS NÃO carregado!');
         }
     </script>
+<script>
+$(document).ready(function() {
+    $('.form-avaliacao').on('submit', function(e) {
+        e.preventDefault();
+        var $form = $(this);
+        var artigoId = $form.data('artigo');
+        var url = $form.attr('action');
+        var data = $form.serialize();
+
+        $form.find('button[type=submit]').prop('disabled', true);
+
+        $.ajax({
+            url: url,
+            method: 'POST',
+            data: data,
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            success: function(response) {
+                $form.find('.alert').remove();
+                $form.append(
+                    '<div class="alert alert-success mt-3 mb-0 py-2 px-3" role="alert">' +
+                    '<i class="fas fa-check-circle me-2"></i> ' + response.message +
+                    '</div>'
+                );
+                if(response.media !== undefined && response.total !== undefined) {
+                    $form.closest('.card-body').find('.fw-bold').html(
+                        '<i class="fas fa-star text-warning"></i> Nota média: ' + response.media + '/5'
+                    );
+                    $form.closest('.card-body').find('.text-muted').text(
+                        '(' + response.total + ' avaliação' + (response.total > 1 ? 's' : '') + ')'
+                    );
+                }
+            },
+            error: function(xhr) {
+                $form.find('.alert').remove();
+                $form.append(
+                    '<div class="alert alert-danger mt-3 mb-0 py-2 px-3" role="alert">' +
+                    '<i class="fas fa-exclamation-triangle me-2"></i> Ocorreu um erro ao enviar sua avaliação.' +
+                    '</div>'
+                );
+            },
+            complete: function() {
+                $form.find('button[type=submit]').prop('disabled', false);
+            }
+        });
+    });
+});
+</script>
+<script>
+$(document).ready(function() {
+    $(document).on('submit', '.form-favorito', function(e) {
+        e.preventDefault();
+        var $form = $(this);
+        var url = $form.attr('action');
+        var data = $form.serialize();
+        var $btn = $form.find('button[type=submit]');
+        $btn.prop('disabled', true);
+
+        $.ajax({
+            url: url,
+            method: $form.find('input[name=_method]').val() === 'DELETE' ? 'POST' : 'POST',
+            data: data,
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            success: function(response) {
+                var $card = $form.closest('.artigo-card'); // Salva antes do replaceWith
+                if (response.button_html) {
+                    $form.replaceWith(response.button_html);
+                }
+                if (response.message) {
+                    if ($card.length) {
+                        $card.find('.alert').remove();
+                        $card.prepend(
+                            '<div class="alert alert-success alert-dismissible fade show mb-2" role="alert">' +
+                            '<i class="fas fa-check-circle me-2"></i> ' + response.message +
+                            '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>' +
+                            '</div>'
+                        );
+                    } else {
+                        // Fallback: insere antes do form
+                        $form.prev('.alert').remove();
+                        $form.before(
+                            '<div class="alert alert-success alert-dismissible fade show mb-2" role="alert">' +
+                            '<i class="fas fa-check-circle me-2"></i> ' + response.message +
+                            '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>' +
+                            '</div>'
+                        );
+                    }
+                }
+            },
+            error: function() {
+                alert('Erro ao favoritar/desfavoritar.');
+            },
+            complete: function() {
+                $btn.prop('disabled', false);
+            }
+        });
+    });
+});
+</script>
 </body>
 </html>

@@ -23,6 +23,18 @@ class AvaliacaoController extends Controller
             ]
         );
 
+        // Recupera média e total atualizados
+        $media = Avaliacao::where('artigo_id', $request->artigo_id)->avg('nota');
+        $total = Avaliacao::where('artigo_id', $request->artigo_id)->count();
+
+        if ($request->ajax()) {
+            return response()->json([
+                'message' => 'Avaliação registrada com sucesso!',
+                'media' => number_format($media, 2, ',', '.'),
+                'total' => $total,
+            ]);
+        }
+
         return redirect()->back()->with('success_'.$request->artigo_id, 'Avaliação registrada com sucesso!');
     }
 }

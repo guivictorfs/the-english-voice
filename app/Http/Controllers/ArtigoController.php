@@ -17,6 +17,29 @@ use App\Models\ArticleReport;
 class ArtigoController extends Controller
 {
     /**
+     * Exibe um artigo individual
+     */
+    public function show($article_id)
+    {
+        $article = \App\Models\Article::with(['authors', 'keywords'])->findOrFail($article_id);
+        // Calcule média e total de avaliações
+        $media = \App\Models\Avaliacao::where('artigo_id', $article->article_id)->avg('nota');
+        $total = \App\Models\Avaliacao::where('artigo_id', $article->article_id)->count();
+        $article->media_avaliacoes = $media ? round($media, 2) : null;
+        $article->total_avaliacoes = $total;
+        // Nota do usuário logado (se houver)
+        $notaUsuario = null;
+        if (auth()->check()) {
+            $avaliacao = \App\Models\Avaliacao::where('artigo_id', $article->article_id)
+                ->where('user_id', auth()->id())
+                ->first();
+            if ($avaliacao) {
+                $notaUsuario = $avaliacao->nota;
+            }
+        }
+        return view('artigos.show', compact('article', 'notaUsuario'));
+    }
+    /**
      * Exibe o formulário de edição do artigo
      */
     public function edit($id)

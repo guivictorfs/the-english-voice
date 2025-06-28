@@ -44,4 +44,12 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Course::class, 'course_id', 'course_id');
     }
+
+    /**
+     * Artigos favoritados pelo usuário
+     */
+    public function favorites()
+    {
+        return $this->belongsToMany(\App\Models\Article::class, 'favorite', 'user_id', 'article_id')->withTimestamps();
+    }
 }
