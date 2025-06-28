@@ -37,7 +37,7 @@ class ArtigoController extends Controller
                 $notaUsuario = $avaliacao->nota;
             }
         }
-        $ultimaDenuncia = \\App\\Models\\ArticleReport::where('article_id', $article->article_id)
+        $ultimaDenuncia = \App\Models\ArticleReport::where('article_id', $article->article_id)
     ->where('user_id', auth()->id())
     ->latest('created_at')
     ->first();
