@@ -41,7 +41,7 @@ class DashboardController extends Controller
             });
         }
 
-        $articles = $query->orderByDesc('created_at')->get();
+        $articles = $query->orderByDesc('created_at')->paginate(8);
 
         // Carrega média e total de avaliações para cada artigo
         foreach ($articles as $article) {

@@ -32,8 +32,8 @@
         </div>
 
         <div class="mb-3">
-            <label for="keywords" class="form-label">Keywords</label>
-            <input name="keywords" id="keywords" class="form-control" placeholder="Ex: Grammar, Vocabulary, Reading, Writing, Speaking, Listening" value="{{ old('keywords', $article->keywords->pluck('name')->implode(', ')) }}">
+            <label for="keywords" class="form-label">Tags</label>
+            <input name="keywords" id="keywords" class="form-control" value="{{ old('keywords', $article->keywords->pluck('name')->implode(', ')) }}">
             <small class="form-text text-muted">Digite uma palavra-chave e pressione <b>Enter</b> ou <b>vírgula</b> para adicionar.</small>
         </div>
 
@@ -54,39 +54,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css">
     <!-- Quill -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-    <style>
-        .ql-toolbar {
-            background: #fff;
-        }
-        .ql-editor {
-            background: #fff;
-            border: 1px solid #ced4da;
-            border-radius: 0.375rem;
-        }
-        /* Tagify placeholder e layout */
-        .tagify {
-            width: 100%;
-            min-height: 38px;
-            background: #fff;
-            border-radius: 6px;
-            border: 1px solid #ced4da;
-        }
-        .tagify__input {
-            min-width: 200px;
-            color: #888;
-            opacity: 1;
-            padding: 6px 8px;
-        }
-        .tagify--focus .tagify__input::placeholder {
-            color: #bbb;
-            opacity: 1;
-        }
-        .tagify__input::placeholder {
-            color: #bbb;
-            opacity: 1;
-            text-align: center;
-        }
-    </style>
 @endpush
 
 @push('scripts')

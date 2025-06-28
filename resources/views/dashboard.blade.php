@@ -318,6 +318,20 @@ document.addEventListener('DOMContentLoaded', function() {
                             </div>
                         @endforeach
                     </div>
+                    <div class="row justify-content-center mt-4">
+                        <div class="col-auto">
+                            <div class="card border-0 shadow-sm p-2 bg-light" style="min-width:320px;">
+                                <div class="d-flex flex-column align-items-center">
+                                    <div class="small text-muted mb-1">
+                                        Mostrando <b>{{ $articles->firstItem() }}</b> a <b>{{ $articles->lastItem() }}</b> de <b>{{ $articles->total() }}</b> resultados
+                                    </div>
+                                    <div>
+                                        {{ $articles->links('pagination::bootstrap-5') }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 @else
                     <div class="alert alert-info">
                         @if(request('q'))
