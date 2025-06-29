@@ -32,10 +32,10 @@
                         <a class="nav-link" href="{{ route('articles.favorites') }}">Favoritos</a>
                     </li>
                     <li class="nav-item underline">
-                        <a class="nav-link" href="{{ route('help') }}">Ajuda</a>
+                        <a class="nav-link" href="{{ route('students.profile') }}">Conta</a>
                     </li>
                     <li class="nav-item underline">
-                        <a class="nav-link" href="{{ route('students.profile') }}">Conta</a>
+                        <a class="nav-link" href="{{ route('help') }}">Ajuda</a>
                     </li>
                     <li class="nav-item me-2">
                         <form class="d-flex align-items-center" method="GET" action="{{ route('dashboard') }}" style="gap:0.25rem;">
@@ -346,7 +346,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     <div class="row justify-content-center mt-4">
                         <div class="col-auto">
-                            <div class="card border-0 shadow-sm p-2 bg-light" style="min-width:320px;">
+                            <div class="card border-0 p-2 bg-light" style="min-width:320px;">
                                 <div class="d-flex flex-column align-items-center">
                                     <div class="small text-muted mb-1">
                                         Mostrando <b>{{ $articles->firstItem() }}</b> a <b>{{ $articles->lastItem() }}</b> de <b>{{ $articles->total() }}</b> resultados

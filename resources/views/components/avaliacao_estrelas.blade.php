@@ -1,5 +1,9 @@
-<div class="my-4">
-    <div class="card shadow-sm border-0" style="background: #f8f9fa;">
+<div class="my-4 position-relative">
+    <span id="badge-nota-media-{{ $artigo->article_id }}" class="badge bg-warning text-dark position-absolute top-0 end-0 mt-2 me-2 d-none" style="cursor:pointer;z-index:10;font-size:1.1em;" onclick="abrirAvaliacao{{ $artigo->article_id }}()">
+        <i class="fas fa-star"></i> {{ number_format($artigo->media_avaliacoes, 2, ',', '.') }}/5
+    </span>
+    <div class="card shadow-sm border-0 position-relative avaliacao-card" id="avaliacao-card-{{ $artigo->article_id }}" style="background: #f8f9fa;">
+        <button type="button" class="btn-close position-absolute top-0 end-0 m-3" aria-label="Fechar" onclick="fecharAvaliacao{{ $artigo->article_id }}()"></button>
         <div class="card-body text-center">
             <h5 class="mb-3 text-primary"><i class="fas fa-star me-2"></i>Como você avalia este artigo?</h5>
             <form action="{{ route('avaliacao.store') }}" method="POST" class="d-flex flex-column align-items-center form-avaliacao" data-artigo="{{ $artigo->article_id }}">
@@ -33,6 +37,26 @@
         </div>
     </div>
 </div>
+<script>
+function fecharAvaliacao{{ $artigo->article_id }}() {
+    document.getElementById('avaliacao-card-{{ $artigo->article_id }}').style.display = 'none';
+    document.getElementById('badge-nota-media-{{ $artigo->article_id }}').classList.remove('d-none');
+}
+function abrirAvaliacao{{ $artigo->article_id }}() {
+    document.getElementById('avaliacao-card-{{ $artigo->article_id }}').style.display = '';
+    document.getElementById('badge-nota-media-{{ $artigo->article_id }}').classList.add('d-none');
+}
+</script>
+
+<style>
+.badge.bg-warning.text-dark:hover {
+    background: #ff9800 !important;
+    color: #fff !important;
+    box-shadow: 0 2px 8px rgba(255, 168, 0, 0.2);
+    transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+}
+</style>
+
 
 
 <style>
