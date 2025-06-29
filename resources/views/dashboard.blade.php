@@ -159,6 +159,7 @@ $(document).ready(function() {
 });
 // Exibe campo para motivo personalizado ao selecionar 'Outro' no modal denúncia
 document.addEventListener('DOMContentLoaded', function() {
+    //* Adicionei um estilo para o botão de favorito */
     // Habilita/desabilita botão de submit do modal denúncia
     $(document).on('input change', 'select[id^="motivo-"]', function() {
         var id = $(this).attr('id').replace('motivo-', '');
@@ -276,8 +277,24 @@ document.addEventListener('DOMContentLoaded', function() {
         em {{ $article->created_at->setTimezone('America/Sao_Paulo')->format('d/m/Y') }}, às {{ $article->created_at->setTimezone('America/Sao_Paulo')->format('H:i') }}
     </div>
     <hr class="my-2">
-    @if($article->content)
+    @if($article->content && trim($article->content) !== '')
         <div class="mb-3 text-break overflow-hidden text-truncate text-start ps-3 pe-3" style="max-height: 5.5rem; white-space: pre-line;">{!! highlight(Str::limit(strip_tags($article->content), 400), $highlight) !!}</div>
+    @else
+        @php
+            $file = DB::table('file_upload')
+                ->where('article_id', $article->article_id)
+                ->orderByDesc('created_at')
+                ->first();
+        @endphp
+        @if($file)
+            <div class="mb-2 ps-3 pe-3">
+                <strong>Arquivo PDF:</strong>
+                <a href="{{ asset('storage/' . $file->file_path) }}" target="_blank" class="btn btn-sm btn-outline-danger ms-2">Abrir PDF</a>
+            </div>
+            <iframe src="{{ asset('storage/' . $file->file_path) }}" width="100%" height="400px" style="border:1px solid #ccc;"></iframe>
+        @else
+            <div class="text-muted ps-3 pe-3">Nenhum conteúdo disponível.</div>
+        @endif
     @endif
 
     <hr class="my-2">
@@ -332,9 +349,13 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 </div>
 
+<hr class="my-2">
+<a href="{{ route('artigos.pdf', $article->article_id) }}" class="btn btn-sm btn-outline-danger mt-2" target="_blank" title="Baixar PDF do artigo">
+    <i class="fas fa-file-pdf"></i> Baixar PDF
+</a>
+<hr class="my-2">
 @if($article->keywords && $article->keywords->count())
-    <hr class="my-2">
-    <div class="mt-2">
+    <div class="pt-2">
         <span class="text-secondary fw-bold me-2" style="letter-spacing:1px;">Tags:</span>
         @foreach($article->keywords as $kw)
             <a href="{{ route('dashboard', ['tag' => $kw->name]) }}" class="badge bg-info text-dark me-1 text-decoration-none" title="Filtrar pela tag '{{ $kw->name }}'">{{ $kw->name }}</a>
@@ -491,5 +512,13 @@ $(document).ready(function() {
     });
 });
 </script>
+<style>
+.favorito-btn:hover .fa-star,
+.favorito-btn:hover .fa-star.text-warning {
+    color: #ff9800 !important; /* laranja escuro, destaque no hover */
+    text-shadow: 0 0 2px #fff;
+    transition: color 0.15s;
+}
+</style>
 </body>
 </html>

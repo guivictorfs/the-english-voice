@@ -105,6 +105,8 @@ Route::get('/logout', function () {
     return redirect()->route('home');  // Redireciona para a página inicial ou outra rota
 })->name('logout');
 
+Route::get('/artigos/melhores', [App\Http\Controllers\ArtigoController::class, 'melhores'])->name('artigos.melhores');
+
 // Página para postar artigo
 Route::get('/artigos/postar', function () {
     return view('artigo_postar');
@@ -115,6 +117,9 @@ Route::post('/artigos', [App\Http\Controllers\ArtigoController::class, 'store'])
 
 // Visualizar artigo (PDF)
 Route::get('/artigos/{article}/visualizar', [App\Http\Controllers\ArtigoController::class, 'visualizar'])->middleware('auth')->name('artigos.visualizar');
+
+// Baixar PDF do artigo
+Route::get('/artigos/{article}/pdf', [App\Http\Controllers\ArtigoController::class, 'gerarPdf'])->middleware('auth')->name('artigos.pdf');
 
 // Exibir artigo individual
 Route::get('/artigos/{article}', [App\Http\Controllers\ArtigoController::class, 'show'])

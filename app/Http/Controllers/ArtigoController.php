@@ -13,6 +13,8 @@ use App\Models\ForbiddenWord;
 use App\Notifications\ArtigoDenunciadoNotification;
 use App\Models\User;
 use App\Models\ArticleReport;
+use Barryvdh\DomPDF\Facade\Pdf; // PDF facade
+use Illuminate\Support\Str;
 
 class ArtigoController extends Controller
 {
@@ -285,14 +287,11 @@ return view('artigos.show', compact('article', 'notaUsuario', 'jaDenunciou'));
 
     public function visualizar($article_id)
     {
-        $artigo = \App\Models\Article::findOrFail($article_id);
+        $artigo = \App\Models\Article::with(['authors', 'keywords'])->findOrFail($article_id);
 
         $file = DB::table('file_upload')
-            ->join('article_author', function ($join) use ($article_id) {
-                $join->on('file_upload.uploaded_by', '=', 'article_author.id')
-                    ->where('article_author.article_id', '=', $article_id);
-            })
-            ->orderByDesc('file_upload.created_at')
+            ->where('article_id', $article_id)
+            ->orderByDesc('created_at')
             ->first();
 
         return view('artigo_visualizar', [
@@ -332,5 +331,96 @@ return view('artigos.show', compact('article', 'notaUsuario', 'jaDenunciou'));
             $autor->notify(new ArtigoDenunciadoNotification($article->title, $motivo, $article->article_id));
         }
         return redirect()->back()->with('success', 'Artigo denunciado com sucesso!');
+    }
+
+    /**
+     * Gera PDF do artigo (título, autores, corpo)
+     */
+    public function gerarPdf($article_id)
+    {
+        $artigo = Article::with('authors')->findOrFail($article_id);
+        $pdf = Pdf::loadView('artigos.pdf', ['artigo' => $artigo]);
+        $titulo = trim($artigo->title) ? str_replace(' ', '_', Str::slug(substr($artigo->title, 0, 50))) : 'artigo_'.$artigo->article_id;
+        return $pdf->download($titulo.'.pdf');
+    }
+
+    /**
+     * Exibe os artigos com melhor avaliação
+     */
+    public function melhores()
+    {
+        $now = now();
+        // Artigos com melhor avaliação geral
+        $artigos = \App\Models\Article::with(['authors', 'keywords'])
+            ->where('status', 'Aprovado')
+            ->withAvg('avaliacoes', 'nota')
+            ->withCount('avaliacoes')
+            ->orderByDesc('avaliacoes_avg_nota')
+            ->orderByDesc('avaliacoes_count')
+            ->take(20)
+            ->get();
+
+        // Média geral do site
+        $mediaGeral = \App\Models\Avaliacao::avg('nota');
+        $nMinimo = 5;
+
+        // Melhores notas no mês (mínimo 5 avaliações)
+        $maisAvaliadosMes = \App\Models\Article::with(['authors', 'keywords'])
+            ->where('status', 'Aprovado')
+            ->whereHas('avaliacoes', function($q) use ($now) {
+                $q->whereMonth('created_at', $now->month)->whereYear('created_at', $now->year);
+            })
+            ->withCount(['avaliacoes as avaliacoes_mes_count' => function($q) use ($now) {
+                $q->whereMonth('created_at', $now->month)->whereYear('created_at', $now->year);
+            }])
+            ->withAvg(['avaliacoes as media_mes' => function($q) use ($now) {
+                $q->whereMonth('created_at', $now->month)->whereYear('created_at', $now->year);
+            }], 'nota')
+            ->having('avaliacoes_mes_count', '>=', $nMinimo)
+            ->get();
+        foreach ($maisAvaliadosMes as $artigo) {
+            $n = $artigo->avaliacoes_mes_count;
+            $media = $artigo->media_mes;
+            $artigo->media_ponderada_mes = ($media * $n + $mediaGeral * $nMinimo) / ($n + $nMinimo);
+        }
+        $maisAvaliadosMes = $maisAvaliadosMes->sortByDesc('media_ponderada_mes')->take(10);
+
+        // Melhores notas no ano (mínimo 5 avaliações)
+        $maisAvaliadosAno = \App\Models\Article::with(['authors', 'keywords'])
+            ->where('status', 'Aprovado')
+            ->whereHas('avaliacoes', function($q) use ($now) {
+                $q->whereYear('created_at', $now->year);
+            })
+            ->withCount(['avaliacoes as avaliacoes_ano_count' => function($q) use ($now) {
+                $q->whereYear('created_at', $now->year);
+            }])
+            ->withAvg(['avaliacoes as media_ano' => function($q) use ($now) {
+                $q->whereYear('created_at', $now->year);
+            }], 'nota')
+            ->having('avaliacoes_ano_count', '>=', $nMinimo)
+            ->get();
+        foreach ($maisAvaliadosAno as $artigo) {
+            $n = $artigo->avaliacoes_ano_count;
+            $media = $artigo->media_ano;
+            $artigo->media_ponderada_ano = ($media * $n + $mediaGeral * $nMinimo) / ($n + $nMinimo);
+        }
+        $maisAvaliadosAno = $maisAvaliadosAno->sortByDesc('media_ponderada_ano')->take(10);
+
+        // Melhores notas no geral (mínimo 5 avaliações)
+        $maisAvaliadosGeral = \App\Models\Article::with(['authors', 'keywords'])
+            ->where('status', 'Aprovado')
+            ->withCount('avaliacoes')
+            ->withAvg('avaliacoes', 'nota')
+            ->having('avaliacoes_count', '>=', $nMinimo)
+            ->get();
+        foreach ($maisAvaliadosGeral as $artigo) {
+            $n = $artigo->avaliacoes_count;
+            $media = $artigo->avaliacoes_avg_nota;
+            $artigo->media_ponderada = ($media * $n + $mediaGeral * $nMinimo) / ($n + $nMinimo);
+        }
+        $maisAvaliadosGeral = $maisAvaliadosGeral->sortByDesc('media_ponderada')->take(10);
+
+
+        return view('artigos.melhores', compact('artigos', 'maisAvaliadosMes', 'maisAvaliadosAno', 'maisAvaliadosGeral'));
     }
 }

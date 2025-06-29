@@ -34,4 +34,12 @@ class Article extends Model
     {
         return $this->belongsToMany(User::class, 'favorite', 'article_id', 'user_id')->withTimestamps();
     }
+
+    /**
+     * Avaliações deste artigo
+     */
+    public function avaliacoes()
+    {
+        return $this->hasMany(\App\Models\Avaliacao::class, 'artigo_id', 'article_id');
+    }
 }
