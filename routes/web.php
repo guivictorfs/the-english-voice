@@ -103,6 +103,7 @@ Route::middleware(['auth', \App\Http\Middleware\CheckAdminAccess::class])->group
 Route::get('forgot-password', [PasswordResetController::class, 'showLinkRequestForm'])->name('password.request');
 Route::post('forgot-password', [PasswordResetController::class, 'sendResetLinkEmail'])->name('password.email');
 Route::get('reset-password/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
+Route::post('reset-password', [PasswordResetController::class, 'update'])->name('password.update');
 Route::get('/artigos', [App\Http\Controllers\ArtigoController::class, 'index'])->name('dashboard');
 
 // Painel do aluno - Meus Artigos
@@ -127,6 +128,7 @@ Route::middleware(['auth', \App\Http\Middleware\VerifyAdminAccess::class])->pref
     Route::post('/users/{id}', [\App\Http\Controllers\Admin\UserController::class, 'update'])->name('users.update');
     Route::get('/articles', [\App\Http\Controllers\Admin\AdminPanelController::class, 'articles'])->name('articles.index');
     Route::get('/reports', [\App\Http\Controllers\Admin\AdminPanelController::class, 'reports'])->name('reports.index');
+    Route::get('/logs', [\App\Http\Controllers\Admin\AdminPanelController::class, 'logs'])->name('logs.index');
     // Rotas de cursos
     Route::get('/courses', [\App\Http\Controllers\Admin\CourseController::class, 'index'])->name('courses.index');
     Route::post('/courses', [\App\Http\Controllers\Admin\CourseController::class, 'store'])->name('courses.store');

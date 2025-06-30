@@ -48,14 +48,9 @@ class AdminPanelController extends Controller
             ->orderByDesc('created_at')
             ->paginate(10);
 
-        return view('admin.reports', compact(
-            'articleStatusCounts',
-            'userRoleCounts',
-            'ratingCounts',
-            'reports',
-            'pendingArticles'
-        ));
+        return view('admin.reports', compact('articleStatusCounts', 'userRoleCounts', 'ratingCounts', 'reports', 'pendingArticles'));
     }
+
     public function courses() { return view('admin.section', ['title' => 'Cursos']); }
     public function keywords(){ return view('admin.section', ['title' => 'Palavras-chave']); }
     public function logs(Request $request)

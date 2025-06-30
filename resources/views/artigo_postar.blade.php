@@ -141,7 +141,8 @@
 
         <div class="mb-3">
             <label for="keywords" class="form-label fs-4"><b>Tags</b></label>
-            <input name="keywords" id="keywords" class="form-control" placeholder="Ex: Grammar, Vocabulary, Reading, Writing, Speaking, Listening" value="{{ old('keywords') }}">
+            <input type="hidden" id="keywords-hidden" name="keywords">
+            <input type="text" id="keywords" class="form-control tag-input" placeholder="Ex: Grammar, Vocabulary, Reading, Writing, Speaking, Listening" value="{{ old('keywords') }}">
             <small class="form-text text-muted">Digite uma palavra-chave e pressione <b>Enter</b> ou <b>vírgula</b> para adicionar.</small>
         </div>
 
@@ -180,7 +181,8 @@
 
         <div class="mb-3">
             <label for="keywords-pdf" class="form-label fs-4"><b>Keywords</b></label>
-            <input name="keywords" id="keywords-pdf" class="form-control" placeholder="Ex: Grammar, Vocabulary, Reading, Writing, Speaking, Listening" value="{{ old('keywords') }}">
+            <input type="hidden" id="keywords-pdf-hidden" name="keywords">
+            <input type="text" id="keywords-pdf" class="form-control tag-input" placeholder="Ex: Grammar, Vocabulary, Reading, Writing, Speaking, Listening" value="{{ old('keywords') }}">
             <small class="form-text text-muted">Digite uma palavra-chave e pressione <b>Enter</b> ou <b>vírgula</b> para adicionar.</small>
         </div>
 
@@ -194,27 +196,125 @@
     </form>
 </div>
 
-{{-- Estilos --}}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css">
 <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
-<link href="{{ asset('css/tagify.css') }}" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@1.6.2/dist/select2-bootstrap4.min.css" rel="stylesheet">
+@vite('resources/css/welcome.css')
+    
+<style>
+    .tagify {
+        width: 100%;
+        min-height: 38px;
+        background: #fff;
+        border-radius: 6px;
+        border: 1px solid #ced4da;
+    }
+    .tagify__input {
+        min-width: 200px;
+        color: #888;
+        opacity: 1;
+        padding: 6px 8px;
+    }
+    .tagify__input::placeholder {
+        color: #bbb;
+        opacity: 1;
+        text-align: center;
+    }
+    .ql-toolbar {
+        background: #fff;
+    }
+    .ql-editor {
+        background: #fff;
+    }
+</style>
 
-{{-- Scripts --}}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
-<script src="{{ asset('js/tagify.min.js') }}"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Seletores dos cards e formulários
-    const cardEscrever = document.getElementById('card-escrever');
-    const cardUpload = document.getElementById('card-upload');
-    const formArtigo = document.getElementById('form-artigo');
-    const formPDF = document.getElementById('form-pdf');
+$(document).ready(function() {
+    // Função para verificar palavras proibidas
+    function checkForbiddenWords(text, element) {
+        $.ajax({
+            url: '/api/check-forbidden-words',
+            method: 'POST',
+            data: {
+                text: text,
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                if (response.hasForbiddenWords) {
+                    element.addClass('is-invalid');
+                    element.next('.invalid-feedback').remove();
+                    element.after('<div class="invalid-feedback">Contém palavras proibidas: ' + response.forbiddenWords.join(', ') + '</div>');
+                } else {
+                    element.removeClass('is-invalid');
+                    element.next('.invalid-feedback').remove();
+                }
+            }
+        });
+    }
 
-    // Quill com toolbar avançada
+    // Inicializa Tagify para ambos os formulários
+    const tagify = new Tagify(document.querySelector('#keywords'), {
+        whitelist: [],
+        maxTags: 10,
+        dropdown: {
+            maxItems: 20,
+            enabled: 0,
+            closeOnSelect: false
+        }
+    });
+
+    const tagifyPdf = new Tagify(document.querySelector('#keywords-pdf'), {
+        whitelist: [],
+        maxTags: 10,
+        dropdown: {
+            maxItems: 20,
+            enabled: 0,
+            closeOnSelect: false
+        }
+    });
+
+    // Sugestões de tags
+    [tagify, tagifyPdf].forEach(tag => {
+        tag.on('input', function(e) {
+            if (e.detail.value.length >= 2) {
+                $.get('/api/keywords?q=' + e.detail.value, function(response) {
+                    tag.whitelist = response.map(item => item.value);
+                });
+            }
+        });
+
+        // Verificação de palavras proibidas
+        tag.on('add', function(e) {
+            var allTags = tag.value.map(function(tag) {
+                return tag.value;
+            }).join(', ');
+            checkForbiddenWords(allTags, $(tag.DOM.input));
+        });
+    });
+
+    // Inicializa Select2 para autores
+    $('#autores, #autores-pdf').select2({
+        placeholder: 'Selecione um ou mais autores',
+        allowClear: true,
+        width: '100%',
+        theme: 'bootstrap4',
+        dropdownAutoWidth: true,
+        minimumResultsForSearch: 0,
+        language: {
+            noResults: function () {
+                return "Nenhum autor encontrado.";
+            }
+        }
+    });
+
+    // Inicializa Quill
     var quill = new Quill('#editor-artigo', {
         theme: 'snow',
         modules: {
@@ -232,10 +332,12 @@ document.addEventListener('DOMContentLoaded', function() {
             ]
         }
     });
+
     // Preencher o campo hidden ao submeter
     $('#form-artigo').on('submit', function() {
         $('#conteudo-hidden').val(quill.root.innerHTML);
     });
+
     // Atualizar contador de caracteres
     var charCount = document.getElementById('char-count');
     var submitBtn = document.getElementById('submit-artigo');
@@ -248,12 +350,18 @@ document.addEventListener('DOMContentLoaded', function() {
     updateCharCount();
 
     // Alternância dos cards
+    const cardEscrever = document.getElementById('card-escrever');
+    const cardUpload = document.getElementById('card-upload');
+    const formArtigo = document.getElementById('form-artigo');
+    const formPDF = document.getElementById('form-pdf');
+
     cardEscrever.addEventListener('click', () => {
         formArtigo.classList.remove('d-none');
         formPDF.classList.add('d-none');
         cardEscrever.classList.add('border-3','border-primary');
         cardUpload.classList.remove('border-3','border-success');
     });
+
     cardUpload.addEventListener('click', () => {
         formPDF.classList.remove('d-none');
         formArtigo.classList.add('d-none');
@@ -261,123 +369,17 @@ document.addEventListener('DOMContentLoaded', function() {
         cardEscrever.classList.remove('border-3','border-primary');
     });
 
-    // Select2 para autores
-    $('#autores, #autores-pdf').select2({
-        placeholder: 'Selecione um ou mais autores',
-        allowClear: true,
-        width: '100%',
-        theme: 'bootstrap4',
-        dropdownAutoWidth: true,
-        minimumResultsForSearch: 0, // Permite busca sempre
-        language: {
-            noResults: function () {
-                return "Nenhum autor encontrado.";
-            }
-        }
-    });
-
-
-    // Tagify para keywords
-    [ 'keywords', 'keywords-pdf' ].forEach(function (id) {
-        var input = document.getElementById(id);
-        if (input) new Tagify(input, { delimiters: "," });
+    // Tratamento de submissão para ambos os formulários
+    $('form').on('submit', function(e) {
+        const isPDF = this.id === 'form-pdf';
+        const tagifyInstance = isPDF ? tagifyPdf : tagify;
+        const tags = tagifyInstance.value.map(tag => tag.value).join(', ');
+        $(isPDF ? '#keywords-pdf-hidden' : '#keywords-hidden').val(tags);
     });
 });
-</script>
-@push('styles')
-    <!-- Select2 -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <!-- Tagify -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css">
-    <!-- Quill -->
-    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-    <style>
-        .ql-toolbar.ql-snow {
-            background: #fff !important;
-            border: 1px solid #ced4da !important;
-            border-radius: 6px !important;
-            padding: 15px !important;
-        }
-        .ql-container.ql-snow {
-            background: #fff !important;
-            border: 1px solid #ced4da !important;
-        }
-        .ql-editor {
-            min-height: 300px !important;
-            background: #fff !important;
-            padding: 15px !important;
-        }
-        /* Tagify placeholder e layout */
-        .tagify {
-            width: 100%;
-            min-height: 38px;
-            background: #fff;
-            border-radius: 6px;
-            border: 1px solid #ced4da;
-        }
-        .tagify__input {
-            min-width: 200px;
-            color: #888;
-            opacity: 1;
-            padding: 6px 8px;
-        }
-        .tagify--focus .tagify__input::placeholder {
-            color: #bbb;
-            opacity: 1;
-        }
-        .tagify__input::placeholder {
-            color: #bbb;
-            opacity: 1;
-            text-align: center;
-        }
-    </style>
-@endpush
-
-@push('scripts')
-    <!-- jQuery (necessário para Select2) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Select2 -->
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <!-- Tagify -->
-    <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
-    <!-- Quill -->
-    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#autores').select2({
-                width: '100%',
-                placeholder: 'Selecione os autores',
-                allowClear: true
-            });
-        });
-        // Tagify
-        var input = document.querySelector('input[name=keywords]');
-        if(input) { new Tagify(input); }
-        // Quill com toolbar avançada
-        var quill = new Quill('#editor', {
-            theme: 'snow',
-            modules: {
-                toolbar: [
-                    [{ 'font': [] }, { 'size': [] }],
-                    ['bold', 'italic', 'underline', 'strike'],
-                    [{ 'color': [] }, { 'background': [] }],
-                    [{ 'script': 'sub'}, { 'script': 'super' }],
-                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                    ['blockquote', 'code-block'],
-                    [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'indent': '-1'}, { 'indent': '+1' }],
-                    [{ 'direction': 'rtl' }, { 'align': [] }],
-                    ['link', 'image', 'video', 'formula'],
-                    ['clean']
-                ]
-            }
-        });
-        // Preencher o campo hidden ao submeter
-        $('#form-artigo').on('submit', function() {
-            $('#conteudo-hidden').val(quill.root.innerHTML);
-        });
     </script>
-@endpush
-<!-- Footer -->
+</body>
+</html>
 <footer class="footer bg-light py-2">
     <div class="container text-center">
         <p class="mb-0">&copy; 2024 The English Voice - Todos os direitos reservados</p>

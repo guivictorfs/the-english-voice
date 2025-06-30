@@ -17,6 +17,7 @@ use App\Models\User;
 use App\Models\ArticleReport;
 use Barryvdh\DomPDF\Facade\Pdf; // PDF facade
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class ArtigoController extends Controller
 {
@@ -269,19 +270,21 @@ return view('artigos.show', compact('article', 'notaUsuario', 'jaDenunciou'));
 
         // Processa keywords
         if ($keywordsInput) {
-            if (is_array($keywordsInput)) {
-                $keywordsArr = $keywordsInput;
-            } else {
+            // Se for JSON, decodifica
+            if (is_string($keywordsInput) && strpos($keywordsInput, '[') === 0) {
                 $decoded = json_decode($keywordsInput, true);
                 if (is_array($decoded)) {
-                    foreach ($decoded as $kw) {
-                        if (is_array($kw) && isset($kw['value'])) $keywordsArr[] = trim($kw['value']);
-                        elseif (is_string($kw)) $keywordsArr[] = trim($kw);
-                    }
-                } else {
-                    $keywordsArr = array_map('trim', explode(',', $keywordsInput));
+                    $keywordsArr = array_map('trim', $decoded);
                 }
+            } else {
+                // Se for string com vírgulas, separa
+                $keywordsArr = array_map('trim', explode(',', $keywordsInput));
             }
+
+            // Remove tags vazias
+            $keywordsArr = array_filter($keywordsArr, function($tag) {
+                return !empty($tag);
+            });
         }
 
         // Validação de palavras proibidas no título, conteúdo e keywords
