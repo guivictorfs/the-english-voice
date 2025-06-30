@@ -15,7 +15,7 @@ body::before {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(255, 252, 232, 0.493);  
+    background: rgba(245, 237, 125, 0.212);  
     pointer-events: none;
     z-index: -1;
 }
@@ -96,6 +96,29 @@ h1 {
     background-color: #f8f9fa;
     border-radius: 1em;
     text-align: center;
+}
+
+.admin-panel-main {
+    margin-top: 60px !important;
+    margin-bottom: 200px !important;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    min-height: 75vh;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.14);
+}
+
+@media (min-width: 992px) {
+  .flex-grow-1 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
+footer.footer {
+    margin-top: 40px;
+    background: #f0f2f5;
+    border-top: 2px solid #e0e0e0;
 }
 
 .container-title {

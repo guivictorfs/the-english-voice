@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meus Artigos - The English Voice</title>
+    <title>Minha Conta - The English Voice</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     @vite('resources/css/welcome.css')
@@ -23,7 +23,7 @@
                         <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
                     </li>
                     <li class="nav-item underline">
-                        <a class="nav-link active" href="{{ route('students.account') }}">Meus Artigos</a>
+                        <a class="nav-link" href="{{ route('students.account') }}">Meus Artigos</a>
                     </li>
                     <li class="nav-item underline">
                         <a class="nav-link" href="{{ route('artigos.postar') }}">Postar Artigo</a>
@@ -35,7 +35,7 @@
                         <a class="nav-link" href="{{ route('help') }}">Ajuda</a>
                     </li>
                     <li class="nav-item underline">
-                        <a class="nav-link" href="{{ route('students.profile') }}">Conta</a>
+                        <a class="nav-link active" href="{{ route('students.profile') }}">Conta</a>
                     </li>
                     <li class="nav-item me-2">
                         <form class="d-flex align-items-center" method="GET" action="{{ route('dashboard') }}" style="gap:0.25rem;">
@@ -140,8 +140,8 @@
             <label class="form-label fs-5">Confirmar Nova Senha</label>
             <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" placeholder="Confirme a nova senha">
         </div>
-        <button type="submit" class="btn btn-primary">Salvar</button>
-        <a href="{{ route('students.account') }}" class="btn btn-secondary ms-2">Cancelar</a>
+        <a href="{{ route('dashboard') }}" class="btn btn-outline-danger me-5">Cancelar</a>
+        <button type="submit" class="btn btn-success">Salvar</button>
     </form>
 </div>
 
@@ -200,11 +200,23 @@ confirmPasswordField.addEventListener('input', () => {
 </script>
 @endpush
 
-    <footer class="footer mt-auto py-3 bg-light">
-        <div class="container text-center">
-            <span class="text-muted">&copy; {{ date('Y') }} The English Voice. Todos os direitos reservados.</span>
+<!-- Footer -->
+<footer class="footer bg-light py-2">
+    <div class="container text-center">
+        <p class="mb-0">&copy; 2024 The English Voice - Todos os direitos reservados</p>
+        <div class="social-icons mt-3">
+            <a href="https://www.linkedin.com/company/fatec-guaratinguetá/" target="_blank" class="social-link" aria-label="LinkedIn">
+                <i class="fab fa-linkedin fa-lg"></i>
+            </a>
+            <a href="https://www.instagram.com/fatecguaratingueta/" target="_blank" class="mx-2 social-link" aria-label="Instagram">
+                <i class="fab fa-instagram fa-lg"></i>
+            </a>
+            <a href="https://www.fatecguaratingueta.edu.br" target="_blank" class="social-link" aria-label="Fatec Guaratinguetá">
+                <i class="fas fa-globe fa-lg"></i>
+            </a>
         </div>
-    </footer>
+    </div>
+</footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

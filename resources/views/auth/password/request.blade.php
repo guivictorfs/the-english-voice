@@ -21,10 +21,13 @@
 
         <div class="row justify-content-center d-flex align-items-center">
             <!-- Coluna da Imagem -->
-            <div class="col-md-4 text-center me-5">
+            <div class="col-md-4 text-center">
                 <img src="{{ asset('img/forgot-password.svg') }}" alt="Recuperar senha" class="img-fluid" style="max-width: 100%;">
             </div>
-
+            <!-- HR vertical -->
+            <div class="d-none d-md-block" style="width:40px;">
+                <div class="vertical-hr mx-auto"></div>
+            </div>
             <!-- Coluna do Formulário -->
             <div class="col-md-6">
                 <form method="POST" action="{{ route('password.email') }}" class="p-4 shadow rounded">
@@ -48,8 +51,8 @@
 
                     <!-- Links para início e login -->
                     <div class="mt-4 text-center d-flex justify-content-center gap-2">
-                        <a href="{{ url('/') }}" class="btn btn-outline-secondary"><i class="fas fa-home me-1"></i> Início</a>
-                        <a href="{{ route('login') }}" class="btn btn-outline-primary"><i class="fas fa-sign-in-alt me-1"></i> Login</a>
+                        <a href="{{ url('/') }}" class="btn btn-outline-primary"><i class="fas fa-home me-1"></i> Início</a>
+                        <a href="{{ route('login') }}" class="btn btn-outline-success"><i class="fas fa-sign-in-alt me-1"></i> Login</a>
                     </div>
 
                 </form>

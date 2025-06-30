@@ -57,11 +57,43 @@ class UserController extends Controller
         // captura valores antes e identifica mudanças
         $before = $user->only(['name','email','role','ra','course_id']);
         $details = [];
+        $actionType = [];
         foreach ($data as $k => $v) {
+            if ($k === 'password') {
+                $details[] = 'Senha do usuário alterada';
+                $actionType[] = 'Alteração de Senha';
+                continue;
+            }
+            if ($k === 'profile_photo') {
+                $details[] = 'Foto de perfil alterada';
+                $actionType[] = 'Alteração de Foto';
+                continue;
+            }
             if (($before[$k] ?? null) != $v) {
-                $details[] = $k . ': "' . ($before[$k] ?? 'null') . '" -> "' . $v . '"';
+                switch($k) {
+                    case 'name':
+                        $details[] = 'Nome alterado de "' . ($before[$k] ?? 'null') . '" para "' . $v . '"';
+                        break;
+                    case 'email':
+                        $details[] = 'Email alterado de "' . ($before[$k] ?? 'null') . '" para "' . $v . '"';
+                        break;
+                    case 'role':
+                        $details[] = 'Função alterada de "' . ($before[$k] ?? 'null') . '" para "' . $v . '"';
+                        break;
+                    case 'ra':
+                        $details[] = 'RA alterado de "' . ($before[$k] ?? 'null') . '" para "' . $v . '"';
+                        break;
+                    case 'course_id':
+                        $details[] = 'Curso alterado de "' . ($before[$k] ?? 'null') . '" para "' . $v . '"';
+                        break;
+                    default:
+                        $details[] = ucfirst($k) . ' alterado de "' . ($before[$k] ?? 'null') . '" para "' . $v . '"';
+                }
+                $actionType[] = 'Alteração de Dados';
             }
         }
+        $actionType = array_unique($actionType);
+        $logAction = count($actionType) ? implode(' / ', $actionType) : 'Alteração';
 
         // se não houve alterações, não registra log
         if (empty($details)) {
@@ -74,7 +106,7 @@ class UserController extends Controller
         // registrar log
         DB::table('system_audit_log')->insert([
             'id' => auth()->id(),
-            'action' => 'Atualização',
+            'action' => $logAction,
             'table_name' => 'users',
             'record_id' => $user->id,
             'description' => implode('; ', $details),

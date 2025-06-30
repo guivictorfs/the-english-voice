@@ -58,7 +58,7 @@
         </div>
     </nav>
 
-    <div class="container mt-5">
+    <div class="container mt-5 p-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div class="d-flex align-items-center gap-3">
                 @php $photo = Auth::user()->profile_photo; @endphp
@@ -143,11 +143,23 @@
         @endif
     </div>
 
-    <footer class="footer mt-auto py-3 bg-light">
-        <div class="container text-center">
-            <span class="text-muted">&copy; {{ date('Y') }} The English Voice. Todos os direitos reservados.</span>
+<!-- Footer -->
+<footer class="footer bg-light py-2">
+    <div class="container text-center">
+        <p class="mb-0">&copy; 2024 The English Voice - Todos os direitos reservados</p>
+        <div class="social-icons mt-3">
+            <a href="https://www.linkedin.com/company/fatec-guaratinguetá/" target="_blank" class="social-link" aria-label="LinkedIn">
+                <i class="fab fa-linkedin fa-lg"></i>
+            </a>
+            <a href="https://www.instagram.com/fatecguaratingueta/" target="_blank" class="mx-2 social-link" aria-label="Instagram">
+                <i class="fab fa-instagram fa-lg"></i>
+            </a>
+            <a href="https://www.fatecguaratingueta.edu.br" target="_blank" class="social-link" aria-label="Fatec Guaratinguetá">
+                <i class="fas fa-globe fa-lg"></i>
+            </a>
         </div>
-    </footer>
+    </div>
+</footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -4,10 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meus Artigos - The English Voice</title>
+    <title>Postar Artigos - The English Voice</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     @vite('resources/css/welcome.css')
+    @vite('resources/css/artigo_postar.css')    
 </head>
 <body>
     <!-- Navbar -->
@@ -23,10 +24,10 @@
                         <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
                     </li>
                     <li class="nav-item underline">
-                        <a class="nav-link active" href="{{ route('students.account') }}">Meus Artigos</a>
+                        <a class="nav-link" href="{{ route('students.account') }}">Meus Artigos</a>
                     </li>
                     <li class="nav-item underline">
-                        <a class="nav-link" href="{{ route('artigos.postar') }}">Postar Artigo</a>
+                        <a class="nav-link active" href="{{ route('artigos.postar') }}">Postar Artigo</a>
                     </li>
                     <li class="nav-item underline">
                         <a class="nav-link" href="{{ route('articles.favorites') }}">Favoritos</a>
@@ -58,7 +59,7 @@
         </div>
     </nav>
 
-    <div class="container mt-5 mb-5 pb-4">
+    <div class="container mt-5 mb-5 p-4">
     {{-- Alertas --}}
     @if(session('success'))
         <div class="alert alert-success d-flex align-items-center" role="alert">
@@ -102,14 +103,14 @@
     {{-- Escolha entre escrever ou upload --}}
     <div class="row mb-4">
         <div class="col-md-6">
-            <div class="card card-option shadow-sm text-center p-4 border-primary" id="card-escrever">
+            <div class="card card-option-escrever shadow-sm text-center p-4 border-primary" id="card-escrever">
                 <i class="fas fa-pen-nib fa-2x text-primary mb-2"></i>
                 <h5>Escrever artigo</h5>
                 <p>Digite e formate seu texto diretamente no site</p>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="card card-option shadow-sm text-center p-4 border-success" id="card-upload">
+            <div class="card card-option-pdf shadow-sm text-center p-4 border-success" id="card-upload">
                 <i class="fas fa-file-upload fa-2x text-success mb-2"></i>
                 <h5>Enviar PDF</h5>
                 <p>Faça upload de um arquivo PDF já pronto</p>
@@ -124,7 +125,8 @@
 
         <div class="mb-3">
             <label for="titulo" class="form-label fs-4"><b>Título</b></label>
-            <input type="text" class="form-control" id="titulo" name="titulo" required>
+            <input type="text" class="form-control" id="titulo" name="titulo" placeholder="Digite um título descritivo para seu artigo" required>
+            <small class="form-text text-muted">O título deve ser claro e representativo do conteúdo do artigo.</small>
         </div>
 
         <div class="mb-4">
@@ -148,7 +150,7 @@
             <div id="editor-artigo" style="height: 300px;"></div>
             <input type="hidden" name="conteudo" id="conteudo-hidden">
         </div>
-        <div class="mt-2"><span id="char-count" class="text-muted">Caracteres: 0/50</span></div>
+        <div class="mt-2"><span id="char-count" class="text-muted">Caracteres: 0/250</span></div>
 
         <button type="submit" class="btn btn-primary" id="submit-artigo" disabled>Postar artigo</button>
     </form>
@@ -159,27 +161,31 @@
         <input type="hidden" name="tipo_formulario" value="pdf">
 
         <div class="mb-3">
-            <label for="titulo-pdf" class="form-label">Título</label>
-            <input type="text" class="form-control" id="titulo-pdf" name="titulo" required>
+            <label for="titulo-pdf" class="form-label fs-4"><b>Título</b></label>
+            <input type="text" class="form-control" id="titulo-pdf" name="titulo" placeholder="Digite um título descritivo para seu artigo" required>
+            <small class="form-text text-muted">O título deve ser claro e representativo do conteúdo do artigo.</small>
         </div>
 
-        <div class="mb-3">
-            <label for="autores-pdf" class="form-label">Autores</label>
-            <select id="autores-pdf" name="autores[]" class="form-control" multiple required>
+        <div class="mb-4">
+            <label for="autores-pdf" class="form-label fs-4"><b>Autores</b></label>
+            <select id="autores-pdf" name="autores[]" class="form-control" multiple required style="width:100%">
                 @foreach(App\Models\User::orderBy('name')->get() as $user)
                     <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->role }})</option>
                 @endforeach
             </select>
+            <small class="form-text text-muted">Selecione um ou mais autores. Clique no campo para buscar e adicione todos que participaram do artigo.</small>
         </div>
 
         <div class="mb-3">
-            <label for="keywords-pdf" class="form-label">Keywords</label>
-            <input name="keywords" id="keywords-pdf" class="form-control" placeholder="Digite e pressione Enter ou vírgula">
+            <label for="keywords-pdf" class="form-label fs-4"><b>Keywords</b></label>
+            <input name="keywords" id="keywords-pdf" class="form-control" placeholder="Ex: Grammar, Vocabulary, Reading, Writing, Speaking, Listening" value="{{ old('keywords') }}">
+            <small class="form-text text-muted">Digite uma palavra-chave e pressione <b>Enter</b> ou <b>vírgula</b> para adicionar.</small>
         </div>
 
         <div class="mb-3">
-            <label for="pdf" class="form-label">Arquivo PDF</label>
+            <label for="pdf" class="form-label fs-4"><b>Arquivo PDF</b></label>
             <input type="file" class="form-control" id="pdf" name="pdf" accept="application/pdf" required>
+            <small class="form-text text-muted">Selecione um arquivo PDF com seu artigo pronto para publicação.</small>
         </div>
 
         <button type="submit" class="btn btn-primary">Enviar PDF</button>
@@ -233,8 +239,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var submitBtn = document.getElementById('submit-artigo');
     function updateCharCount() {
         var chars = quill.getText().replace(/\s/g, '').length;
-        charCount.textContent = `Caracteres: ${chars}/50`;
-        submitBtn.disabled = chars < 50;
+        charCount.textContent = `Caracteres: ${chars}/250`;
+        submitBtn.disabled = chars < 250;
     }
     quill.on('text-change', updateCharCount);
     updateCharCount();
@@ -276,51 +282,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-
-<style>
-    .card-option { transition: box-shadow .2s, border .2s; cursor:pointer; }
-    .card-option:hover, .card-option.border-3 { box-shadow: 0 0 0 4px #0d6efd22; border-width:3px!important; }
-
-    /* SELECT2 - Melhor visual para múltiplos autores */
-    .select2-container--bootstrap4 .select2-selection--multiple {
-        min-height: 46px;
-        padding: 0.5rem 0.75rem;
-        border: 1px solid #ced4da;
-        border-radius: 0.375rem;
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        background-color: #fff;
-    }
-
-    .select2-container--bootstrap4 .select2-selection--multiple .select2-selection__rendered {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.35rem;
-    }
-
-    .select2-container--bootstrap4 .select2-selection--multiple .select2-selection__choice {
-        background-color: #e9f5ff;
-        border-color: #b6e0fe;
-        color: #007bff;
-        padding: 0.25rem 0.5rem;
-        font-size: 0.875rem;
-        border-radius: 0.25rem;
-    }
-
-    .select2-container--bootstrap4 .select2-selection--multiple .select2-selection__choice__remove {
-        margin-left: 0.4rem;
-        color: #007bff;
-        font-weight: bold;
-        cursor: pointer;
-    }
-
-    .select2-container--bootstrap4 .select2-search--inline .select2-search__field {
-        width: auto !important;
-        min-width: 120px !important;
-        margin: 0;
-    }
-</style>
 @push('styles')
     <!-- Select2 -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -405,12 +366,23 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     </script>
 @endpush
-
-    <footer class="footer mt-auto py-3 bg-light">
-        <div class="container text-center">
-            <span class="text-muted">&copy; {{ date('Y') }} The English Voice. Todos os direitos reservados.</span>
+<!-- Footer -->
+<footer class="footer bg-light py-2">
+    <div class="container text-center">
+        <p class="mb-0">&copy; 2024 The English Voice - Todos os direitos reservados</p>
+        <div class="social-icons mt-3">
+            <a href="https://www.linkedin.com/company/fatec-guaratinguetá/" target="_blank" class="social-link" aria-label="LinkedIn">
+                <i class="fab fa-linkedin fa-lg"></i>
+            </a>
+            <a href="https://www.instagram.com/fatecguaratingueta/" target="_blank" class="mx-2 social-link" aria-label="Instagram">
+                <i class="fab fa-instagram fa-lg"></i>
+            </a>
+            <a href="https://www.fatecguaratingueta.edu.br" target="_blank" class="social-link" aria-label="Fatec Guaratinguetá">
+                <i class="fas fa-globe fa-lg"></i>
+            </a>
         </div>
-    </footer>
+    </div>
+</footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

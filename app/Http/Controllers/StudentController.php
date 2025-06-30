@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -81,9 +82,18 @@ DB::raw('(SELECT ROUND(AVG(rating),1) FROM vote WHERE vote.article_id = article.
             $path = $request->file('photo')->store('profile_photos', 'public');
             // opcional: deletar foto antiga
             if ($user->profile_photo) {
-                \Storage::disk('public')->delete($user->profile_photo);
+                Storage::disk('public')->delete($user->profile_photo);
             }
             $data['profile_photo'] = $path;
+            // Log no sistema de auditoria geral
+            DB::table('system_audit_log')->insert([
+                'id' => $user->id,
+                'action' => 'Alteração de Foto',
+                'table_name' => 'users',
+                'record_id' => $user->id,
+                'description' => 'Foto de perfil alterada',
+                'created_at' => now()
+            ]);
         }
         if ($request->filled('password')) {
             $data['password'] = bcrypt($request->password);

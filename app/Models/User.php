@@ -46,6 +46,23 @@ class User extends Authenticatable
     }
 
     /**
+     * Retorna a cor do badge baseado no role
+     *
+     * @return string
+     */
+    public function getBadgeColor()
+    {
+        switch ($this->role) {
+            case 'Admin':
+                return 'bg-danger';
+            case 'Professor':
+                return 'bg-warning';
+            default:
+                return 'bg-success';
+        }
+    }
+
+    /**
      * Artigos favoritados pelo usuário
      */
     public function favorites()

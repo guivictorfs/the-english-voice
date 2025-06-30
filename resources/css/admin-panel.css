@@ -1,0 +1,6 @@
+.card-hover:hover {
+    cursor: pointer;
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 12px 32px 0 rgba(32,118,211,0.13);
+    border-color: #94c2ff;
+}

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Article;
 use App\Models\ArticleReport;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class AdminPanelController extends Controller
 {
@@ -61,7 +62,7 @@ class AdminPanelController extends Controller
     {
         $query = DB::table('system_audit_log as l')
             ->leftJoin('users as u', 'u.id', '=', 'l.id')
-            ->select('l.*', 'u.name as performed_by')
+            ->select('l.*', 'u.name as performed_by', 'u.email as email')
             ->orderByDesc('l.created_at');
 
         // Filtros
@@ -72,10 +73,18 @@ class AdminPanelController extends Controller
             $query->whereDate('l.created_at', '<=', $request->end_date);
         }
         if ($request->filled('action')) {
-            $query->where('l.action', 'like', "%{$request->action}%");
+            $action = $request->action;
+            $query->where(function($q) use ($action) {
+                $q->where('l.action', 'like', "%{$action}%")
+                  ->orWhere('l.description', 'like', "%{$action}%");
+            });
         }
         if ($request->filled('user')) {
-            $query->where('u.name', 'like', "%{$request->user}%");
+            $user = $request->user;
+            $query->where(function($q) use ($user) {
+                $q->where('u.name', 'like', "%{$user}%")
+                  ->orWhere('u.email', 'like', "%{$user}%");
+            });
         }
 
         $logs = $query->paginate(20)->withQueryString();

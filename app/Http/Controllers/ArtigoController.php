@@ -19,6 +19,51 @@ use Illuminate\Support\Str;
 class ArtigoController extends Controller
 {
     /**
+     * Exibe a lista de artigos favoritos com filtros
+     */
+    public function favorites()
+    {
+        $user = auth()->user();
+        
+        $query = Article::with(['authors', 'keywords'])
+            ->whereHas('favorites', function($q) use ($user) {
+                $q->where('user_id', $user->id);
+            });
+
+        // Filtro por título ou conteúdo
+        if (request('q')) {
+            $searchTerm = request('q');
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('title', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('content', 'like', '%' . $searchTerm . '%');
+            });
+        }
+
+        // Filtro por tags
+        if (request('tags')) {
+            $tags = request('tags');
+            if (is_string($tags)) {
+                $tags = [$tags];
+            }
+            $query->whereHas('keywords', function($q) use ($tags) {
+                $q->whereIn('keyword', $tags);
+            });
+        }
+
+        // Filtro por autor
+        if (request('author')) {
+            $author = request('author');
+            $query->whereHas('authors', function($q) use ($author) {
+                $q->where('name', 'like', '%' . $author . '%');
+            });
+        }
+
+        $favorites = $query->paginate(10);
+
+        return view('favorites.index', compact('favorites'));
+    }
+
+    /**
      * Exibe um artigo individual
      */
     public function show($article_id)

@@ -1,11 +1,63 @@
-@extends('layouts.app')
-@php use Illuminate\Support\Str; use Illuminate\Support\Facades\DB; @endphp
+<!DOCTYPE html>
+<html lang="pt-br">
+@php use Illuminate\Support\Facades\DB; use Illuminate\Support\Str; use Carbon\Carbon; use Illuminate\Support\Facades\Auth; @endphp
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artigos Denunciados - The English Voice</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    @vite('resources/css/welcome.css')
+</head>
+<body class="d-flex flex-column min-vh-100">
 
-@section('title', 'Revisar Artigos Denunciados - The English Voice')
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm pb-3 pt-3">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-primary" href="#">The English Voice</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('admin.panel') }}">Painel</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('admin.users.index') }}">Usuários</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ route('admin.artigos.pendentes') }}">Denúncias</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url('/admin/courses') }}">Cursos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('keywords.index') }}">Tags</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('forbidden_words.index') }}">Palavras Proibidas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('admin.logs.index') }}">Logs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-danger ms-2" href="{{ route('logout') }}">Sair</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-@section('content')
-    <div class="container mt-5">
-        <h2 class="mb-4"><i class="fas fa-flag"></i> Artigos Denunciados para Revisão</h2>
+    <div class="container mt-4 p-4">
+        <div class="d-flex align-items-center mb-4">
+            <div class="flex-shrink-0">
+                <a href="{{ route('admin.panel') }}" class="btn btn-outline-primary"><i class="fas fa-arrow-left me-1"></i>Voltar ao Painel</a>
+            </div>
+            <div class="flex-grow-1 text-center">
+                <h2><i class="fas fa-flag me-2"></i>Artigos Denunciados para Revisão</h2>
+            </div>
+        </div>
         @if(session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
@@ -59,6 +111,9 @@
                             </div>
                             <div>
                                 <a href="{{ route('artigos.edit', $article->article_id) }}" class="btn btn-primary btn-sm me-1"><i class="fas fa-edit"></i> Editar</a>
+                                <a href="{{ route('artigos.visualizar', $article->article_id) }}" class="btn btn-outline-info btn-sm me-1" target="_blank" title="Visualizar Artigo">
+                                    <i class="fas fa-eye"></i>
+                                </a>
                                 <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalAprovar-{{ $article->article_id }}">
                                     <i class="fas fa-check"></i> Aprovar
                                 </button>
@@ -75,7 +130,7 @@
                                                 Tem certeza que deseja aprovar e republicar este artigo?
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Cancelar</button>
                                                 <form action="{{ route('admin.artigos.aprovar', $article->article_id) }}" method="POST" class="d-inline m-0 p-0">
                                                     @csrf
                                                     <button type="submit" class="btn btn-success">Aprovar e republicar</button>
@@ -84,7 +139,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalExcluir-{{ $article->article_id }}">
+                                <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalExcluir-{{ $article->article_id }}">
                                     <i class="fas fa-trash"></i> Excluir
                                 </button>
                                 <!-- Modal de confirmação -->
@@ -100,7 +155,7 @@
                                                 Tem certeza que deseja excluir este artigo para sempre?
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Cancelar</button>
                                                 <form action="{{ route('admin.artigos.excluir', $article->article_id) }}" method="POST" class="d-inline m-0 p-0">
                                                     @csrf
                                                     @method('DELETE')
@@ -126,7 +181,7 @@
                                     <div class="mb-2">
                                         <strong>Arquivo PDF:</strong>
                                         <a href="{{ asset('storage/' . $file->file_path) }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                            Abrir PDF
+                                            <i class="fas fa-eye me-1"></i>Abrir PDF
                                         </a>
                                     </div>
                                 @else
@@ -144,126 +199,22 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-@endsection
-
-@section('content')
-<div class="container mt-5">
-    <h2 class="mb-4"><i class="fas fa-flag"></i> Artigos Denunciados para Revisão</h2>
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+    <!-- Footer -->
+    <footer class="footer bg-light py-2 mt-auto">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2024 The English Voice - Todos os direitos reservados</p>
+            <div class="social-icons mt-3">
+                <a href="https://www.linkedin.com/company/fatec-guaratinguetá/" target="_blank" class="social-link" aria-label="LinkedIn">
+                    <i class="fab fa-linkedin fa-lg"></i>
+                </a>
+                <a href="https://www.instagram.com/fatecguaratingueta/" target="_blank" class="mx-2 social-link" aria-label="Instagram">
+                    <i class="fab fa-instagram fa-lg"></i>
+                </a>
+                <a href="https://www.fatecguaratingueta.edu.br" target="_blank" class="social-link" aria-label="Fatec Guaratinguetá">
+                    <i class="fas fa-globe fa-lg"></i>
+                </a>
+            </div>
         </div>
-    @endif
-    @if($errors->any())
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-triangle me-2"></i>
-            @foreach($errors->all() as $error)
-                {{ $error }}<br>
-            @endforeach
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-        </div>
-    @endif
-
-    @if($articles->count())
-        <div class="list-group">
-            @foreach($articles as $article)
-                <div class="list-group-item mb-4">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5 class="mb-1">{{ $article->title }}</h5>
-                            <span class="badge bg-warning text-dark">{{ $article->denuncias }} denúncia{{ $article->denuncias > 1 ? 's' : '' }}</span>
-                        </div>
-                        <div>
-                            <form method="POST" action="{{ route('admin.artigos.aprovar', $article->article_id) }}" class="d-inline">
-                                @csrf
-                                <button type="submit" class="btn btn-success btn-sm" title="Aprovar"><i class="fas fa-check"></i> Aprovar</button>
-                            </form>
-                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalExcluir-{{ $article->article_id }}" title="Excluir"><i class="fas fa-trash"></i> Excluir</button>
-<!-- Modal de confirmação -->
-<div class="modal fade" id="modalExcluir-{{ $article->article_id }}" tabindex="-1" aria-labelledby="modalExcluirLabel-{{ $article->article_id }}" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header bg-danger text-white">
-        <h5 class="modal-title" id="modalExcluirLabel-{{ $article->article_id }}">Excluir Artigo</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
-      </div>
-      <div class="modal-body">
-        <strong>ATENÇÃO:</strong> Esta ação é <span class="text-danger">permanente e irreversível</span>.<br>
-        Tem certeza que deseja excluir este artigo para sempre?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <form action="{{ route('admin.artigos.excluir', $article->article_id) }}" method="POST" class="d-inline m-0 p-0">
-            @csrf
-            @method('DELETE')
-            <button type="submit" class="btn btn-danger">Excluir definitivamente</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-                        </div>
-                    </div>
-                    <p class="mb-1 text-muted">
-                        Por
-                        @if($article->authors && $article->authors->count())
-                            {{ $article->authors->pluck('name')->join(', ') }}
-                        @else
-                            Autor desconhecido
-                        @endif
-                        em {{ $article->created_at->setTimezone('America/Sao_Paulo')->format('d/m/Y H:i') }}
-                    </p>
-                    @if(isset($article->content) && $article->content !== null && trim($article->content) !== '')
-                        <div class="mb-2">{!! Str::limit($article->content, 400) !!}</div>
-                    @else
-                        @php
-                            $file = DB::table('file_upload')
-                                ->where('article_id', $article->article_id)
-                                ->orderByDesc('created_at')
-                                ->first();
-                        @endphp
-                        @if($file)
-                            <div class="mb-2">
-                                <strong>Arquivo PDF:</strong>
-                                <a href="{{ asset('storage/' . $file->file_path) }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                    Abrir PDF
-                                </a>
-                            </div>
-                            <iframe 
-                                src="{{ asset('storage/' . $file->file_path) }}" 
-                                width="100%" 
-                                height="400px" 
-                                style="border:1px solid #ccc;">
-                            </iframe>
-                        @else
-                            <div class="text-muted">Nenhum arquivo disponível.</div>
-                        @endif
-                    @endif
-
-                    <!-- Avaliação por estrelas -->
-                    <x-avaliacao-estrelas :artigo="$article" />
-
-                    {{-- Lista de denúncias --}}
-                    @if(isset($reports[$article->article_id]) && $reports[$article->article_id]->count())
-                        <div class="mt-3">
-                            <strong>Denúncias recebidas:</strong>
-                            <ul class="list-group list-group-flush">
-                                @foreach($reports[$article->article_id] as $report)
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <span><i class="fas fa-user"></i> {{ $report->user ? $report->user->name : 'Aluno desconhecido' }}</span>
-                                        <span class="ms-3"><i class="fas fa-comment"></i> {{ $report->motivo }}</span>
-                                        <span class="text-muted small">{{ $report->created_at->setTimezone('America/Sao_Paulo')->format('d/m/Y H:i') }}</span>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-                </div>
-            @endforeach
-        </div>
-    @else
-        <div class="alert alert-info">Nenhum artigo pendente de revisão.</div>
-    @endif
-</div>
-@endsection
+    </footer>
+</body>
+</html>

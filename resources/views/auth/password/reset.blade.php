@@ -21,10 +21,13 @@
 
         <div class="row justify-content-center d-flex align-items-center">
             <!-- Coluna da Imagem -->
-            <div class="col-md-4 text-center me-5">
+            <div class="col-md-4 text-center">
                 <img src="{{ asset('img/reset-password.svg') }}" alt="Redefinir senha" class="img-fluid" style="max-width: 100%;">
             </div>
-
+            <!-- HR vertical -->
+            <div class="d-none d-md-block" style="width:40px;">
+                <div class="vertical-hr mx-auto"></div>
+            </div>
             <!-- Coluna do Formulário -->
             <div class="col-md-6">
                 <form method="POST" action="{{ route('password.update') }}" class="p-4 shadow rounded">

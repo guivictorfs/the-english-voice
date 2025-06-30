@@ -69,7 +69,7 @@
     <div class="container mb-3">
         <div class="container container-title text-center my-3">
             <h1 class="display-2 mb-4">Bem-vindo ao <br><span id="typing-effect"></span></h1>
-            <p class="lead mb-5">Seu portal para o aprendizado de línguas!</p>
+            <p class="lead mb-5">Seu portal para o aprendizado de inglês!</p>
         </div>
         <div class="text-center pb-2">
             <img src="{{ asset('/IMG/happy-announcement.svg') }}" alt="Acessar conta" class="img-fluid img-svg">

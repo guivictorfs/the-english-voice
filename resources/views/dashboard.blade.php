@@ -9,51 +9,81 @@
     @vite('resources/css/welcome.css')
     {{-- @vite('resources/js/app.js') Removido para evitar erro de JS quebrado no dashboard --}}
 </head>
+@php use Illuminate\Support\Facades\Auth; @endphp
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm pb-3 pt-3">
+    @php $role = strtolower(Auth::user()->role ?? ''); @endphp
         <div class="container">
             <a class="navbar-brand fw-bold text-primary" href="#">The English Voice</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item underline">
-                        <a class="nav-link active" href="{{ route('dashboard') }}">Dashboard</a>
-                    </li>
-                    <li class="nav-item underline">
-                        <a class="nav-link" href="{{ route('students.account') }}">Meus Artigos</a>
-                    </li>
-                    <li class="nav-item underline">
-                        <a class="nav-link" href="{{ route('artigos.postar') }}">Postar Artigo</a>
-                    </li>
-                    <li class="nav-item underline">
-                        <a class="nav-link" href="{{ route('articles.favorites') }}">Favoritos</a>
-                    </li>
-                    <li class="nav-item underline">
-                        <a class="nav-link" href="{{ route('students.profile') }}">Conta</a>
-                    </li>
-                    <li class="nav-item underline">
-                        <a class="nav-link" href="{{ route('help') }}">Ajuda</a>
-                    </li>
-                    <li class="nav-item me-2">
-                        <form class="d-flex align-items-center" method="GET" action="{{ route('dashboard') }}" style="gap:0.25rem;">
-                            <input class="form-control form-control-sm me-2" type="search" name="q" placeholder="Pesquisar artigos..." aria-label="Pesquisar" value="{{ request('q') }}" style="min-width: 180px;">
-                            <button class="btn btn-sm btn-outline-primary" type="submit"><i class="fas fa-search"></i></button>
-                            @if(request('q'))
-                                @php
-                                    $query = request()->except('q');
-                                    $url = route('dashboard') . ($query ? ('?' . http_build_query($query)) : '');
-                                @endphp
-                                <a href="{{ $url }}" class="btn btn-sm btn-outline-danger ms-1" title="Limpar pesquisa"><i class="fas fa-times"></i></a>
-                            @endif
-                        </form>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn btn-outline-danger ms-2" href="{{ route('logout') }}">Sair</a>
-                    </li>
-                </ul>
+    @if($role === 'admin')
+        <ul class="navbar-nav ms-auto align-items-center">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.panel') }}">Painel</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.users.index') }}">Usuários</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.artigos.pendentes') }}">Denúncias</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url('/admin/courses') }}">Cursos</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('keywords.index') }}">Tags</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('forbidden_words.index') }}">Palavras Proibidas</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.logs.index') }}">Logs</a>
+            </li>
+        </ul>
+    @else
+        <ul class="navbar-nav ms-auto align-items-center">
+            <li class="nav-item underline">
+                <a class="nav-link active" href="{{ route('dashboard') }}">Dashboard</a>
+            </li>
+            <li class="nav-item underline">
+                <a class="nav-link" href="{{ route('students.account') }}">Meus Artigos</a>
+            </li>
+            <li class="nav-item underline">
+                <a class="nav-link" href="{{ route('artigos.postar') }}">Postar Artigo</a>
+            </li>
+            <li class="nav-item underline">
+                <a class="nav-link" href="{{ route('articles.favorites') }}">Favoritos</a>
+            </li>
+            <li class="nav-item underline">
+                <a class="nav-link" href="{{ route('help') }}">Ajuda</a>
+            </li>
+            <li class="nav-item underline">
+                <a class="nav-link" href="{{ route('students.profile') }}">Conta</a>
+            </li>
+        </ul>
+    @endif
+    <ul class="navbar-nav ms-auto align-items-center">
+        <li class="nav-item me-2">
+            <form class="d-flex align-items-center" method="GET" action="{{ route('dashboard') }}" style="gap:0.25rem;">
+                <input class="form-control form-control-sm me-2" type="search" name="q" placeholder="Pesquisar artigos..." aria-label="Pesquisar" value="{{ request('q') }}" style="min-width: 180px;">
+                <button class="btn btn-sm btn-outline-primary" type="submit"><i class="fas fa-search"></i></button>
+                @if(request('q'))
+                    @php
+                        $query = request()->except('q');
+                        $url = route('dashboard') . ($query ? ('?' . http_build_query($query)) : '');
+                    @endphp
+                    <a href="{{ $url }}" class="btn btn-sm btn-outline-danger ms-1" title="Limpar pesquisa"><i class="fas fa-times"></i></a>
+                @endif
+            </form>
+        </li>
+        <li class="nav-item">
+            <a class="btn btn-outline-danger ms-2" href="{{ route('logout') }}">Sair</a>
+        </li>
+    </ul>
             </div>
         </div>
     </nav>
@@ -67,11 +97,11 @@
 
     <!-- Conteúdo principal -->
     <div class="container mt-5 mb-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <h2 class="mb-2 mt-3"><i class="fas fa-book-open"></i> Artigos Postados</h2>
+        <div class="row justify-content-center pt-4">
+            <div class="col-lg-10 col-xl-8">
+                <h2 class="mb-4 mt-3"><i class="fas fa-book-open"></i> Artigos Postados</h2>
 
-<!-- Tags selecionadas (acima da lista) -->
+                <!-- Tags selecionadas (acima da lista) -->
 @php
     $selectedTags = request('tags');
     if (is_string($selectedTags)) {
@@ -97,10 +127,13 @@
         </a>
     </div>
 @endif
-<!-- Botão para abrir modal de filtro -->
-<div class="mb-4">
+<!-- Botões de ação -->
+<div class="mb-4 d-flex justify-content-start gap-2">
+    <a href="{{ route('artigos.melhores') }}" class="btn btn-outline-warning" title="Ver ranking de melhores artigos">
+        <i class="fas fa-trophy me-1"></i> Ver Ranking
+    </a>
     <button class="btn btn-outline-primary d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#modalFiltroTags">
-        <i class="fas fa-tags me-2"></i> Filtrar
+        <i class="fas fa-filter me-2"></i> Filtrar
     </button>
 </div>
 <!-- Modal de filtro de tags -->
@@ -238,19 +271,23 @@ document.addEventListener('DOMContentLoaded', function() {
         $isProfessorOrAdmin = in_array(auth()->user()->role, ['Professor', 'Admin']);
     @endphp
     <div class="ms-2 d-flex align-items-center gap-1">
+        <!-- Botão Visualizar Artigo -->
+        <a href="{{ route('artigos.visualizar', $article->article_id) }}" class="btn btn-sm btn-outline-info me-1" target="_blank" title="Visualizar artigo">
+            <i class="fas fa-eye"></i>
+        </a>
         <!-- Botão de Favoritar -->
         @if($isFavorited)
     <form action="{{ route('articles.unfavorite', $article->article_id) }}" method="POST" class="form-favorito d-inline" data-artigo="{{ $article->article_id }}">
         @csrf
         @method('DELETE')
-        <button type="submit" class="btn btn-sm btn-outline-warning px-2 py-1" title="Remover dos favoritos">
+        <button type="submit" class="btn btn-sm btn-outline-warning px-2 py-1 favorito-btn" title="Remover dos favoritos">
             <i class="fas fa-star text-warning"></i>
         </button>
     </form>
 @else
     <form action="{{ route('articles.favorite', $article->article_id) }}" method="POST" class="form-favorito d-inline" data-artigo="{{ $article->article_id }}">
         @csrf
-        <button type="submit" class="btn btn-sm btn-outline-warning px-2 py-1" title="Salvar nos favoritos">
+        <button type="submit" class="btn btn-sm btn-outline-warning px-2 py-1 favorito-btn" title="Salvar nos favoritos">
             <i class="far fa-star"></i>
         </button>
     </form>
