@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
+// Ou usar o facade diretamente com \Log::
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use App\Models\Article;
 use Smalot\PdfParser\Parser;
 use App\Models\ForbiddenWord;
@@ -101,6 +103,18 @@ return view('artigos.show', compact('article', 'notaUsuario', 'jaDenunciou'));
         $isAuthor = $article->authors->contains('id', $user->id);
         $isProfessorOrAdmin = in_array($user->role, ['Professor', 'Admin']);
         if (!$isAuthor && !$isProfessorOrAdmin) abort(403);
+        
+        // Verifica se é um artigo PDF
+        $pdf = DB::table('file_upload')
+            ->where('article_id', $article->article_id)
+            ->orderByDesc('created_at')
+            ->first();
+        
+        if ($pdf && $pdf->file_path) {
+            $article->is_pdf = true;
+            $article->pdf_path = $pdf->file_path;
+        }
+        
         return view('artigos.edit', compact('article'));
     }
 
@@ -134,7 +148,64 @@ return view('artigos.show', compact('article', 'notaUsuario', 'jaDenunciou'));
             return back()->withErrors(['O artigo contém palavras proibidas: ' . implode(', ', $foundWords)])->withInput();
         }
 
+        // Atualiza o título e conteúdo primeiro
         $article->update($validated);
+
+        // Debug - log das palavras-chave recebidas
+        \Illuminate\Support\Facades\Log::info('Palavras-chave recebidas:', [$request->input('keywords')]);
+
+        // Trata as palavras-chave
+        $keywordsRaw = $request->input('keywords'); // deve ser uma string: "tag1, tag2, tag3"
+
+        if ($keywordsRaw) {
+            // Separa e limpa as tags
+            $keywords = explode(',', $keywordsRaw);
+            $keywords = array_map('trim', $keywords);
+            $keywords = array_filter($keywords, function($tag) {
+                return !empty($tag);
+            });
+
+            // Validação de palavras proibidas nas tags
+            $forbiddenWords = \App\Models\ForbiddenWord::pluck('word')->toArray();
+            $foundForbidden = [];
+            
+            foreach ($keywords as $tag) {
+                foreach ($forbiddenWords as $fw) {
+                    if (stripos($tag, $fw) !== false) {
+                        $foundForbidden[] = $fw;
+                    }
+                }
+            }
+
+            if (!empty($foundForbidden)) {
+                return back()->withErrors(['As tags contêm palavras proibidas: ' . implode(', ', $foundForbidden)])->withInput();
+            }
+
+            // Cria/Recupera as tags e coleta os IDs
+            $keywordIds = [];
+            foreach ($keywords as $keywordName) {
+                if (!empty($keywordName)) {
+                    $keyword = \App\Models\Keyword::firstOrCreate(['name' => $keywordName]);
+                    $keywordIds[] = $keyword->getKey(); // Usa getKey() para pegar a chave primária correta
+                }
+            }
+
+            // Remove IDs vazios ou nulos
+            $keywordIds = array_filter($keywordIds, function($id) {
+                return !empty($id) && is_numeric($id);
+            });
+
+            // Sincroniza as tags apenas se tivermos IDs válidos
+            if (!empty($keywordIds)) {
+                $article->keywords()->sync($keywordIds);
+            } else {
+                // Se não houver tags válidas, limpa todas
+                $article->keywords()->detach();
+            }
+        } else {
+            // Se não houver tags válidas, limpa todas
+            $article->keywords()->detach();
+        }
 
         // Zera denúncias ao editar
         $article->denuncias = 0;

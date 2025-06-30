@@ -1,11 +1,3 @@
-body {
-    background: linear-gradient(120deg, #f8fafc 60%, #e9f3fb 100%);
-    font-family: 'Segoe UI', Arial, sans-serif;
-    color: #24324d;
-    margin: 0;
-    padding: 0;
-}
-
 .help-header {
     background: #fff;
     border-bottom: 2px solid #e3e7f0;

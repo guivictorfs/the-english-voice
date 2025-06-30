@@ -8,21 +8,51 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     @vite('resources/css/password-reset.css')
+    @vite('resources/css/welcome.css')
 </head>
 
 <body>
-    <div class="container">
-        <div class="text-center">
-            <img src="{{ asset('/img/logo-cps.png') }}" alt="The English Voice" class="img-fluid" style="max-width: 50em;">
-        </div>
-        <h1 class="text-center mb-4 mt-4">
-            <i class="fas fa-key text-primary"></i> Redefinir Senha
-        </h1>
+     <!-- Navbar -->
+     <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm pb-3 pt-3">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-primary" href="#">The English Voice</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item underline">
+                        <a class="nav-link active" href="#">Início</a>
+                    </li>
+                    <li class="nav-item underline">
+                        <a class="nav-link" href="#">Artigos</a>
+                    </li>
+                    <li class="nav-item underline">
+                        <a class="nav-link" href="#">Sobre</a>
+                    </li>
+                    <li class="nav-item underline">
+                        <a class="nav-link" href="#">Contato</a>
+                    </li>
 
+                    <!-- Se o usuário não estiver logado -->
+                    <li class="nav-item">
+                        <a class="btn btn-outline-primary ms-2" href="{{ route('login') }}">Entrar</a>
+                        <a class="btn btn-success ms-2" href="{{ route('register') }}">Criar Conta</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4 mb-4 p-4">
+        <h1 class="text-center mb-4 mt-4">
+            <i class="fas fa-lock-open text-primary"></i> Redefinir Senha
+        </h1>
+    <hr>
         <div class="row justify-content-center d-flex align-items-center">
             <!-- Coluna da Imagem -->
             <div class="col-md-4 text-center">
-                <img src="{{ asset('img/reset-password.svg') }}" alt="Redefinir senha" class="img-fluid" style="max-width: 100%;">
+                <img src="{{ asset('img/forgot-password.svg') }}" alt="Recuperar senha" class="img-fluid img-svg" style="max-width: 100%;">
             </div>
             <!-- HR vertical -->
             <div class="d-none d-md-block" style="width:40px;">
@@ -32,14 +62,12 @@
             <div class="col-md-6">
                 <form method="POST" action="{{ route('password.update') }}" class="p-4 shadow rounded">
                     @csrf
-                    
-                    <!-- Token -->
                     <input type="hidden" name="token" value="{{ $token }}">
-
+                    
                     <!-- Email -->
                     <div class="mb-3">
                         <label for="email" class="form-label"><i class="fas fa-envelope"></i> E-mail</label>
-                        <input type="email" name="email" id="email" class="form-control" placeholder="Digite seu e-mail" required value="{{ $email ?? old('email') }}">
+                        <input type="email" name="email" id="email" class="form-control" placeholder="Digite seu e-mail" required value="{{ old('email') }}">
                         @error('email')
                             <small class="text-danger">{{ $message }}</small>
                         @enderror
@@ -47,27 +75,11 @@
 
                     <!-- Nova Senha -->
                     <div class="mb-3">
-                        <label for="password" class="form-label">Nova Senha</label>
-                        <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password" autofocus>
+                        <label for="password" class="form-label"><i class="fas fa-lock"></i> Nova Senha</label>
+                        <input type="password" name="password" id="password" class="form-control" placeholder="Digite sua nova senha" required>
                         @error('password')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
+                            <small class="text-danger">{{ $message }}</small>
                         @enderror
-                        <!-- Medidor de força -->
-                        <div id="password-strength-container" class="d-none">
-                            <div class="progress mt-2">
-                                <div id="password-strength-meter" class="progress-bar" role="progressbar" style="width: 0%" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                            <small id="password-strength-text" class="form-text text-muted"></small>
-                            <ul class="mt-2">
-                                <li id="length" class="text-danger">Mínimo 8 caracteres</li>
-                                <li id="lowercase" class="text-danger">Letra minúscula</li>
-                                <li id="uppercase" class="text-danger">Letra maiúscula</li>
-                                <li id="number" class="text-danger">Número</li>
-                                <li id="special" class="text-danger">Caractere especial</li>
-                            </ul>
-                        </div>
                     </div>
 
                     <!-- Confirmar Senha -->
@@ -78,20 +90,27 @@
 
                     <!-- Botão de Redefinição -->
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary w-100" id="submitButton" disabled>
+                        <button type="submit" class="btn btn-primary btn-lg">
                             <i class="fas fa-sync-alt me-2"></i>Redefinir Senha
                         </button>
                     </div>
 
                     <!-- Links Adicionais -->
-                    <div class="text-center mt-3">
-                        <a href="{{ route('login') }}" class="text-decoration-none">
+                    <div class="mt-4 text-center d-flex justify-content-center gap-2">
+                        <a href="{{ url('/') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-home me-1"></i>Voltar ao início
+                        </a>
+                        <a href="{{ route('login') }}" class="btn btn-outline-success">
                             <i class="fas fa-sign-in-alt me-1"></i>Voltar para login
                         </a>
                     </div>
                 </form>
             </div>
+            <hr class = "mt-4">
         </div>
+        <div class="text-center">
+            <img src="{{ asset('/img/logo-cps.png') }}" alt="The English Voice" class="img-fluid logo" style="max-width: 50em;">
+    </div>
     </div>
 
     <!-- Mensagem de Sucesso -->
@@ -109,6 +128,24 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     @endif
+
+    <!-- Footer -->
+    <footer class="footer bg-light py-2 mt-auto">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2024 The English Voice - Todos os direitos reservados</p>
+            <div class="social-icons mt-3">
+                <a href="https://www.linkedin.com/company/fatec-guaratinguetá/" target="_blank" class="social-link" aria-label="LinkedIn">
+                    <i class="fab fa-linkedin fa-lg"></i>
+                </a>
+                <a href="https://www.instagram.com/fatecguaratingueta/" target="_blank" class="mx-2 social-link" aria-label="Instagram">
+                    <i class="fab fa-instagram fa-lg"></i>
+                </a>
+                <a href="https://www.fatecguaratingueta.edu.br" target="_blank" class="social-link" aria-label="Fatec Guaratinguetá">
+                    <i class="fas fa-globe fa-lg"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

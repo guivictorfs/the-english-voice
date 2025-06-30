@@ -152,12 +152,12 @@ a:hover {
 
 /* HR vertical entre imagem e formulário */
 .vertical-hr {
-    width: 2px;
-    height: 80%;
-    background: linear-gradient(to bottom, transparent, #007bff 60%, transparent);
+    width: 3px;
+    height: 750px;
+    background: linear-gradient(to bottom, transparent, #0d6efd, transparent);
     margin: 0 auto;
-    border-radius: 1em;
     display: block;
+    transition: all 0.3s ease;
 }
 
 @media (max-width: 767.98px) {
@@ -295,4 +295,27 @@ form {
     border-bottom: 2px solid #007bff;
     padding-bottom: 2px; 
     transition: color 0.3s ease;
+}
+
+
+.home-link {
+    color: #0d6efd;
+    transition: all 0.1s ease;
+}
+
+.home-link:hover {
+    color: #0b5ed7;
+    border-bottom: 1px solid #0d6efd;
+    padding-bottom: 1px;
+}
+
+.login-link {
+    color: #198754;
+    transition: all 0.1s ease;
+}
+
+.login-link:hover {
+    color: #157347;
+    border-bottom: 1px solid #198754;
+    padding-bottom: 1px;
 }

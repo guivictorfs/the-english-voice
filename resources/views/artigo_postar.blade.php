@@ -140,14 +140,16 @@
         </div>
 
         <div class="mb-3">
-            <label for="keywords" class="form-label fs-4"><b>Keywords</b></label>
+            <label for="keywords" class="form-label fs-4"><b>Tags</b></label>
             <input name="keywords" id="keywords" class="form-control" placeholder="Ex: Grammar, Vocabulary, Reading, Writing, Speaking, Listening" value="{{ old('keywords') }}">
             <small class="form-text text-muted">Digite uma palavra-chave e pressione <b>Enter</b> ou <b>vírgula</b> para adicionar.</small>
         </div>
 
         <div class="mb-3">
             <label for="editor" class="form-label fs-4"><b>Conteúdo</b></label>
-            <div id="editor-artigo" style="height: 300px;"></div>
+            <div class="editor-container">
+                <div id="editor-artigo" class="editor-container" style="height: 300px; background: #fff; border: 1px solid #ced4da; border-radius: 6px; padding: 15px;"></div>
+            </div>
             <input type="hidden" name="conteudo" id="conteudo-hidden">
         </div>
         <div class="mt-2"><span id="char-count" class="text-muted">Caracteres: 0/250</span></div>
@@ -290,11 +292,20 @@ document.addEventListener('DOMContentLoaded', function() {
     <!-- Quill -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <style>
-        .ql-toolbar {
-            background: #fff;
+        .ql-toolbar.ql-snow {
+            background: #fff !important;
+            border: 1px solid #ced4da !important;
+            border-radius: 6px !important;
+            padding: 15px !important;
+        }
+        .ql-container.ql-snow {
+            background: #fff !important;
+            border: 1px solid #ced4da !important;
         }
         .ql-editor {
-            background: #fff;
+            min-height: 300px !important;
+            background: #fff !important;
+            padding: 15px !important;
         }
         /* Tagify placeholder e layout */
         .tagify {

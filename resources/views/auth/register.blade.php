@@ -68,18 +68,20 @@
             <i class="fas fa-user-plus text-success"></i> Criar Conta
         </h1>
 
-        <div class="row justify-content-center align-items-center">
-            <!-- Coluna da imagem -->
-            <div class="col-md-4 text-center mb-4 mb-md-0">
-                <img src="{{ asset('IMG/access-account.svg') }}" alt="Acessar conta" class="img-fluid"
-                    style="max-width: 100%;">
+        <div class="row justify-content-center d-flex align-items-center">
+            <hr>
+            <!-- Coluna da Imagem -->
+            <div class="col-md-4 text-center me-5">
+                <img src="{{ asset('img/access-account.svg') }}" alt="Acessar conta" class="img-fluid img-svg" style="max-width: 100%;">
             </div>
-
-            <!-- Coluna do formulário -->
+            <!-- HR vertical -->
+            <div class="d-none d-md-block" style="width:40px;">
+                <div class="vertical-hr mx-auto"></div>
+            </div>
+            <!-- Coluna do Formulário -->
             <div class="col-md-6">
-                <form method="POST" action="{{ route('register') }}" class="p-4 shadow rounded bg-white" id="registerForm">
+                <form method="POST" action="{{ route('register') }}" class="p-4 shadow rounded" id="registerForm">
                     @csrf
-
                     <!-- Nome -->
                     <div class="mb-3">
                         <label for="name" class="form-label"><i class="fas fa-user"></i> Nome Completo</label>
@@ -170,21 +172,21 @@
                             <small class="text-danger">{{ $message }}</small>
                         @enderror
                     </div>
-
                     <!-- Botão -->
                     <div class="d-grid mb-3">
                         <button type="submit" class="btn btn-primary btn-lg" id="submitButton">
                             <i class="fas fa-check"></i> Cadastrar
                         </button>
                     </div>
-
+                    
                     <div class="text-center">
-                        <a href="{{ route('home') }}" class="btn btn-link"><i class="fas fa-home"></i> Voltar ao início</a>
-                        <a href="{{ route('login') }}" class="btn btn-link"><i class="fas fa-sign-in-alt"></i> Já possuo conta</a>
+                        <a href="{{ route('home') }}" class="text-primary text-decoration-none home-link me-2"><i class="fas fa-home"></i> Voltar ao início</a>
+                        <a href="{{ route('login') }}" class="text-success text-decoration-none login-link"><i class="fas fa-sign-in-alt"></i> Já possuo conta</a>
                     </div>
                 </form>
             </div>
         </div>
+        <hr>
         <div class="text-center pb-4">
             <img src="{{ asset('/IMG/logo-cps.png') }}" alt="Logotipo Centro Paula Souze" class="img-fluid img-logo">
         </div>

@@ -80,7 +80,10 @@
                 @endif
             </form>
         </li>
-    </ul>
+        <li class="nav-item">
+            <a class="btn btn-outline-danger ms-2" href="{{ route('logout') }}">Sair</a>
+        </li>
+        </ul>
             </div>
         </div>
     </nav>

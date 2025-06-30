@@ -429,12 +429,23 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer mt-auto py-3 bg-light border-top">
-        <div class="container text-center">
-            <span class="text-muted">&copy; {{ date('Y') }} The English Voice. Todos os direitos reservados.</span>
+<!-- Footer -->
+<footer class="footer bg-light py-2 mt-auto">
+    <div class="container text-center">
+        <p class="mb-0">&copy; 2024 The English Voice - Todos os direitos reservados</p>
+        <div class="social-icons mt-3">
+            <a href="https://www.linkedin.com/company/fatec-guaratinguetá/" target="_blank" class="social-link" aria-label="LinkedIn">
+                <i class="fab fa-linkedin fa-lg"></i>
+            </a>
+            <a href="https://www.instagram.com/fatecguaratingueta/" target="_blank" class="mx-2 social-link" aria-label="Instagram">
+                <i class="fab fa-instagram fa-lg"></i>
+            </a>
+            <a href="https://www.fatecguaratingueta.edu.br" target="_blank" class="social-link" aria-label="Fatec Guaratinguetá">
+                <i class="fas fa-globe fa-lg"></i>
+            </a>
         </div>
-    </footer>
+    </div>
+</footer>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

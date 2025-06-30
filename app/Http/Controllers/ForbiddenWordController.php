@@ -14,6 +14,25 @@ class ForbiddenWordController extends Controller
         return view('admin.forbidden_words', compact('words'));
     }
 
+    // Verifica se há palavras proibidas em um texto
+    public function check(Request $request)
+    {
+        $text = $request->input('text', '');
+        $words = ForbiddenWord::all();
+        $foundWords = [];
+
+        foreach ($words as $word) {
+            if (stripos($text, $word->word) !== false) {
+                $foundWords[] = $word->word;
+            }
+        }
+
+        return response()->json([
+            'hasForbiddenWords' => !empty($foundWords),
+            'forbiddenWords' => $foundWords
+        ]);
+    }
+
     // Adiciona nova palavra
     public function store(Request $request)
     {

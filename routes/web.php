@@ -19,6 +19,8 @@ Route::post('/avaliacao', [AvaliacaoController::class, 'store'])->name('avaliaca
 
 // API autocomplete keywords
 Route::get('/api/keywords', [KeywordController::class, 'index']);
+// Verifica palavras proibidas
+Route::post('/api/check-forbidden-words', [ForbiddenWordController::class, 'check'])->name('check.forbidden.words');
 
 // (Opcional) API autocomplete authors
 // Route::get('/api/authors', [AuthorController::class, 'index']);
