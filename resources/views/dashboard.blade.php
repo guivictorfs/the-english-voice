@@ -13,14 +13,14 @@
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm pb-3 pt-3">
-    @php $role = strtolower(Auth::user()->role ?? ''); @endphp
+    @php $role = Auth::user()->role ?? ''; @endphp
         <div class="container">
             <a class="navbar-brand fw-bold text-primary" href="#">The English Voice</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-    @if($role === 'admin')
+    @if($role === 'Admin')
         <ul class="navbar-nav ms-auto align-items-center">
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('admin.panel') }}">Painel</a>

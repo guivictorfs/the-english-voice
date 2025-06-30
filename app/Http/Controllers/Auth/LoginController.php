@@ -6,12 +6,19 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
 {
     public function showLoginForm()
     {
+        // Inicia a sessão se não estiver iniciada
+        if (!session()->isStarted()) {
+            session()->start();
+        }
+
         return view('auth.login');
     }
 
@@ -23,7 +30,16 @@ class LoginController extends Controller
         ]);
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->remember)) {
+            // Invalida todas as sessões antigas do usuário
+            DB::table('sessions')
+                ->where('user_id', Auth::id())
+                ->delete();
+
+            // Cria nova sessão
             $request->session()->regenerate();
+            
+            // Adiciona notificação de login bem-sucedido
+            $request->session()->flash('status', 'Login realizado com sucesso!');
 
             // Redireciona com base no role do usuário
             $user = Auth::user();

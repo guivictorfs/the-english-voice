@@ -63,6 +63,12 @@
         </div>
     </nav>
     <div class="container container-flex mt-4 mb-4 p-4">
+        @if(session()->has('warning'))
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i> {{ session()->get('warning') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+        </div>
+        @endif
         <h1 class="text-center mb-4 mt-4">
             <i class="fas fa-sign-in-alt text-primary"></i> Entrar
         </h1>
@@ -80,6 +86,14 @@
             <div class="col-md-6">
                 <form method="POST" action="{{ route('login') }}" class="p-4 shadow rounded">
                     @csrf
+                    
+                    <!-- Mensagem de Warning -->
+                @if($warning ?? false)
+                    <div class="alert alert-warning alert-dismissible fade show mb-3" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i> {{ $warning }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                    </div>
+                @endif
                     
                     <!-- Email -->
                     <div class="mb-3">

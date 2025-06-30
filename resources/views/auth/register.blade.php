@@ -94,7 +94,7 @@
 
                     <!-- E-mail -->
                     <div class="mb-3">
-                        <label for="email" class="form-label"><i class="fas fa-envelope"></i> E-mail</label>
+                        <label for="email" class="form-label"><i class="fas fa-envelope"></i> E-mail institucional</label>
                         <input type="email" name="email" id="email" class="form-control" placeholder="Digite seu e-mail"
                             required value="{{ old('email') }}">
                         @error('email')

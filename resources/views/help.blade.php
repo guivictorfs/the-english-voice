@@ -99,7 +99,7 @@ use Illuminate\Support\Facades\Auth;
         <div class="help-card">
             <span class="icon"><i class="fas fa-user-plus"></i></span>
             <h3>Cadastro e Login</h3>
-            <p>Para começar, cadastre-se no sistema usando seu e-mail e RA. Após o cadastro, faça login com suas credenciais para acessar o sistema.</p>
+            <p>Para começar, <a href="{{ route('register') }}" class="help-link">cadastre-se</a> no sistema usando seu e-mail institucional e RA. Após o cadastro, faça login com suas credenciais para acessar o sistema.</p>
         </div>
 
         <div class="help-card">
@@ -130,7 +130,7 @@ use Illuminate\Support\Facades\Auth;
         <div class="help-card">
             <span class="icon"><i class="fas fa-book-reader"></i></span>
             <h3>Palavras-Chave e Tags</h3>
-            <p>Utilize palavras-chave relevantes para facilitar a busca de seus artigos. Você pode gerenciar suas palavras-chave em seu <a href="{{ route('keywords.index') }}" class="help-link">painel de tags</a>.</p>
+            <p>Utilize palavras-chave relevantes para facilitar a busca de seus artigos.</p>
         </div>
 
         <div class="help-card">
@@ -139,7 +139,6 @@ use Illuminate\Support\Facades\Auth;
             <p>- Palavras proibidas são filtradas automaticamente<br>
                - Conteúdo inapropriado é bloqueado<br>
                - Denúncias podem ser feitas pelos usuários<br>
-               - Acesse a lista de palavras proibidas em <a href="{{ route('forbidden_words.index') }}" class="help-link">palavras proibidas</a></p>
         </div>
 
         <div class="help-card">
