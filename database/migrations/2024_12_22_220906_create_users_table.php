@@ -13,7 +13,7 @@ class CreateUsersTable extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
-            $table->enum('role', ['Aluno', 'Professor', 'Admin']);
+            $table->enum('role', ['Aluno', 'Professor', 'admin']);
             $table->string('ra', 20)->unique()->nullable();
             $table->foreignId('course_id')->constrained('course', 'course_id');
             $table->string('password_reset_token')->nullable();

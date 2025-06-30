@@ -330,7 +330,7 @@
     const roleChart = new Chart(ctxRole, {
         type: 'pie',
         data: {
-            labels: ['Aluno', 'Professor', 'Admin'],
+            labels: ['Aluno', 'Professor', 'admin'],
             datasets: [{
                 data: [{{ $userRoleCounts['student'] ?? 0 }}, {{ $userRoleCounts['teacher'] ?? 0 }}, {{ $userRoleCounts['admin'] ?? 0 }}],
                 backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']

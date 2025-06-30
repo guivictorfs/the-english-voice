@@ -268,7 +268,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <span class="display-6 fw-bold text-center d-block w-100 text-break" style="font-size:2rem;">{!! highlight($article->title, $highlight) !!}</span>
     @php
         $isAuthor = $article->authors->contains('id', auth()->id());
-        $isProfessorOrAdmin = in_array(auth()->user()->role, ['Professor', 'Admin']);
+        $isProfessorOrAdmin = in_array(auth()->user()->role, ['Professor', 'admin']);
     @endphp
     <div class="ms-2 d-flex align-items-center gap-1">
         <!-- Botão Visualizar Artigo -->

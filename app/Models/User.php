@@ -53,7 +53,7 @@ class User extends Authenticatable
     public function getBadgeColor()
     {
         switch ($this->role) {
-            case 'Admin':
+            case 'admin':
                 return 'bg-danger';
             case 'Professor':
                 return 'bg-warning';

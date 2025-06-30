@@ -226,7 +226,7 @@
     document.getElementById('role').addEventListener('change', function () {
         const role = this.value;
 
-        if (role === 'Professor' || role === 'Admin') {
+        if (role === 'Professor' || role === 'admin') {
             isVerified = false; // Reseta a verificação ao mudar para um tipo protegido
             const modal = new bootstrap.Modal(document.getElementById('verificationModal'));
             modal.show();

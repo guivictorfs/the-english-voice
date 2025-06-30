@@ -25,7 +25,20 @@ class LoginController extends Controller
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->remember)) {
             $request->session()->regenerate();
 
-            return Redirect::intended('/');
+            // Redireciona com base no role do usuário
+            $user = Auth::user();
+            $role = $user->role;
+            
+            switch ($role) {
+                case 'Aluno':
+                    return redirect()->route('dashboard');
+                case 'Professor':
+                    return redirect()->route('admin.panel');
+                case 'Admin':
+                    return redirect()->route('admin.panel');
+                default:
+                    return Redirect::intended('/');
+            }
         }
 
         throw ValidationException::withMessages([
