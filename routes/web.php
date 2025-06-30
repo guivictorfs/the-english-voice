@@ -29,6 +29,11 @@ Route::get('/help', function () {
     return view('help');
 })->name('help');
 
+// Rota de teste para diagnóstico do middleware
+Route::get('/teste-admin', function () {
+    return 'Você é admin!';
+})->middleware(['auth', \App\Http\Middleware\VerifyAdminAccess::class]);
+
 
 
 Route::get('login', [\App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
@@ -39,25 +44,43 @@ Route::get('register', function () {
 })->name('register');
 Route::post('register', [RegisterController::class, 'register']);
 
+// Rota de logout (POST)
+Route::post('/logout', function () {
+    auth()->logout();
+    session()->invalidate();
+    session()->regenerateToken();
+    return redirect()->route('home');
+})->name('logout.post')->middleware('auth');
+
+// Rota de logout (GET)
+Route::get('/logout', function () {
+    auth()->logout();
+    session()->invalidate();
+    session()->regenerateToken();
+    return redirect()->route('home');
+})->name('logout')->middleware('auth');
+
 // Redefinição de senha exibindo o link/token na tela
 Route::get('forgot-password-token', [\App\Http\Controllers\Auth\PasswordTokenController::class, 'showForm'])->name('password.token.form');
 Route::post('forgot-password-token', [\App\Http\Controllers\Auth\PasswordTokenController::class, 'generateLink'])->name('password.token.link');
 
 // Rotas AJAX para redefinição de senha personalizada
-Route::get('forgot-password-ajax', function() {
-    return view('auth.forgot_password_ajax');
-})->name('password.request.ajax');
+Route::middleware(['auth', \App\Http\Middleware\CheckAdminAccess::class])->group(function () {
+    Route::get('forgot-password-ajax', function() {
+        return view('auth.forgot_password_ajax');
+    })->name('password.request.ajax');
 
-Route::get('reset-password-ajax/{token}', function($token) {
-    $email = request('email');
-    return view('auth.reset_password_ajax', compact('token', 'email'));
-})->name('password.reset.ajax');
+    Route::get('reset-password-ajax/{token}', function($token) {
+        $email = request('email');
+        return view('auth.reset_password_ajax', compact('token', 'email'));
+    })->name('password.reset.ajax');
+});
 
 // Rotas padrão (backend Laravel)
 Route::get('forgot-password', [PasswordResetController::class, 'showLinkRequestForm'])->name('password.request');
 Route::post('forgot-password', [PasswordResetController::class, 'sendResetLinkEmail'])->name('password.email');
 Route::get('reset-password/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
-Route::post('reset-password', [PasswordResetController::class, 'reset'])->name('password.update');
+Route::get('/artigos', [App\Http\Controllers\ArtigoController::class, 'index'])->name('dashboard');
 
 // Painel do aluno - Meus Artigos
 use App\Http\Controllers\StudentController;
@@ -68,7 +91,7 @@ Route::middleware(['auth'])->delete('/artigos/{article}/excluir', [StudentContro
 Route::middleware(['auth'])->get('/students/profile', [StudentController::class, 'profile'])->name('students.profile');
 
 // Painel do Administrador
-Route::middleware('auth')->prefix('admin')->name('admin.')->group(function(){
+Route::middleware(['auth', \App\Http\Middleware\VerifyAdminAccess::class])->prefix('admin')->name('admin.')->group(function(){
     Route::get('/', function(){ return view('admin.admin_panel'); })->name('panel');
 
     Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
@@ -86,33 +109,33 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function(){
     Route::delete('/courses/{id}', [\App\Http\Controllers\Admin\CourseController::class, 'destroy'])->name('courses.destroy');
     Route::get('/keywords', [\App\Http\Controllers\Admin\AdminPanelController::class, 'keywords'])->name('keywords.index');
     Route::get('/logs', [\App\Http\Controllers\Admin\AdminPanelController::class, 'logs'])->name('logs.index');
+    
+    // Painel de tags/keywords
+    Route::get('/keywords', [\App\Http\Controllers\KeywordController::class, 'index'])->name('keywords.index');
+    Route::post('/keywords', [\App\Http\Controllers\KeywordController::class, 'store'])->name('keywords.store');
+    Route::delete('/keywords/{id}', [\App\Http\Controllers\KeywordController::class, 'destroy'])->name('keywords.destroy');
+    
+    // Revisão de artigos denunciados
+    Route::get('/artigos_pendentes', [\App\Http\Controllers\ArtigoController::class, 'pendentes'])->name('artigos.pendentes');
+    Route::post('/artigos/{article}/aprovar', [\App\Http\Controllers\ArtigoController::class, 'aprovar'])->name('artigos.aprovar');
+    Route::delete('/artigos/{article}/excluir', [\App\Http\Controllers\ArtigoController::class, 'excluir'])->name('artigos.excluir');
+    
+    // Palavras proibidas
+    Route::get('/forbidden_words', [ForbiddenWordController::class, 'index'])->name('forbidden_words.index');
+    Route::post('/forbidden_words', [ForbiddenWordController::class, 'store'])->name('forbidden_words.store');
+    Route::delete('/forbidden_words/{id}', [ForbiddenWordController::class, 'destroy'])->name('forbidden_words.destroy');
 });
-Route::middleware(['auth'])->post('/students/profile', [StudentController::class, 'updateProfile'])->name('students.profile.update');
-
-
-
-Route::get('/register', [RegisterController::class, 'create'])->name('register');
-Route::post('/register', [RegisterController::class, 'store']);
-
-// Redirecionamento pós-login conforme role
-Route::middleware(['auth', \App\Http\Middleware\RoleRedirect::class])->get('/home', function(){
-    // fallback caso middleware não redirecione
-    return view('welcome');
-});
-
-Route::get('/logout', function () {
-    auth()->logout();  // Desloga o usuário
-    session()->invalidate();  // Limpa a sessão
-    session()->regenerateToken();  // Gera novo token
-    return redirect()->route('home');  // Redireciona para a página inicial ou outra rota
-})->name('logout');
-
-Route::get('/artigos/melhores', [App\Http\Controllers\ArtigoController::class, 'melhores'])->name('artigos.melhores');
 
 // Página para postar artigo
 Route::get('/artigos/postar', function () {
-    return view('artigo_postar');
-})->middleware('auth')->name('artigos.postar');
+    return view('artigos.postar');
+})->name('artigos.postar');
+
+// Lista de artigos
+Route::get('/artigos', [App\Http\Controllers\ArtigoController::class, 'index'])->name('artigos.index');
+
+// Lista de melhores artigos
+Route::get('/artigos/melhores', [App\Http\Controllers\ArtigoController::class, 'melhores'])->name('artigos.melhores');
 
 // (Opcional) Rota para processar o envio do artigo
 Route::post('/artigos', [App\Http\Controllers\ArtigoController::class, 'store'])->middleware('auth')->name('artigos.store');
