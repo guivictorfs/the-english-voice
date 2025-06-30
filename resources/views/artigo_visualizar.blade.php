@@ -46,7 +46,7 @@
     @else
         <ul class="navbar-nav ms-auto align-items-center">
             <li class="nav-item underline">
-                <a class="nav-link active" href="{{ route('dashboard') }}">Dashboard</a>
+                <a class="nav-link active" href="{{ route('dashboard') }}">Artigos</a>
             </li>
             <li class="nav-item underline">
                 <a class="nav-link" href="{{ route('students.account') }}">Meus Artigos</a>
@@ -248,7 +248,7 @@ $(document).ready(function() {
                 @endif
             </div>
             <div class="d-flex justify-content-center pb-3">
-                <a href="{{ route('dashboard') }}" class="btn btn-outline-success"><i class="fas fa-arrow-left"></i> Voltar para o Dashboard</a>
+                <a href="{{ route('dashboard') }}" class="btn btn-outline-success"><i class="fas fa-arrow-left"></i> Voltar para o Artigos</a>
                 <a href="{{ route('artigos.pdf', $artigo->article_id) }}" class="btn btn-outline-danger ms-3" target="_blank"><i class="fas fa-file-pdf"></i> Baixar PDF</a>
             </div>
         </div>

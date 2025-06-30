@@ -61,8 +61,13 @@ Route::get('/logout', function () {
 })->name('logout')->middleware('auth');
 
 // Redefinição de senha exibindo o link/token na tela
-Route::get('forgot-password-token', [\App\Http\Controllers\Auth\PasswordTokenController::class, 'showForm'])->name('password.token.form');
-Route::post('forgot-password-token', [\App\Http\Controllers\Auth\PasswordTokenController::class, 'generateLink'])->name('password.token.link');
+Route::get('forgot-password-token', [\App\Http\Controllers\Auth\PasswordTokenController::class, 'showForm'])
+    ->middleware([\App\Http\Middleware\VerifyAdminAccess::class])
+    ->name('password.token.form');
+
+Route::post('forgot-password-token', [\App\Http\Controllers\Auth\PasswordTokenController::class, 'generateLink'])
+    ->middleware([\App\Http\Middleware\VerifyAdminAccess::class])
+    ->name('password.token.link');
 
 // Rotas AJAX para redefinição de senha personalizada
 Route::middleware(['auth', \App\Http\Middleware\CheckAdminAccess::class])->group(function () {
@@ -124,6 +129,21 @@ Route::middleware(['auth', \App\Http\Middleware\VerifyAdminAccess::class])->pref
     Route::get('/forbidden_words', [ForbiddenWordController::class, 'index'])->name('forbidden_words.index');
     Route::post('/forbidden_words', [ForbiddenWordController::class, 'store'])->name('forbidden_words.store');
     Route::delete('/forbidden_words/{id}', [ForbiddenWordController::class, 'destroy'])->name('forbidden_words.destroy');
+
+    // Adicionando a rota de palavras proibidas dentro do grupo admin
+    Route::middleware(['auth'])->prefix('admin')->group(function () {
+        // Painel de tags/keywords
+        Route::get('/keywords', [\App\Http\Controllers\KeywordController::class, 'index'])->name('keywords.index');
+        Route::post('/keywords', [\App\Http\Controllers\KeywordController::class, 'store'])->name('keywords.store');
+        Route::delete('/keywords/{id}', [\App\Http\Controllers\KeywordController::class, 'destroy'])->name('keywords.destroy');
+        // Revisão de artigos denunciados
+        Route::get('/artigos_pendentes', [\App\Http\Controllers\ArtigoController::class, 'pendentes'])->name('admin.artigos.pendentes');
+        Route::post('/artigos/{article}/aprovar', [\App\Http\Controllers\ArtigoController::class, 'aprovar'])->name('admin.artigos.aprovar');
+        Route::delete('/artigos/{article}/excluir', [\App\Http\Controllers\ArtigoController::class, 'excluir'])->name('admin.artigos.excluir');
+        Route::get('/forbidden_words', [ForbiddenWordController::class, 'index'])->name('forbidden_words.index');
+        Route::post('/forbidden_words', [ForbiddenWordController::class, 'store'])->name('forbidden_words.store');
+        Route::delete('/forbidden_words/{id}', [ForbiddenWordController::class, 'destroy'])->name('forbidden_words.destroy');
+    });
 });
 
 // Página para postar artigo
@@ -170,7 +190,7 @@ Route::post('/validate-code', function (Illuminate\Http\Request $request) {
     return response()->json(['valid' => false], 401);
 });
 
-// Dashboard (protegido por autenticação)
+// Artigos (protegido por autenticação)
 Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
     ->middleware('auth')
     ->name('dashboard');
@@ -180,18 +200,4 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/artigos/{article}/favorite', [\App\Http\Controllers\FavoriteController::class, 'store'])->name('articles.favorite');
     Route::delete('/artigos/{article}/favorite', [\App\Http\Controllers\FavoriteController::class, 'destroy'])->name('articles.unfavorite');
     Route::get('/favoritos', [\App\Http\Controllers\FavoriteController::class, 'index'])->name('articles.favorites');
-});
-
-Route::middleware(['auth'])->prefix('admin')->group(function () {
-    // Painel de tags/keywords
-    Route::get('/keywords', [\App\Http\Controllers\KeywordController::class, 'index'])->name('keywords.index');
-    Route::post('/keywords', [\App\Http\Controllers\KeywordController::class, 'store'])->name('keywords.store');
-    Route::delete('/keywords/{id}', [\App\Http\Controllers\KeywordController::class, 'destroy'])->name('keywords.destroy');
-    // Revisão de artigos denunciados
-    Route::get('/artigos_pendentes', [\App\Http\Controllers\ArtigoController::class, 'pendentes'])->name('admin.artigos.pendentes');
-    Route::post('/artigos/{article}/aprovar', [\App\Http\Controllers\ArtigoController::class, 'aprovar'])->name('admin.artigos.aprovar');
-    Route::delete('/artigos/{article}/excluir', [\App\Http\Controllers\ArtigoController::class, 'excluir'])->name('admin.artigos.excluir');
-    Route::get('/forbidden_words', [ForbiddenWordController::class, 'index'])->name('forbidden_words.index');
-    Route::post('/forbidden_words', [ForbiddenWordController::class, 'store'])->name('forbidden_words.store');
-    Route::delete('/forbidden_words/{id}', [ForbiddenWordController::class, 'destroy'])->name('forbidden_words.destroy');
 });

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - The English Voice</title>
+    <title>Artigos - The English Voice</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     @vite('resources/css/welcome.css')
@@ -47,7 +47,7 @@
     @else
         <ul class="navbar-nav ms-auto align-items-center">
             <li class="nav-item underline">
-                <a class="nav-link active" href="{{ route('dashboard') }}">Dashboard</a>
+                <a class="nav-link active" href="{{ route('dashboard') }}">Artigos</a>
             </li>
             <li class="nav-item underline">
                 <a class="nav-link" href="{{ route('students.account') }}">Meus Artigos</a>

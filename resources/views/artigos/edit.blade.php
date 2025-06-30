@@ -75,7 +75,7 @@
                 @else
                     <ul class="navbar-nav ms-auto align-items-center">
                         <li class="nav-item underline">
-                            <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
+                            <a class="nav-link" href="{{ route('dashboard') }}">Artigos</a>
                         </li>
                         <li class="nav-item underline">
                             <a class="nav-link" href="{{ route('students.account') }}">Meus Artigos</a>
@@ -120,7 +120,7 @@
         <div class="d-flex align-items-center mb-4">
             <div class="flex-shrink-0">
                 <a href="{{ route('dashboard') }}" class="btn btn-outline-primary me-3">
-                    <i class="fas fa-arrow-left me-1"></i>Voltar ao Dashboard
+                    <i class="fas fa-arrow-left me-1"></i>Voltar ao Artigos
                 </a>
             </div>
             <div class="flex-grow-1 text-center">

@@ -45,7 +45,7 @@
                     @include('components.favorito_button', ['article' => $article])
                 </div>
             </div>
-            <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left"></i> Voltar para o Dashboard</a>
+            <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left"></i> Voltar para o Artigos</a>
         </div>
     </div>
 </div>

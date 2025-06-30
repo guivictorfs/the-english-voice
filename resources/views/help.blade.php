@@ -49,7 +49,7 @@ use Illuminate\Support\Facades\Auth;
     @else
         <ul class="navbar-nav ms-auto align-items-center">
             <li class="nav-item underline">
-                <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
+                <a class="nav-link" href="{{ route('dashboard') }}">Artigos</a>
             </li>
             <li class="nav-item underline">
                 <a class="nav-link" href="{{ route('students.account') }}">Meus Artigos</a>

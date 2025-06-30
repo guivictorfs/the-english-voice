@@ -23,7 +23,7 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto align-items-center">
                         <li class="nav-item underline">
-                            <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
+                            <a class="nav-link" href="{{ route('dashboard') }}">Artigos</a>
                         </li>
                         <li class="nav-item underline">
                             <a class="nav-link" href="{{ route('students.account') }}">Meus Artigos</a>
@@ -153,7 +153,7 @@
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <div class="flex-shrink-0">
                                 <a href="{{ route('dashboard') }}" class="btn btn-outline-primary">
-                                    <i class="fas fa-arrow-left"></i> Dashboard
+                                    <i class="fas fa-arrow-left"></i> Artigos
                                 </a>
                             </div>
                             <div class="flex-grow-1 text-center">

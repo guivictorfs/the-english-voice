@@ -10,7 +10,7 @@
     <div class="container d-flex flex-column justify-content-center align-items-center" style="min-height: 80vh;">
         <div class="alert alert-warning text-center mt-5">
             <h4 class="alert-heading">Acesso restrito</h4>
-            <p>Você precisa estar logado para acessar o dashboard.</p>
+            <p>Você precisa estar logado para acessar a página de artigos.</p>
             <hr>
             <a href="{{ route('login') }}" class="btn btn-primary">Fazer login</a>
         </div>

@@ -64,7 +64,7 @@
     @else
         <ul class="navbar-nav ms-auto align-items-center">
             <li class="nav-item underline">
-                <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
+                <a class="nav-link" href="{{ route('dashboard') }}">Artigos</a>
             </li>
             <li class="nav-item underline">
                 <a class="nav-link" href="{{ route('students.account') }}">Meus Artigos</a>
@@ -120,7 +120,7 @@
                 <i class="fas fa-home me-1"></i> Voltar para a página inicial
             </a>
             @if(auth()->check())
-                <a href="{{ route('artigos.index') }}" class="btn btn-success">
+                <a href="{{ route('dashboard') }}" class="btn btn-success">
                     <i class="fas fa-book-open me-1"></i> Ver Artigos
                 </a>
             @endif

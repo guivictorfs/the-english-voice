@@ -21,7 +21,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item underline">
-                        <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
+                        <a class="nav-link" href="{{ route('dashboard') }}">Artigos</a>
                     </li>
                     <li class="nav-item underline">
                         <a class="nav-link" href="{{ route('students.account') }}">Meus Artigos</a>
