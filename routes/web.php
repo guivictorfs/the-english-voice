@@ -32,14 +32,13 @@ Route::post('/api/check-forbidden-words', [ForbiddenWordController::class, 'chec
 Route::get('/help', function () {
     return view('help');
 })->name('help');
-
 // Rotas de keywords (apenas para admin)
 Route::middleware(['auth', \App\Http\Middleware\VerifyAdminAccess::class])->group(function () {
     Route::get('/keywords', [\App\Http\Controllers\KeywordController::class, 'index'])->name('keywords.index');
     Route::post('/keywords', [\App\Http\Controllers\KeywordController::class, 'store'])->name('keywords.store');
     Route::delete('/keywords/{id}', [\App\Http\Controllers\KeywordController::class, 'destroy'])->name('keywords.destroy');
 });
-
+// Rotas de admin já agrupadas
 // Rotas de palavras proibidas (apenas para admin)
 Route::middleware(['auth', \App\Http\Middleware\VerifyAdminAccess::class])->group(function () {
     Route::get('/forbidden_words', [\App\Http\Controllers\ForbiddenWordController::class, 'index'])->name('forbidden_words.index');
@@ -112,7 +111,7 @@ Route::middleware(['auth'])->get('/students/account', [StudentController::class,
 Route::middleware(['auth'])->delete('/artigos/{article}/excluir', [StudentController::class, 'destroy'])->name('artigos.excluir');
 
 // Perfil do aluno
-Route::middleware(['auth', 'checkActiveSessions'])->group(function () {
+Route::middleware(['auth', 'updateSessionUserId', 'checkActiveSessions'])->group(function () {
     Route::get('/students/profile', [StudentController::class, 'profile'])->name('students.profile');
     Route::post('/students/profile/update', [StudentController::class, 'updateProfile'])->name('students.profile.update');
     Route::put('/students/profile', [StudentController::class, 'updateProfile'])->name('students.profile.update');
@@ -131,6 +130,12 @@ Route::middleware(['auth', \App\Http\Middleware\VerifyAdminAccess::class])->pref
     Route::get('/articles', [\App\Http\Controllers\Admin\AdminPanelController::class, 'articles'])->name('articles.index');
     Route::get('/reports', [\App\Http\Controllers\Admin\AdminPanelController::class, 'reports'])->name('reports.index');
     Route::get('/logs', [\App\Http\Controllers\Admin\AdminPanelController::class, 'logs'])->name('logs.index');
+    Route::post('/check-suspicious-votes', [\App\Http\Controllers\Admin\AdminPanelController::class, 'runSuspiciousVotesCheck'])
+        ->name('checkSuspiciousVotes');
+    Route::get('/suspicious-activities', [\App\Http\Controllers\Admin\AdminPanelController::class, 'suspiciousActivities'])->name('suspicious_activities.index');
+    // Detalhes de atividades suspeitas por usuário e tipo
+    Route::get('/suspicious-activities/user/{user}/type/{type}', [\App\Http\Controllers\Admin\AdminPanelController::class, 'suspiciousUserDetails'])->name('suspicious_activities.user_details');
+
     // Rotas de cursos
     Route::get('/courses', [\App\Http\Controllers\Admin\CourseController::class, 'index'])->name('courses.index');
     Route::post('/courses', [\App\Http\Controllers\Admin\CourseController::class, 'store'])->name('courses.store');
@@ -148,12 +153,8 @@ Route::middleware(['auth', \App\Http\Middleware\VerifyAdminAccess::class])->pref
     Route::delete('/forbidden_words/{id}', [ForbiddenWordController::class, 'destroy'])->name('forbidden_words.destroy');
 
     // Adicionando a rota de palavras proibidas dentro do grupo admin
-    Route::middleware(['auth'])->prefix('admin')->group(function () {
-        // Revisão de artigos denunciados
-        Route::get('/artigos_pendentes', [\App\Http\Controllers\ArtigoController::class, 'pendentes'])->name('admin.artigos.pendentes');
-        Route::post('/artigos/{article}/aprovar', [\App\Http\Controllers\ArtigoController::class, 'aprovar'])->name('admin.artigos.aprovar');
-        Route::delete('/artigos/{article}/excluir', [\App\Http\Controllers\ArtigoController::class, 'excluir'])->name('admin.artigos.excluir');
-    });
+    // (Grupo duplicado removido, mantenha todas as rotas admin apenas no grupo acima)
+
 });
 
 // Página para postar artigo

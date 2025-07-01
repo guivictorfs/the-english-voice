@@ -189,6 +189,15 @@
                     </div>
                 @endif
             </div>
+            <!-- Atividades Suspeitas -->
+            <div class="col-md-4">
+                    <a href="{{ route('admin.suspicious_activities.index') }}" class="text-decoration-none text-dark">
+                        <div class="card card-hover shadow-sm h-100 text-center p-4">
+                            <i class="fas fa-clipboard-list fa-3x text-secondary mb-3"></i>
+                            <h5 class="card-title">Atividades Suspeitas</h5>
+                        </div>
+                    </a>
+            </div>
         </div>
     </div>
 

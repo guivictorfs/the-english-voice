@@ -243,6 +243,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 @if($articles->count())
                     <div>
                         @foreach($articles as $article)
+    @php
+        $mainAuthor = $article->authors->first();
+        $avatar = $mainAuthor && $mainAuthor->profile_photo ? asset('storage/'.$mainAuthor->profile_photo) : 'https://ui-avatars.com/api/?name=' . urlencode($mainAuthor ? $mainAuthor->name : 'A') . '&size=60&background=cccccc&color=555555';
+    @endphp
     <div class="artigo-card p-3">
     <!-- Feedback visual de sucesso/erro para favoritos -->
     @if(session('success') && session('fav_article_id') == $article->article_id)
@@ -260,7 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <!-- 1. Título -->
     @php 
         $mainAuthor = $article->authors->first(); 
-        $avatar = $mainAuthor && $mainAuthor->profile_photo ? asset('storage/'.$mainAuthor->profile_photo) : 'https://via.placeholder.com/50x50?text=Avatar';
+        $avatar = $mainAuthor && $mainAuthor->profile_photo ? asset('storage/'.$mainAuthor->profile_photo) : 'https://ui-avatars.com/api/?name=' . urlencode($mainAuthor ? $mainAuthor->name : 'A') . '&size=50&background=cccccc&color=555555';
         $isFavorited = auth()->user()->favorites->contains($article->article_id);
     @endphp
 <div class="mb-2 d-flex justify-content-between align-items-center">
@@ -315,7 +319,25 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
     <hr class="my-2">
     @if($article->content && trim($article->content) !== '')
-        <div class="mb-3 text-break overflow-hidden text-truncate text-start ps-3 pe-3" style="max-height: 5.5rem; white-space: pre-line;">{!! highlight(Str::limit(strip_tags($article->content), 400), $highlight) !!}</div>
+        @php
+    $plainContent = strip_tags($article->content);
+    $isLong = mb_strlen($plainContent) > 400;
+    $shortContent = Str::limit($plainContent, 400);
+@endphp
+<div class="mb-3 text-break text-start ps-3 pe-3">
+    <span id="conteudo-curto-{{ $article->article_id }}" style="display: {{ $isLong ? 'inline' : 'block' }};">
+        {!! highlight($shortContent, $highlight) !!}
+        @if($isLong)
+            ...<br><div class="w-100 text-center"><a href="javascript:void(0);" class="ver-mais btn btn-link p-0 align-baseline fw-semibold mt-1" data-id="{{ $article->article_id }}"><i class="fas fa-chevron-down me-1"></i>Ver mais</a></div>
+        @endif
+    </span>
+    @if($isLong)
+    <span id="conteudo-completo-{{ $article->article_id }}" style="display: none;">
+        {!! highlight($plainContent, $highlight) !!}
+        <br><div class="w-100 text-center"><a href="javascript:void(0);" class="ver-menos btn btn-link p-0 align-baseline fw-semibold mt-1" data-id="{{ $article->article_id }}"><i class="fas fa-chevron-up me-1"></i>Ver menos</a></div>
+    </span>
+    @endif
+</div>
     @else
         @php
             $file = DB::table('file_upload')
@@ -568,5 +590,47 @@ $(document).ready(function() {
     transition: color 0.15s;
 }
 </style>
+<style>
+.ver-mais, .ver-menos {
+    color: #0d6efd !important;
+    text-decoration: underline dotted;
+    transition: color 0.2s;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 500;
+}
+.ver-mais:hover, .ver-menos:hover {
+    color: #084298 !important;
+    text-decoration: underline solid;
+    text-shadow: 0 1px 2px #e0eaff;
+}
+.ver-mais i, .ver-menos i {
+    transition: transform 0.3s;
+}
+.ver-mais:hover i {
+    transform: translateY(2px) scale(1.15);
+}
+.ver-menos:hover i {
+    transform: translateY(-2px) scale(1.15);
+}
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.ver-mais').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var id = this.getAttribute('data-id');
+                document.getElementById('conteudo-curto-' + id).style.display = 'none';
+                document.getElementById('conteudo-completo-' + id).style.display = 'inline';
+            });
+        });
+        document.querySelectorAll('.ver-menos').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var id = this.getAttribute('data-id');
+                document.getElementById('conteudo-curto-' + id).style.display = 'inline';
+                document.getElementById('conteudo-completo-' + id).style.display = 'none';
+            });
+        });
+    });
+</script>
 </body>
 </html>

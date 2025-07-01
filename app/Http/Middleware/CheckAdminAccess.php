@@ -1,14 +1,11 @@
 <?php
 
-dd('Middleware CheckAdminAccess carregado');
-
 namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Contracts\Http\Middleware as MiddlewareContract;
 
-class CheckAdminAccess implements MiddlewareContract
+class CheckAdminAccess
 {
     public function __construct()
     {

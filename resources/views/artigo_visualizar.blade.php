@@ -104,7 +104,7 @@
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <div class="d-flex align-items-center">
                         @php $firstAuthor = $artigo->authors->first(); @endphp
-                        <img src="{{ $firstAuthor && $firstAuthor->avatar ? asset('storage/' . $firstAuthor->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode($firstAuthor ? $firstAuthor->name : 'A') . '&size=96' }}" alt="Avatar" class="rounded-circle me-3" width="54" height="54">
+                        <img src="{{ $firstAuthor && $firstAuthor->profile_photo ? asset('storage/' . $firstAuthor->profile_photo) : 'https://ui-avatars.com/api/?name=' . urlencode($firstAuthor ? $firstAuthor->name : 'A') . '&size=96&background=cccccc&color=555555' }}" alt="Avatar" class="rounded-circle me-3" width="54" height="54">
                         <div>
                                                         <div class="text-muted" style="font-size:1rem;">
                                 Por

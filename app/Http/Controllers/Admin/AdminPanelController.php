@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use App\Models\Article;
 use App\Models\ArticleReport;
 use App\Models\User;
@@ -10,6 +11,35 @@ use Illuminate\Support\Facades\DB;
 
 class AdminPanelController extends Controller
 {
+    public function suspiciousActivities(Request $request)
+    {
+        $query = \App\Models\SuspiciousActivity::with('user')->orderBy('created_at', 'desc');
+
+        // Filtro por nome do usuário
+        if ($request->filled('user')) {
+            $query->whereHas('user', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->user . '%');
+            });
+        }
+        // Filtro por tipo
+        if ($request->filled('type')) {
+            $query->where('type', 'like', '%' . $request->type . '%');
+        }
+        // Filtro por data
+        if ($request->filled('date')) {
+            $query->whereDate('created_at', $request->date);
+        }
+        $activities = $query->get();
+        return view('admin.suspicious_activities', compact('activities'));
+    }
+
+    public function runSuspiciousVotesCheck()
+    {
+        Artisan::call('votes:check-suspicious');
+        $output = Artisan::output();
+        return redirect()->back()->with('success', 'Verificação executada!<br><pre>' . e($output) . '</pre>');
+    }
+
     public function users()
     {
         $users = \App\Models\User::orderByDesc('created_at')->paginate(15);
@@ -85,5 +115,30 @@ class AdminPanelController extends Controller
         $logs = $query->paginate(20)->withQueryString();
 
         return view('admin.system_logs', compact('logs'));
+    }
+
+    /**
+     * Exibe os artigos relacionados à atividade suspeita de um usuário
+     */
+    public function suspiciousUserDetails($userId, $type)
+    {
+        $user = User::findOrFail($userId);
+        $artigos = collect();
+        $tipo = $type;
+        if ($type === 'muitas_denuncias') {
+            $artigos = \App\Models\ArticleReport::with('article')
+                ->where('user_id', $userId)
+                ->get()
+                ->pluck('article')
+                ->unique('article_id');
+        } elseif ($type === 'many_low_votes') {
+            $artigos = \App\Models\Avaliacao::with('artigo')
+                ->where('user_id', $userId)
+                ->where('nota', 1)
+                ->get()
+                ->pluck('artigo')
+                ->unique('article_id');
+        }
+        return view('admin.suspicious_user_details', compact('user', 'tipo', 'artigos'));
     }
 }

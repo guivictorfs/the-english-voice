@@ -75,7 +75,8 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('students.profile.update') }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ url('/students/profile') }}" enctype="multipart/form-data">
+    @method('PUT')
         @csrf
         <div class="mb-3">
             <label class="form-label fs-4">Foto de Perfil</label>

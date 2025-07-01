@@ -75,7 +75,12 @@
                     <li class="list-group-item">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <strong>{{ $article->title }}</strong>
+                                @php
+    $author = $article->authors->first();
+    $avatar = $author && $author->profile_photo ? asset('storage/'.$author->profile_photo) : 'https://ui-avatars.com/api/?name=' . urlencode($author ? $author->name : 'A') . '&size=60&background=cccccc&color=555555';
+@endphp
+<img src="{{ $avatar }}" alt="Avatar" class="rounded-circle me-2" width="40" height="40" style="object-fit:cover;">
+<strong>{{ $article->title }}</strong>
                                 <button type="button" class="badge bg-warning text-dark ms-2 border-0" data-bs-toggle="modal" data-bs-target="#modalDenuncias-{{ $article->article_id }}">
                                     {{ $article->denuncias }} denúncia{{ $article->denuncias > 1 ? 's' : '' }}
                                 </button>

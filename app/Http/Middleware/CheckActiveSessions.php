@@ -41,15 +41,17 @@ class CheckActiveSessions
                     ->where('user_id', Auth::id())
                     ->delete();
 
+                // Log para depuração
+                \Log::info('CheckActiveSessions: sessão concorrente detectada para o usuário ' . Auth::id());
+                \Log::info('CheckActiveSessions: mensagem de warning -> ' . $warningMessage);
+
                 // Limpa a sessão atual
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
 
-                // Adiciona a mensagem de aviso
-                $request->session()->put('warning', $warningMessage);
-
-                // Redireciona para a página de login
-                return redirect()->route('login');
+                \Log::info('CheckActiveSessions: redirect para login com warning');
+                // Redireciona para a página de login com mensagem flash
+                return redirect()->route('login')->with('warning', $warningMessage);
 
             }
 
