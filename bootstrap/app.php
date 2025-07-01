@@ -11,7 +11,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->alias([
+            'checkActiveSessions' => \App\Http\Middleware\CheckActiveSessions::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

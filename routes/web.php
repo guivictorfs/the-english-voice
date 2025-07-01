@@ -112,13 +112,15 @@ Route::middleware(['auth'])->get('/students/account', [StudentController::class,
 Route::middleware(['auth'])->delete('/artigos/{article}/excluir', [StudentController::class, 'destroy'])->name('artigos.excluir');
 
 // Perfil do aluno
-Route::middleware(['auth', 'check.active.sessions'])->group(function () {
+Route::middleware(['auth', 'checkActiveSessions'])->group(function () {
     Route::get('/students/profile', [StudentController::class, 'profile'])->name('students.profile');
     Route::post('/students/profile/update', [StudentController::class, 'updateProfile'])->name('students.profile.update');
     Route::put('/students/profile', [StudentController::class, 'updateProfile'])->name('students.profile.update');
 });
 
 // Painel do Administrador
+
+
 Route::middleware(['auth', \App\Http\Middleware\VerifyAdminAccess::class])->prefix('admin')->name('admin.')->group(function(){
     Route::get('/', function(){ return view('admin.admin_panel'); })->name('panel');
 

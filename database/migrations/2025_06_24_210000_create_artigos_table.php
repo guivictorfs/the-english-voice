@@ -12,7 +12,8 @@ return new class extends Migration {
             $table->string('titulo');
             $table->string('pdf_path');
             $table->text('conteudo')->nullable();
-            $table->foreignId('user_id')->constrained('users');
+            $table->integer('user_id');
+            $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
         });
     }

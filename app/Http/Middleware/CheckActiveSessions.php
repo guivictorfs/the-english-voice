@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
-\Log::info('Middleware CheckActiveSessions foi executado');
+use Illuminate\Support\Facades\Log;
 
 class CheckActiveSessions
 {
@@ -18,6 +18,7 @@ class CheckActiveSessions
      */
     public function handle(Request $request, Closure $next): mixed
     {
+        Log::info('Middleware CheckActiveSessions foi executado');
         // Inicia a sessão se não estiver iniciada
         if (!$request->session()->isStarted()) {
             $request->session()->start();

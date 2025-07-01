@@ -7,8 +7,37 @@
     <title>Postar Artigos - The English Voice</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     @vite('resources/css/welcome.css')
-    @vite('resources/css/artigo_postar.css')    
+    @vite('resources/css/artigo_postar.css')
+    <style>
+        .tagify {
+            width: 100%;
+            min-height: 38px;
+            background: #fff;
+            border-radius: 6px;
+            border: 1px solid #ced4da;
+        }
+        .tagify__input {
+            min-width: 200px;
+            color: #888;
+            opacity: 1;
+            padding: 6px 8px;
+        }
+        .tagify__input::placeholder {
+            color: #bbb;
+            opacity: 1;
+            text-align: center;
+        }
+        .ql-toolbar {
+            background: #fff;
+        }
+        .ql-editor {
+            background: #fff;
+        }
+    </style>
 </head>
 <body>
     <!-- Navbar -->
@@ -237,6 +266,130 @@
 <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 <script>
 $(document).ready(function() {
+    // --- TAGIFY ---
+    const tagify = new Tagify(document.querySelector('#keywords'), {
+        whitelist: [],
+        maxTags: 10,
+        dropdown: {
+            maxItems: 20,
+            enabled: 0,
+            closeOnSelect: false
+        }
+    });
+    const tagifyPdf = new Tagify(document.querySelector('#keywords-pdf'), {
+        whitelist: [],
+        maxTags: 10,
+        dropdown: {
+            maxItems: 20,
+            enabled: 0,
+            closeOnSelect: false
+        }
+    });
+    // Sugestão dinâmica
+    [tagify, tagifyPdf].forEach(tag => {
+        tag.on('input', function(e) {
+            if (e.detail.value.length >= 2) {
+                $.get('/api/keywords?q=' + e.detail.value, function(response) {
+                    tag.whitelist = response.map(item => item.value);
+                });
+            }
+        });
+        tag.on('add', function(e) {
+            var allTags = tag.value.map(function(tag) { return tag.value; }).join(', ');
+            checkForbiddenWords(allTags, $(tag.DOM.input));
+        });
+    });
+    // Sincronização dos campos hidden no submit
+    $('form').on('submit', function(e) {
+        const isPDF = this.id === 'form-pdf';
+        const tagifyInstance = isPDF ? tagifyPdf : tagify;
+        const tags = tagifyInstance.value.map(tag => tag.value).join(', ');
+        $(isPDF ? '#keywords-pdf-hidden' : '#keywords-hidden').val(tags);
+    });
+    // Validação de palavras proibidas
+    function checkForbiddenWords(text, element) {
+        $.ajax({
+            url: '/api/check-forbidden-words',
+            method: 'POST',
+            data: {
+                text: text,
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                if (response.hasForbiddenWords) {
+                    element.addClass('is-invalid');
+                    element.next('.invalid-feedback').remove();
+                    element.after('<div class="invalid-feedback">Contém palavras proibidas: ' + response.forbiddenWords.join(', ') + '</div>');
+                } else {
+                    element.removeClass('is-invalid');
+                    element.next('.invalid-feedback').remove();
+                }
+            }
+        });
+    }
+    // --- SELECT2 ---
+    $('#autores, #autores-pdf').select2({
+        placeholder: 'Selecione um ou mais autores',
+        allowClear: true,
+        width: '100%',
+        theme: 'bootstrap4',
+        dropdownAutoWidth: true,
+        minimumResultsForSearch: 0,
+        language: {
+            noResults: function () { return "Nenhum autor encontrado."; }
+        }
+    });
+    // --- QUILL ---
+    var quill = new Quill('#editor-artigo', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                [{ 'font': [] }, { 'size': [] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ 'color': [] }, { 'background': [] }],
+                [{ 'script': 'sub'}, { 'script': 'super' }],
+                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                ['blockquote', 'code-block'],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'indent': '-1'}, { 'indent': '+1' }],
+                [{ 'direction': 'rtl' }, { 'align': [] }],
+                ['link', 'image', 'video', 'formula'],
+                ['clean']
+            ]
+        }
+    });
+    // Preencher o campo hidden ao submeter
+    $('#form-artigo').on('submit', function() {
+        $('#conteudo-hidden').val(quill.root.innerHTML);
+    });
+    // Contador de caracteres
+    var charCount = document.getElementById('char-count');
+    var submitBtn = document.getElementById('submit-artigo');
+    function updateCharCount() {
+        var chars = quill.getText().replace(/\s/g, '').length;
+        charCount.textContent = `Caracteres: ${chars}/250`;
+        submitBtn.disabled = chars < 250;
+    }
+    quill.on('text-change', updateCharCount);
+    updateCharCount();
+    // Alternância dos cards
+    const cardEscrever = document.getElementById('card-escrever');
+    const cardUpload = document.getElementById('card-upload');
+    const formArtigo = document.getElementById('form-artigo');
+    const formPDF = document.getElementById('form-pdf');
+    cardEscrever.addEventListener('click', () => {
+        formArtigo.classList.remove('d-none');
+        formPDF.classList.add('d-none');
+        cardEscrever.classList.add('border-3','border-primary');
+        cardUpload.classList.remove('border-3','border-success');
+    });
+    cardUpload.addEventListener('click', () => {
+        formPDF.classList.remove('d-none');
+        formArtigo.classList.add('d-none');
+        cardUpload.classList.add('border-3','border-success');
+        cardEscrever.classList.remove('border-3','border-primary');
+    });
+});
+</script>
     // Função para verificar palavras proibidas
     function checkForbiddenWords(text, element) {
         $.ajax({

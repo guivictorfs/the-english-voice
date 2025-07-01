@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Illuminate\Support\Facades\DB;
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
@@ -60,7 +62,7 @@ class RegisterController extends Controller
             'email' => $validatedData['email'],
             'password' => Hash::make($validatedData['password']),
             'role' => $validatedData['role'],
-            'course_id' => \DB::table('course')->where('course_name', $validatedData['course'])->value('course_id'),
+            'course_id' => DB::table('course')->where('course_name', $validatedData['course'])->value('course_id'),
             'ra' => $validatedData['ra'], // Caso o tipo de usuário seja Aluno
         ]);
 
