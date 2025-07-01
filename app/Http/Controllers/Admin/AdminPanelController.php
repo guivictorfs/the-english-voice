@@ -141,4 +141,26 @@ class AdminPanelController extends Controller
         }
         return view('admin.suspicious_user_details', compact('user', 'tipo', 'artigos'));
     }
+
+    /**
+     * Marcar atividade suspeita como revisada
+     */
+    public function markSuspiciousActivityReviewed($id)
+    {
+        $activity = \App\Models\SuspiciousActivity::findOrFail($id);
+        $activity->reviewed = true;
+        $activity->save();
+        return redirect()->back()->with('success', 'Atividade marcada como revisada!');
+    }
+
+    /**
+     * Marcar atividade suspeita como NÃO revisada
+     */
+    public function markSuspiciousActivityUnreviewed($id)
+    {
+        $activity = \App\Models\SuspiciousActivity::findOrFail($id);
+        $activity->reviewed = false;
+        $activity->save();
+        return redirect()->back()->with('success', 'Atividade marcada como NÃO revisada!');
+    }
 }

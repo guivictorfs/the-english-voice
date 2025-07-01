@@ -136,6 +136,10 @@ Route::middleware(['auth', \App\Http\Middleware\VerifyAdminAccess::class])->pref
     // Detalhes de atividades suspeitas por usuário e tipo
     Route::get('/suspicious-activities/user/{user}/type/{type}', [\App\Http\Controllers\Admin\AdminPanelController::class, 'suspiciousUserDetails'])->name('suspicious_activities.user_details');
 
+    // Marcar atividade suspeita como revisada/não revisada
+    Route::post('/suspicious-activities/{id}/reviewed', [\App\Http\Controllers\Admin\AdminPanelController::class, 'markSuspiciousActivityReviewed'])->name('suspicious_activities.reviewed');
+    Route::post('/suspicious-activities/{id}/unreviewed', [\App\Http\Controllers\Admin\AdminPanelController::class, 'markSuspiciousActivityUnreviewed'])->name('suspicious_activities.unreviewed');
+
     // Rotas de cursos
     Route::get('/courses', [\App\Http\Controllers\Admin\CourseController::class, 'index'])->name('courses.index');
     Route::post('/courses', [\App\Http\Controllers\Admin\CourseController::class, 'store'])->name('courses.store');

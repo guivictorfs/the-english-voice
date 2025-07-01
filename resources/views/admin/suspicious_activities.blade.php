@@ -147,6 +147,7 @@
                         <th>Tipo</th>
                         <th>Descrição</th>
                         <th>Data</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -168,6 +169,20 @@
 </td>
                         <td>{{ $activity->description }}</td>
                         <td>{{ \Carbon\Carbon::parse($activity->created_at)->format('d/m/Y H:i') }}</td>
+                        <td class="text-center">
+                            <a href="{{ route('admin.suspicious_activities.user_details', ['user' => $activity->user_id, 'type' => $activity->type]) }}" class="btn btn-sm btn-outline-primary mb-1" title="Ver detalhes"><i class="fas fa-eye"></i></a>
+                            @if($activity->reviewed)
+                                <form action="{{ route('admin.suspicious_activities.unreviewed', $activity->id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-success mb-1" title="Revisada! Clique para marcar como NÃO revisada"><i class="fas fa-check-circle"></i></button>
+                                </form>
+                            @else
+                                <form action="{{ route('admin.suspicious_activities.reviewed', $activity->id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary mb-1" title="Marcar como revisada"><i class="fas fa-check"></i></button>
+                                </form>
+                            @endif
+                        </td>
                     </tr>
                 @empty
                     <tr><td colspan="4">Nenhuma atividade suspeita encontrada.</td></tr>

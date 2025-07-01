@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class SuspiciousActivity extends Model
 {
     protected $table = 'suspicious_activities';
-    protected $fillable = ['user_id', 'type', 'description'];
+    protected $fillable = ['user_id', 'type', 'description', 'reviewed'];
 
     public function user()
     {

@@ -190,14 +190,22 @@
                 @endif
             </div>
             <!-- Atividades Suspeitas -->
-            <div class="col-md-4">
-                    <a href="{{ route('admin.suspicious_activities.index') }}" class="text-decoration-none text-dark">
-                        <div class="card card-hover shadow-sm h-100 text-center p-4">
-                            <i class="fas fa-clipboard-list fa-3x text-secondary mb-3"></i>
-                            <h5 class="card-title">Atividades Suspeitas</h5>
-                        </div>
-                    </a>
+<div class="col-md-4">
+    @if($role === 'admin')
+        <a href="{{ route('admin.suspicious_activities.index') }}" class="text-decoration-none text-dark">
+            <div class="card card-hover shadow-sm h-100 text-center p-4">
+                <i class="fas fa-user-secret fa-3x text-dark mb-3"></i>
+                <h5 class="card-title">Atividades Suspeitas</h5>
             </div>
+        </a>
+    @else
+        <div class="card card-hover shadow-sm h-100 text-center p-4 bg-light text-muted" style="pointer-events: none; opacity: 0.6;">
+            <i class="fas fa-user-secret fa-3x text-dark mb-3"></i>
+            <h5 class="card-title">Atividades Suspeitas</h5>
+            <div style="font-size:0.9em;">Acesso restrito</div>
+        </div>
+    @endif
+</div>
         </div>
     </div>
 
