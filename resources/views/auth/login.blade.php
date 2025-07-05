@@ -23,7 +23,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item underline">
-                        <a class="nav-link active" href="{{ url('/') }}">Início</a>
+                        <a class="nav-link" href="{{ url('/') }}">Início</a>
                     </li>
                     <li class="nav-item underline">
                         <a class="nav-link" href="{{ route('login') }}">Artigos</a>
@@ -62,9 +62,9 @@
             </div>
         </div>
     </nav>
-    <div class="container container-flex mt-4 mb-4 p-4">
+    <div class="container container-flex mt-4 mb-4 p-4 border border-dark">
         <h1 class="text-center mb-4 mt-4">
-            <i class="fas fa-sign-in-alt text-primary"></i> Entrar
+            <i class="fas fa-sign-in-alt text-primary"></i> <span class="text-dark">Entrar</span>
         </h1>
         <div class="row justify-content-center d-flex align-items-center">
             <hr>
@@ -85,7 +85,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
                     </div>
                 @endif
-                <form method="POST" action="{{ route('login') }}" class="p-4 shadow rounded">
+                <form method="POST" action="{{ route('login') }}" class="p-4 shadow rounded border border-dark">
                     @csrf
                     
 

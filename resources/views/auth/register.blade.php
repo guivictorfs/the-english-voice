@@ -26,7 +26,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item underline">
-                        <a class="nav-link active" href="#">Início</a>
+                        <a class="nav-link" href="#">Início</a>
                     </li>
                     <li class="nav-item underline">
                         <a class="nav-link" href="#">Artigos</a>
@@ -63,9 +63,9 @@
         </div>
     </nav>
 
-    <div class="container mt-5">
+    <div class="container mt-4 mb-4 p-4 border border-dark">
         <h1 class="text-center mb-4 pt-4">
-            <i class="fas fa-user-plus text-success"></i> Criar Conta
+            <i class="fas fa-user-plus text-success"></i> <span class="text-dark">Criar Conta</span>
         </h1>
 
         <div class="row justify-content-center d-flex align-items-center">
@@ -80,7 +80,7 @@
             </div>
             <!-- Coluna do Formulário -->
             <div class="col-md-6">
-                <form method="POST" action="{{ route('register') }}" class="p-4 shadow rounded" id="registerForm">
+                <form method="POST" action="{{ route('register') }}" class="p-4 shadow rounded border border-dark" id="registerForm">
                     @csrf
                     <!-- Nome -->
                     <div class="mb-3">

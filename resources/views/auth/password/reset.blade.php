@@ -44,7 +44,7 @@
         </div>
     </nav>
 
-    <div class="container mt-4 mb-4 p-4">
+    <div class="container mt-4 mb-4 p-4 border border-dark">
         <h1 class="text-center mb-4 mt-4">
             <i class="fas fa-lock-open text-primary"></i> Redefinir Senha
         </h1>

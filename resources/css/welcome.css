@@ -270,3 +270,12 @@ footer.footer {
 .img-logo {
     max-width: 50em;
 }
+
+.bg-gold {
+    background-color: #ecb500 !important; 
+    color: #fff !important;
+}
+
+.text-gold {
+    color: #ecb500 !important; 
+}

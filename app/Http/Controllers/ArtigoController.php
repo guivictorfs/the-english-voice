@@ -481,7 +481,7 @@ return view('artigos.show', compact('article', 'notaUsuario', 'jaDenunciou'));
 
         // Média geral do site
         $mediaGeral = \App\Models\Avaliacao::avg('nota');
-        $nMinimo = 5;
+        $nMinimo = 1;
 
         // Melhores notas no mês (mínimo 5 avaliações)
         $maisAvaliadosMes = \App\Models\Article::with(['authors', 'keywords'])
@@ -502,7 +502,7 @@ return view('artigos.show', compact('article', 'notaUsuario', 'jaDenunciou'));
             $media = $artigo->media_mes;
             $artigo->media_ponderada_mes = ($media * $n + $mediaGeral * $nMinimo) / ($n + $nMinimo);
         }
-        $maisAvaliadosMes = $maisAvaliadosMes->sortByDesc('media_ponderada_mes')->take(10);
+        $maisAvaliadosMes = $maisAvaliadosMes->sortByDesc('media_ponderada_mes')->take(12);
 
         // Melhores notas no ano (mínimo 5 avaliações)
         $maisAvaliadosAno = \App\Models\Article::with(['authors', 'keywords'])
@@ -523,7 +523,7 @@ return view('artigos.show', compact('article', 'notaUsuario', 'jaDenunciou'));
             $media = $artigo->media_ano;
             $artigo->media_ponderada_ano = ($media * $n + $mediaGeral * $nMinimo) / ($n + $nMinimo);
         }
-        $maisAvaliadosAno = $maisAvaliadosAno->sortByDesc('media_ponderada_ano')->take(10);
+        $maisAvaliadosAno = $maisAvaliadosAno->sortByDesc('media_ponderada_ano')->take(12);
 
         // Melhores notas no geral (mínimo 5 avaliações)
         $maisAvaliadosGeral = \App\Models\Article::with(['authors', 'keywords'])
@@ -537,7 +537,7 @@ return view('artigos.show', compact('article', 'notaUsuario', 'jaDenunciou'));
             $media = $artigo->avaliacoes_avg_nota;
             $artigo->media_ponderada = ($media * $n + $mediaGeral * $nMinimo) / ($n + $nMinimo);
         }
-        $maisAvaliadosGeral = $maisAvaliadosGeral->sortByDesc('media_ponderada')->take(10);
+        $maisAvaliadosGeral = $maisAvaliadosGeral->sortByDesc('media_ponderada')->take(12);
 
 
         return view('artigos.melhores', compact('artigos', 'maisAvaliadosMes', 'maisAvaliadosAno', 'maisAvaliadosGeral'));

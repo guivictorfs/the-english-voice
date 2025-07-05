@@ -96,10 +96,10 @@
 
 
     <!-- Conteúdo principal -->
-    <div class="container mt-5 mb-5">
+    <div class="container p-4 mt-4 mb-4 border border-dark">
         <div class="row justify-content-center pt-4">
             <div class="col-lg-10 col-xl-8">
-                <h2 class="mb-4 mt-3"><i class="fas fa-book-open"></i> Artigos Postados</h2>
+                <h2 class="mb-4"><i class="fas fa-book-open text-success me-2"></i> Artigos Postados</h2>
 
                 <!-- Tags selecionadas (acima da lista) -->
 @php
@@ -287,7 +287,10 @@ document.addEventListener('DOMContentLoaded', function() {
         <button type="submit" class="btn btn-sm btn-outline-warning px-2 py-1 favorito-btn" title="Remover dos favoritos">
             <i class="fas fa-star text-warning"></i>
         </button>
-    </form>
+    </form>.bg-gold {
+    background-color: #ecb500 !important; /* dourado mais claro */
+    color: #fff !important;
+}
 @else
     <form action="{{ route('articles.favorite', $article->article_id) }}" method="POST" class="form-favorito d-inline" data-artigo="{{ $article->article_id }}">
         @csrf
@@ -359,7 +362,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <hr class="my-2">
     <!-- 4. Avaliação -->
     <div class="mb-2 ps-3 pe-3">
-        <x-avaliacao-estrelas :artigo="$article" />
+        <x-avaliacao-estrelas :artigo="$article" :notaUsuario="isset($userRatings[$article->article_id]) ? $userRatings[$article->article_id] : null" />
     </div>
     <hr class="my-2">
     <!-- 5. Bloco de denúncia -->

@@ -62,7 +62,7 @@
         </nav>
 
         <div class="content">
-            <div class="container mt-5 mb-5 p-4">
+            <div class="container mt-4 mb-4 p-4 border border-dark">
                 <div class="row justify-content-center">
                     <div class="col-lg-8">
                         <!-- Filtros de pesquisa -->

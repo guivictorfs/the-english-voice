@@ -84,22 +84,41 @@
         </div>
     </nav>
 
-    <div class="container mt-5 p-4">
+    <div class="container mt-4 mb-4 p-4 border border-dark">
     <div class="d-flex align-items-center mb-4 pt-4">
         <a href="javascript:history.back()" class="btn btn-outline-primary d-flex align-items-center mb-0">
             <i class="fas fa-arrow-left me-2"></i> Voltar
         </a>
-        <h2 class="mb-0 text-primary mx-auto"><i class="fas fa-trophy text-warning me-2"></i> Artigos com Melhor Nota Média</h2>
+        <h2 class="mb-0 text-dark mx-auto"><i class="fas fa-trophy text-gold me-2"></i> Artigos com Melhor Nota Média</h2>
     </div>
+    <p class="mb-3 text-muted text-center" style="font-size:0.95rem; max-width:700px; margin-left:auto; margin-right:auto;">
+
 <p class="mb-4 text-muted text-center" style="max-width:700px; margin-left:auto; margin-right:auto;">
     <i class="fas fa-info-circle me-1"></i>
     Só aparecem artigos com pelo menos 5 avaliações. O ranking usa média ponderada bayesiana, considerando a média geral do site, para garantir justiça entre artigos muito avaliados e recém-avaliados.
 </p>
+<hr>
+<h3 class="mb-4 text-dark"><i class="fas fa-list-ol text-gold me-2"></i> Melhor nota geral</h3>
+<p class="mb-3 text-muted text-center" style="font-size:0.95rem; max-width:700px; margin-left:auto; margin-right:auto;">
+    <i class="fas fa-info-circle me-1"></i>
+    Usa média ponderada (bayesiana) para ranquear os artigos, levando em conta tanto a média quanto a quantidade de avaliações. Assim, artigos com poucas avaliações não ficam no topo injustamente.
+</p>
     <div class="row">
-        @forelse ($artigos as $artigo)
+        @forelse ($maisAvaliadosGeral as $artigo)
             <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card h-100 border-warning shadow-sm">
-                    <div class="card-body">
+                <div class="card h-100 border-warning shadow-sm position-relative">
+    {{-- Ranking badge no canto superior esquerdo --}}
+    @php
+        $rankingColors = [1 => 'bg-gold text-white', 2 => 'bg-success text-light', 3 => 'bg-primary text-light', 4 => 'bg-light text-dark'];
+        $rankingIcons = [1 => 'fas fa-crown', 2 => 'fas fa-medal', 3 => 'fas fa-award'];
+        $color = $loop->iteration <= 3 ? $rankingColors[$loop->iteration] : 'bg-light text-dark border';
+        $icon = $loop->iteration <= 3 ? $rankingIcons[$loop->iteration] : 'fas fa-hashtag';
+    @endphp
+    <span class="position-absolute top-0 start-0 translate-middle-y ms-2 mt-2 badge {{ $color }}" style="font-size:1.1rem; z-index:2; min-width:2.2rem; min-height:2.2rem; display:flex; align-items:center; justify-content:center;">
+        <i class="{{ $icon }} me-1"></i>{{ $loop->iteration }}
+    </span>
+    <div class="card-body" style="padding-top:2.2rem;">
+
                         <h5 class="card-title">{{ $artigo->title }}</h5>
                         <p class="card-text text-muted mb-1">
                             <i class="fas fa-user"></i>
@@ -108,11 +127,15 @@
                             @endforeach
                         </p>
                         <p class="mb-1">
-                            <span class="badge bg-warning text-dark">
-                                <i class="fas fa-star"></i>
-                                {{ number_format($artigo->avaliacoes_avg_nota, 2, ',', '.') }}/5
-                            </span>
-                            <span class="text-muted ms-2">({{ $artigo->avaliacoes_count }} avaliações)</span>
+                            <span class="badge bg-gold text-white me-2">
+    <i class="fas fa-star"></i>
+    Nota ponderada: {{ number_format($artigo->media_ponderada, 2, ',', '.') }}/5
+</span>
+<span class="badge bg-secondary text-white me-2">
+    Média simples: {{ number_format($artigo->avaliacoes_avg_nota, 2, ',', '.') }}/5
+</span>
+<br>
+<span class="text-muted ms-1">({{ $artigo->avaliacoes_count }} avaliações)</span>
                         </p>
                         <a href="{{ route('artigos.visualizar', $artigo->article_id) }}" class="btn btn-outline-warning btn-sm mt-2">
                             Ver artigo
@@ -122,18 +145,27 @@
             </div>
         @empty
             <div class="col-12">
-                <div class="alert alert-info">Nenhum artigo avaliado ainda.</div>
+                <div class="alert alert-info">Nenhum artigo avaliado no geral.</div>
             </div>
         @endforelse
     </div>
-
     <hr class="my-5">
-    <h3 class="mb-4 text-success"><i class="fas fa-fire text-danger"></i> Melhor nota do mês</h3>
-    <div class="row">
+    <h3 class="mb-4 text-dark"><i class="fas fa-fire text-danger me-2"></i> Melhor nota do mês</h3>    <div class="row">
         @forelse ($maisAvaliadosMes as $artigo)
             <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card h-100 border-success shadow-sm">
-                    <div class="card-body">
+                <div class="card h-100 border-success shadow-sm position-relative">
+    {{-- Ranking badge no canto superior esquerdo --}}
+    @php
+        $rankingColors = [1 => 'bg-gold text-white', 2 => 'bg-success text-light', 3 => 'bg-primary text-light', 4 => 'bg-light text-dark'];
+        $rankingIcons = [1 => 'fas fa-crown', 2 => 'fas fa-medal', 3 => 'fas fa-award'];
+        $color = $loop->iteration <= 3 ? $rankingColors[$loop->iteration] : 'bg-light text-dark border';
+        $icon = $loop->iteration <= 3 ? $rankingIcons[$loop->iteration] : 'fas fa-hashtag';
+    @endphp
+    <span class="position-absolute top-0 start-0 translate-middle-y ms-2 mt-2 badge {{ $color }}" style="font-size:1.1rem; z-index:2; min-width:2.2rem; min-height:2.2rem; display:flex; align-items:center; justify-content:center;">
+        <i class="{{ $icon }} me-1"></i>{{ $loop->iteration }}
+    </span>
+    <div class="card-body" style="padding-top:2.2rem;">
+
                         <h5 class="card-title">{{ $artigo->title }}</h5>
                         <p class="card-text text-muted mb-1">
                             <i class="fas fa-user"></i>
@@ -161,12 +193,23 @@
     </div>
 
     <hr class="my-5">
-    <h3 class="mb-4 text-primary"><i class="fas fa-calendar-alt text-info"></i> Melhor nota do ano</h3>
+    <h3 class="mb-4 text-dark"><i class="fas fa-calendar-alt text-info me-2"></i> Melhor nota do ano</h3>
     <div class="row">
         @forelse ($maisAvaliadosAno as $artigo)
             <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card h-100 border-info shadow-sm">
-                    <div class="card-body">
+                <div class="card h-100 border-info shadow-sm position-relative">
+    {{-- Ranking badge no canto superior esquerdo --}}
+    @php
+        $rankingColors = [1 => 'bg-gold text-white', 2 => 'bg-success text-light', 3 => 'bg-primary text-light', 4 => 'bg-light text-dark'];
+        $rankingIcons = [1 => 'fas fa-crown', 2 => 'fas fa-medal', 3 => 'fas fa-award'];
+        $color = $loop->iteration <= 3 ? $rankingColors[$loop->iteration] : 'bg-light text-dark border';
+        $icon = $loop->iteration <= 3 ? $rankingIcons[$loop->iteration] : 'fas fa-hashtag';
+    @endphp
+    <span class="position-absolute top-0 start-0 translate-middle-y ms-2 mt-2 badge {{ $color }}" style="font-size:1.1rem; z-index:2; min-width:2.2rem; min-height:2.2rem; display:flex; align-items:center; justify-content:center;">
+        <i class="{{ $icon }} me-1"></i>{{ $loop->iteration }}
+    </span>
+    <div class="card-body" style="padding-top:2.2rem;">
+
                         <h5 class="card-title">{{ $artigo->title }}</h5>
                         <p class="card-text text-muted mb-1">
                             <i class="fas fa-user"></i>
@@ -194,37 +237,7 @@
     </div>
 
     <hr class="my-5">
-    <h3 class="mb-4 text-warning"><i class="fas fa-list-ol text-warning"></i> Melhor nota geral</h3>
-    <div class="row">
-        @forelse ($maisAvaliadosGeral as $artigo)
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card h-100 border-warning shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ $artigo->title }}</h5>
-                        <p class="card-text text-muted mb-1">
-                            <i class="fas fa-user"></i>
-                            @foreach($artigo->authors as $autor)
-                                {{ $autor->name }}@if(!$loop->last), @endif
-                            @endforeach
-                        </p>
-                        <p class="mb-1">
-                            <span class="badge bg-warning text-dark">
-    <i class="fas fa-star"></i>
-    Nota ponderada geral: {{ number_format($artigo->media_ponderada, 2, ',', '.') }}/5
-</span>
-                        </p>
-                        <a href="{{ route('artigos.visualizar', $artigo->article_id) }}" class="btn btn-outline-warning btn-sm mt-2">
-                            Ver artigo
-                        </a>
-                    </div>
-                </div>
-            </div>
-        @empty
-            <div class="col-12">
-                <div class="alert alert-info">Nenhum artigo avaliado no geral.</div>
-            </div>
-        @endforelse
-    </div>
+
 </div>
 <!-- FIM do conteúdo principal -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

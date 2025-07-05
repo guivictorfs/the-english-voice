@@ -116,7 +116,7 @@
         </div>
     </nav>
 
-    <div class="container p-4 mt-4 mb-4">
+    <div class="container p-4 mt-4 mb-4 border border-dark">
         <div class="d-flex align-items-center mb-4">
             <div class="flex-shrink-0">
                 <a href="{{ route('dashboard') }}" class="btn btn-outline-primary me-3">

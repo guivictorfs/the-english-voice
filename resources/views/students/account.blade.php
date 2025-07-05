@@ -9,7 +9,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     @vite('resources/css/welcome.css')
 </head>
-<body>
+<body class="min-vh-100 d-flex flex-column">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm pb-3 pt-3">
         <div class="container">
@@ -58,12 +58,18 @@
         </div>
     </nav>
 
-    <div class="container mt-5 p-4">
+    <div class="container mt-4 mb-4 p-4 border border-dark">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div class="d-flex align-items-center gap-3">
-                @php $photo = Auth::user()->profile_photo; @endphp
-                <img src="{{ $photo ? asset('storage/'.$photo) : 'https://via.placeholder.com/60x60?text=Avatar' }}" alt="Foto de Perfil" class="rounded-circle" style="width:60px;height:60px;object-fit:cover;">
-                <h2 class="m-0"><i class="fas fa-book"></i> Meus Artigos Postados</h2>
+                @php 
+    $user = Auth::user();
+    $photo = $user->profile_photo;
+    $avatar = $photo 
+        ? asset('storage/'.$photo) 
+        : 'https://ui-avatars.com/api/?name=' . urlencode($user->name) . '&size=60&background=cccccc&color=555555';
+@endphp
+<img src="{{ $avatar }}" alt="Foto de Perfil" class="rounded-circle" style="width:60px;height:60px;object-fit:cover;">
+                <h2 class="m-0"><i class="fas fa-book text-success me-2 ms-2"></i> Meus Artigos Postados</h2>
             </div>
             <a href="{{ route('students.profile') }}" class="btn btn-sm btn-outline-primary"><i class="fas fa-user"></i> Editar Perfil</a>
         </div>
@@ -81,7 +87,7 @@
         @if($articles->count())
             <div class="list-group">
                 @foreach($articles as $article)
-                    <div class="list-group-item mb-4">
+                    <div class="list-group-item mb-4 border border-dark">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <strong>{{ $article->title }}</strong>
@@ -113,7 +119,7 @@
         Tem certeza que deseja excluir este artigo para sempre?
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Cancelar</button>
         <form action="{{ route('artigos.excluir', $article->article_id) }}" method="POST" class="d-inline m-0 p-0">
             @csrf
             @method('DELETE')
@@ -144,7 +150,7 @@
     </div>
 
 <!-- Footer -->
-<footer class="footer bg-light py-2">
+<footer class="footer bg-light py-2 mt-auto">
     <div class="container text-center">
         <p class="mb-0">&copy; 2024 The English Voice - Todos os direitos reservados</p>
         <div class="social-icons mt-3">

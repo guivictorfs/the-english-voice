@@ -88,7 +88,7 @@
         </div>
     </nav>
 
-    <div class="container mt-5 mb-5 p-4">
+    <div class="container mt-5 mb-5 p-4 border border-dark">
     {{-- Alertas --}}
     @if(session('success'))
         <div class="alert alert-success d-flex align-items-center" role="alert">

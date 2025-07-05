@@ -51,11 +51,23 @@ class DashboardController extends Controller
             $article->total_avaliacoes = $total;
         }
 
+        // Busca as avaliações do usuário autenticado para os artigos listados (evita N+1)
+        $user = auth()->user();
+        $userRatings = [];
+        if ($user) {
+            $articleIds = $articles->pluck('article_id')->toArray();
+            $avaliacoes = \App\Models\Avaliacao::where('user_id', $user->id)
+                ->whereIn('artigo_id', $articleIds)
+                ->get(['artigo_id', 'nota']);
+            $userRatings = $avaliacoes->pluck('nota', 'artigo_id')->toArray();
+        }
+
         return view('dashboard', [
             'articles' => $articles,
             'tag' => $tag,
             'author' => $author,
             'q' => $q,
+            'userRatings' => $userRatings,
         ]);
     }
 }

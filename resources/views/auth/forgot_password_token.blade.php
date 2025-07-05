@@ -86,21 +86,21 @@ use Illuminate\Support\Facades\Auth;
             </div>
         </div>
     </nav>
-    <div class="container mt-4 mb-4 p-4 d-flex flex-column align-items-center" style="min-height: 80vh;">
+    <div class="container mt-4 mb-4 p-4 border border-dark  d-flex flex-column align-items-center" style="min-height: 80vh;">
         <div class="col-md-6 col-lg-5 pt-5">
-            <div class="d-flex flex-column align-items-center mb-4">
+            <div class="d-flex flex-column align-items-center mb-4 ">
                 <div class="d-flex flex-column align-items-center mb-2">
                     <div class="d-flex justify-content-start mb-2">
                         <a href="{{ route('admin.users.index') }}" class="btn btn-outline-primary btn-sm">
-                            <i class="fas fa-arrow-left me-1"></i>Voltar para Gerenciamento de Usuários
+                            <i class="fas fa-arrow-left me-1 mb-2"></i>Voltar para Gerenciamento de Usuários
                         </a>
                     </div>
                     <h2 class="mb-0">
-                        <i class="fas fa-key me-2"></i>Redefinição de Senha
+                        <i class="fas fa-key text-danger me-2"></i>Redefinição de Senha
                     </h2>
                 </div>
             </div>
-            <div class="card shadow-sm p-4">
+            <div class="card shadow-sm p-4 border border-dark">
             <h2>Redefinir senha</h2>    
             <hr class="mb-4">
                 <form method="POST" action="{{ route('password.token.link') }}">
@@ -109,7 +109,7 @@ use Illuminate\Support\Facades\Auth;
                         <label for="email" class="form-label">E-mail cadastrado</label>
                         <input type="email" class="form-control" id="email" name="email" required>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Gerar link de redefinição</button>
+                    <button type="submit" class="btn btn-primary w-100"><i class="fas fa-key me-2 text-light"></i>Gerar link de redefinição</button>
                 </form>
                 @if(session('reset_link'))
                     <div class="alert alert-success mt-3">

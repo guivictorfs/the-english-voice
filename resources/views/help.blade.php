@@ -91,24 +91,24 @@ use Illuminate\Support\Facades\Auth;
     </nav>
 
 
-    <div class="help-section container p-4 mt-4 mb-4">
-        <div class="help-header container">
+    <div class="help-section container p-4 mt-4 mb-4 border border-dark">
+        <div class="help-header container p-4 mt-4 mb-4 border border-dark">
             <h1>Precisa de Ajuda?</h1>
             <p>Encontre respostas rápidas para as dúvidas mais comuns ou entre em contato com nosso suporte.</p>
         </div>
-        <div class="help-card">
+        <div class="help-card p-4 mt-4 mb-4 border border-dark">
             <span class="icon"><i class="fas fa-user-plus"></i></span>
             <h3>Cadastro e Login</h3>
             <p>Para começar, <a href="{{ route('register') }}" class="help-link">cadastre-se</a> no sistema usando seu e-mail institucional e RA. Após o cadastro, faça login com suas credenciais para acessar o sistema.</p>
         </div>
 
-        <div class="help-card">
+        <div class="help-card p-4 mt-4 mb-4 border border-dark">
             <span class="icon"><i class="fas fa-key"></i></span>
             <h3>Redefinição de Senha</h3>
             <p>Esqueceu sua senha? Acesse a página de <a href="{{ route('password.request') }}" class="help-link">redefinição de senha</a> para receber um link por e-mail.</p>
         </div>
 
-        <div class="help-card">
+        <div class="help-card p-4 mt-4 mb-4 border border-dark">
             <span class="icon"><i class="fas fa-upload"></i></span>
             <h3>Como enviar artigos?</h3>
             <p>1. Acesse a página de <a href="{{ route('artigos.postar') }}" class="help-link">escrever artigos</a><br>
@@ -118,7 +118,7 @@ use Illuminate\Support\Facades\Auth;
                5. Clique em "Publicar"</p>
         </div>
 
-        <div class="help-card">
+        <div class="help-card p-4 mt-4 mb-4 border border-dark">
             <span class="icon"><i class="fas fa-star"></i></span>
             <h3>Sistema de Avaliação</h3>
             <p>1. Artigos são avaliados pelos estudantes<br>
@@ -127,13 +127,13 @@ use Illuminate\Support\Facades\Auth;
                4. Resultados aparecem no seu <a href="{{ route('dashboard') }}" class="help-link">painel</a></p>
         </div>
 
-        <div class="help-card">
+        <div class="help-card p-4 mt-4 mb-4 border border-dark">
             <span class="icon"><i class="fas fa-book-reader"></i></span>
             <h3>Palavras-Chave e Tags</h3>
             <p>Utilize palavras-chave relevantes para facilitar a busca de seus artigos.</p>
         </div>
 
-        <div class="help-card">
+        <div class="help-card p-4 mt-4 mb-4 border border-dark">
             <span class="icon"><i class="fas fa-user-shield"></i></span>
             <h3>Segurança</h3>
             <p>- Palavras proibidas são filtradas automaticamente<br>
@@ -141,7 +141,7 @@ use Illuminate\Support\Facades\Auth;
                - Denúncias podem ser feitas pelos usuários<br>
         </div>
 
-        <div class="help-card">
+        <div class="help-card p-4 mt-4 mb-4 border border-dark">
             <span class="icon"><i class="fas fa-user-check"></i></span>
             <h3>Meu Perfil</h3>
             <p>1. Atualize seus dados pessoais<br>
@@ -151,7 +151,7 @@ use Illuminate\Support\Facades\Auth;
                5. Gerencie suas configurações em seu <a href="{{ route('students.profile') }}" class="help-link">perfil</a></p>
         </div>
 
-        <div class="help-card">
+        <div class="help-card p-4 mt-4 mb-4 border border-dark">
             <span class="icon"><i class="fas fa-headset"></i></span>
             <h3>Suporte</h3>
             <p>Para dúvidas, sugestões ou problemas:</p>

@@ -58,8 +58,16 @@
         </div>
     </nav>
 
-    <div class="container mt-4 pb-4">
-    <h2 class="mb-4 pt-4 fs-2">Editar Perfil</h2>
+    <div class="container mt-4 mb-4 p-4 border border-dark">
+    <div class="row align-items-center mb-4 pt-4">
+    <div class="col-auto">
+        <a href="{{ route('students.account') }}" class="btn btn-outline-primary"><i class="fas fa-arrow-left me-2"></i>Voltar</a>
+    </div>
+    <div class="col text-center">
+        <h2 class="m-0 fs-2"><i class="fas fa-user-edit text-primary me-2"></i>Editar Perfil</h2>
+    </div>
+    <div class="col-auto"></div>
+</div>
 
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
@@ -75,11 +83,11 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ url('/students/profile') }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ url('/students/profile') }}" enctype="multipart/form-data" class="text-start p-4">
     @method('PUT')
         @csrf
         <div class="mb-3">
-            <label class="form-label fs-4">Foto de Perfil</label>
+            <label class="form-label fs-4"><i class="fas fa-image me-2 text-secondary mb-2"></i>Foto de Perfil</label>
             @if($user->profile_photo)
                 <div class="mb-2">
                     <img src="{{ asset('storage/'.$user->profile_photo) }}" alt="Foto atual" class="img-thumbnail" style="max-width:120px;">
@@ -89,38 +97,38 @@
             <small class="form-text text-muted">JPG ou PNG até 2 MB.</small>
         </div>
         <div class="mb-3">
-            <label class="form-label fs-4">Nome</label>
+            <label class="form-label fs-4"><i class="fas fa-user me-2 text-secondary mb-2"></i>Nome</label>
             <input type="text" name="name" class="form-control" value="{{ old('name', $user->name) }}" required>
         </div>
         <div class="mb-3">
-            <label class="form-label fs-4">E-mail</label>
+            <label class="form-label fs-4"><i class="fas fa-envelope me-2 text-secondary mb-2"></i>E-mail</label>
             <input type="email" name="email" class="form-control" value="{{ old('email', $user->email) }}" required>
         </div>
         <div class="mb-3">
-            <label class="form-label fs-4">RA</label>
+            <label class="form-label fs-4"><i class="fas fa-id-card me-2 text-secondary mb-2"></i>RA</label>
             <input type="text" class="form-control" value="{{ $user->ra }}" disabled>
             <small class="form-text text-muted">Para alterar seu RA, entre em contato com o administrador.</small>
 
         </div>
         <div class="mb-3">
-            <label class="form-label fs-4">Curso</label>
+            <label class="form-label fs-4"><i class="fas fa-graduation-cap me-2 text-secondary mb-2"></i>Curso</label>
             <input type="text" class="form-control" value="{{ $courses[$user->course_id] ?? '' }}" disabled>
             <small class="form-text text-muted">Para alterar curso, entre em contato com o administrador.</small>
         </div>
         <div class="mb-3">
-            <label class="form-label fs-4">Perfil</label>
+            <label class="form-label fs-4"><i class="fas fa-user-tag me-2 text-secondary mb-2"></i>Perfil</label>
             <input type="text" class="form-control" value="{{ $user->role }}" disabled>
             <small class="form-text text-muted">Para alterar o tipo de perfil, entre em contato com o administrador.</small>
         </div>
         <div class="mb-3">
-            <label class="form-label fs-4">Conta criada em</label>
+            <label class="form-label fs-4"><i class="fas fa-calendar-check me-2 text-secondary mb-2"></i>Conta criada em</label>
             <input type="text" class="form-control" value="{{ $user->created_at->format('d/m/Y H:i') }}" disabled>
         </div>
 
         <hr>
-        <h5 class="fs-4">Alterar Senha</h5>
+        <h5 class="fs-4"><i class="fas fa-key me-2 text-secondary mb-2"></i>Alterar Senha</h5>
         <div class="mb-3">
-            <label class="form-label fs-5">Nova Senha</label>
+            <label class="form-label fs-5"><i class="fas fa-key me-2 text-secondary mb-2"></i>Nova Senha</label>
             <input type="password" name="password" id="password" class="form-control" placeholder="Digite a nova senha">
             <!-- Medidor de força -->
             <div id="password-strength-container" class="d-none">
@@ -138,11 +146,13 @@
             </div>
         </div>
         <div class="mb-3">
-            <label class="form-label fs-5">Confirmar Nova Senha</label>
+            <label class="form-label fs-5"><i class="fas fa-key me-2 text-secondary mb-2"></i>Confirmar Nova Senha</label>
             <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" placeholder="Confirme a nova senha">
         </div>
-        <a href="{{ route('dashboard') }}" class="btn btn-outline-danger me-5">Cancelar</a>
-        <button type="submit" class="btn btn-success">Salvar</button>
+        <div class="d-flex justify-content-center gap-3 mt-2">
+    <a href="{{ route('dashboard') }}" class="btn btn-outline-danger"><i class="fas fa-times-circle me-2"></i>Cancelar</a>
+    <button type="submit" class="btn btn-success"><i class="fas fa-save me-2"></i>Salvar</button>
+</div>
     </form>
 </div>
 
