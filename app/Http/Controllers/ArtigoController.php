@@ -102,7 +102,7 @@ return view('artigos.show', compact('article', 'notaUsuario', 'jaDenunciou'));
         $article = \App\Models\Article::with('authors')->findOrFail($id);
         $user = auth()->user();
         $isAuthor = $article->authors->contains('id', $user->id);
-        $isProfessorOrAdmin = in_array($user->role, ['Professor', 'admin']);
+        $isProfessorOrAdmin = in_array($user->role, ['Professor', 'Admin']);
         if (!$isAuthor && !$isProfessorOrAdmin) abort(403);
         
         // Verifica se é um artigo PDF
@@ -127,7 +127,7 @@ return view('artigos.show', compact('article', 'notaUsuario', 'jaDenunciou'));
         $article = \App\Models\Article::with('authors')->findOrFail($id);
         $user = auth()->user();
         $isAuthor = $article->authors->contains('id', $user->id);
-        $isProfessorOrAdmin = in_array($user->role, ['Professor', 'admin']);
+        $isProfessorOrAdmin = in_array($user->role, ['Professor', 'Admin']);
         if (!$isAuthor && !$isProfessorOrAdmin) abort(403);
 
         $validated = $request->validate([

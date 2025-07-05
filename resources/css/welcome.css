@@ -67,6 +67,30 @@ hr {
     opacity: 1;
 }
 
+.hr-green {
+    border: 0;
+    height: 2px;
+    background: linear-gradient(to right, transparent, #1f8c59, transparent);
+    margin: 40px 0;
+    opacity: 1;
+}
+
+.hr-yellow {
+    border: 0;
+    height: 2px;
+    background: linear-gradient(to right, transparent, #ffc107, transparent);
+    margin: 40px 0;
+    opacity: 1;
+}
+
+.hr-red {
+    border: 0;
+    height: 2px;
+    background: linear-gradient(to right, transparent, #dc3545, transparent);
+    margin: 40px 0;
+    opacity: 1;
+}
+
 .vertical-hr {
     height: 400px;
     width: 2px;

@@ -49,13 +49,13 @@
         </div>
     </nav>
 
-    <div class="container mt-4 p-4">
+    <div class="container mt-4 p-4 border border-dark">
         <div class="d-flex align-items-center mb-4">
             <div class="flex-shrink-0">
                 <a href="{{ route('admin.panel') }}" class="btn btn-outline-primary"><i class="fas fa-arrow-left me-1"></i>Voltar ao Painel</a>
             </div>
             <div class="flex-grow-1 text-center">
-                <h2><i class="fas fa-flag me-2"></i>Artigos Denunciados para Revisão</h2>
+                <h2><i class="fas fa-flag me-2 text-danger"></i>Artigos Denunciados para Revisão</h2>
             </div>
         </div>
         @if(session('success'))

@@ -48,7 +48,7 @@
             </div>
         </div>
     </nav>
-    <div class="container p-4 flex-grow-1 mt-4 mb-5">
+    <div class="container p-4 flex-grow-1 mt-4 mb-4 p-4 border border-dark">
     <div class="d-flex align-items-center mb-4">
         <div class="flex-shrink-0">
             <a href="{{ route('admin.panel') }}" class="btn btn-outline-primary"><i class="fas fa-arrow-left me-1"></i>Voltar ao Painel</a>

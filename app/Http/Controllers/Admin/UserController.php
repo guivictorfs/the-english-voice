@@ -103,13 +103,15 @@ class UserController extends Controller
         // aplica atualização
         $user->update($data);
 
-        // registrar log
+        // registrar log detalhado
+        $usuarioAlterado = $user->name . ' (' . $user->email . ')';
+        $descricaoCompleta = 'Usuário ' . $usuarioAlterado . ': ' . implode('; ', $details);
         DB::table('system_audit_log')->insert([
             'id' => auth()->id(),
             'action' => $logAction,
             'table_name' => 'users',
             'record_id' => $user->id,
-            'description' => implode('; ', $details),
+            'description' => $descricaoCompleta,
             'created_at' => now()
         ]);
 

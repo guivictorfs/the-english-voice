@@ -49,7 +49,7 @@
         </div>
     </nav>
 
-    <div class="container mt-4 p-4">
+    <div class="container mt-4 p-4 border border-dark">
         <div class="d-flex align-items-center mb-4">
             <div class="flex-shrink-0">
                 <a href="{{ route('admin.panel') }}" class="btn btn-outline-primary me-3">
@@ -57,7 +57,7 @@
                 </a>
             </div>
             <div class="flex-grow-1 text-center">
-                <h2 class="mb-0"><i class="fas fa-tags me-2"></i>Gerenciar Tags</h2>
+                <h2 class="mb-0"><i class="fas fa-tags text-warning me-2"></i>Gerenciar Tags</h2>
             </div>
             <div class="flex-shrink-0">
                 <form action="{{ route('keywords.store') }}" method="POST" class="d-inline">
@@ -82,11 +82,32 @@
                 @foreach ($keywords as $keyword)
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         {{ $keyword->name }}
-                        <form action="{{ route('keywords.destroy', $keyword->keyword_id) }}" method="POST" onsubmit="return confirm('Deseja remover esta tag?');">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-sm btn-outline-danger">Remover</button>
-                        </form>
+                        <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modalExcluirKeyword-{{ $keyword->keyword_id }}">
+    Remover
+</button>
+<!-- Modal de confirmação de exclusão da tag -->
+<div class="modal fade" id="modalExcluirKeyword-{{ $keyword->keyword_id }}" tabindex="-1" aria-labelledby="modalExcluirKeywordLabel-{{ $keyword->keyword_id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="modalExcluirKeywordLabel-{{ $keyword->keyword_id }}">Excluir Tag</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <strong>ATENÇÃO:</strong> Esta ação é <span class="text-danger">permanente e irreversível</span>.<br>
+                Tem certeza que deseja excluir a tag "{{ $keyword->name }}"?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Cancelar</button>
+                <form action="{{ route('keywords.destroy', $keyword->keyword_id) }}" method="POST" class="d-inline m-0 p-0">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Excluir definitivamente</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
                     </li>
                 @endforeach
             </ul>

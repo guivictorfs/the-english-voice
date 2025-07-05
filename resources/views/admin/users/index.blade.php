@@ -50,13 +50,13 @@
         </div>
     </nav>
 
-    <div class="container mt-4 p-4">
+    <div class="container mt-4 p-4 border border-dark">
     <div class="d-flex align-items-center mb-4">
         <div class="flex-shrink-0">
             <a href="{{ route('admin.panel') }}" class="btn btn-outline-primary"><i class="fas fa-arrow-left me-1"></i>Voltar ao Painel</a>
         </div>
         <div class="flex-grow-1 text-center">
-            <h2><i class="fas fa-users me-2"></i>Usuários cadastrados</h2>
+            <h2><i class="fas fa-users me-2 text-primary"></i>Usuários cadastrados</h2>
         </div>
     </div>
 
@@ -65,7 +65,7 @@
             <input type="text" name="q" value="{{ request('q') }}" placeholder="Buscar por nome ou email" class="form-control">
         </div>
         <div class="col-auto">
-            <button class="btn btn-primary" type="submit">Pesquisar</button>
+            <button class="btn btn-primary" type="submit"><i class="fas fa-search me-1 text-white"></i> Pesquisar</button>
         </div>
         @if(request('q'))
             <div class="col-auto">
@@ -110,8 +110,12 @@
                         <td>{{ $user->created_at->format('d/m/Y') }}</td>
                     
                                         <td>
-                                <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-primary me-1">Editar</a>
-                                <a href="{{ route('admin.users.logs', $user->id) }}" class="btn btn-sm btn-outline-dark">Logs</a>
+                                <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-primary me-1">
+                                    <i class="fas fa-edit me-1"></i> Editar
+                                </a>
+                                <a href="{{ route('admin.users.logs', $user->id) }}" class="btn btn-sm btn-outline-dark">
+                                    <i class="fas fa-list-alt me-1"></i> Logs
+                                </a>
                             </td>
                     </tr>
                 @endforeach

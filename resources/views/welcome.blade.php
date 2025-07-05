@@ -67,10 +67,10 @@
 
 
     <!-- Main Content -->
-    <div class="container mb-3">
+    <div class="container mt-4 mb-4 p-4 border border-dark">
         <div class="container container-title text-center my-3">
-            <h1 class="display-2 mb-4">Bem-vindo ao <br><span id="typing-effect"></span></h1>
-            <p class="lead mb-5">Seu portal para o aprendizado de inglês!</p>
+            <h1 class="display-2 mb-4">Welcome to <br><span id="typing-effect"></span></h1>
+            <p class="lead mb-5">Your portal for learning English!</p>
         </div>
         <div class="text-center pb-2">
             <img src="{{ asset('/IMG/happy-announcement.svg') }}" alt="Acessar conta" class="img-fluid img-svg">
@@ -82,14 +82,13 @@
                 <!-- Card de Entrar -->
                 <div class="col-md-6">
                     <a href="{{ route('login') }}" class="text-decoration-none">
-                        <div class="card-effect shadow-lg border-0 rounded-3 card-entrar"
+                        <div class="card-effect shadow-lg border border-dark rounded-3 card-entrar"
                             style="cursor: pointer; transition: transform 0.3s ease;">
                             <div class="card-body p-4">
                                 <h5 class="card-title text-primary fs-4">Entrar</h5>
-                                <p class="card-text text-muted">Acesse sua conta para gerenciar seus artigos, mensagens e
-                                    mais.
-                                </p>
+                                <p class="card-text text-muted">Acesse sua conta para gerenciar e postar artigos.</p>
                             </div>
+                            <hr class="mt-0">
                             <div class="card-footer text-center bg-transparent border-0">
                                 <i class="bi bi-box-arrow-in-right fs-2 text-primary"></i>
                             </div>
@@ -100,7 +99,7 @@
                 <!-- Card de Criar Conta -->
                 <div class="col-md-6">
                     <a href="{{ route('register') }}" class="text-decoration-none">
-                        <div class="card-effect shadow-lg border-0 rounded-3 card-criar-conta"
+                        <div class="card-effect shadow-lg border border-dark rounded-3 card-criar-conta"
                             style="cursor: pointer; transition: transform 0.3s ease;">
                             <div class="card-body p-4">
                                 <h5 class="card-title text-success fs-4">Criar Conta</h5>
@@ -108,6 +107,7 @@
                                     conhecimentos.
                                 </p>
                             </div>
+                            <hr class="hr-green mt-0">
                             <div class="card-footer text-center bg-transparent border-0">
                                 <i class="bi bi-person-plus fs-2 text-success"></i>
                             </div>
@@ -118,12 +118,13 @@
                 <!-- Card de Esqueceu a Senha -->
                 <div class="col-md-6">
                     <a href="{{ route('password.request') }}" class="text-decoration-none">
-                        <div class="card-effect shadow-lg border-0 rounded-3 card-esqueceu-senha"
+                        <div class="card-effect shadow-lg border border-dark rounded-3 card-esqueceu-senha"
                             style="cursor: pointer; transition: transform 0.3s ease;">
                             <div class="card-body p-4">
                                 <h5 class="card-title text-danger fs-4">Esqueceu a Senha?</h5>
                                 <p class="card-text text-muted">Redefina sua senha de forma fácil e segura.</p>
                             </div>
+                            <hr class="hr-red mt-0">
                             <div class="card-footer text-center bg-transparent border-0">
                                 <i class="bi bi-exclamation-triangle fs-2 text-danger"></i>
                             </div>
@@ -134,12 +135,13 @@
                 <!-- Card de Ajuda -->
                 <div class="col-md-6">
                     <a href="{{ route('help') }}" class="text-decoration-none">
-                        <div class="card-effect shadow-lg border-0 rounded-3 card-ajuda"
+                        <div class="card-effect shadow-lg border border-dark rounded-3 card-ajuda"
                             style="cursor: pointer; transition: transform 0.3s ease;">
                             <div class="card-body p-4">
                                 <h5 class="card-title text-warning fs-4">Ajuda</h5>
                                 <p class="card-text text-muted">Precisa de suporte? Entre em contato conosco.</p>
                             </div>
+                            <hr class="hr-yellow mt-0">
                             <div class="card-footer text-center bg-transparent border-0">
                                 <i class="bi bi-question-circle fs-2 text-warning"></i>
                             </div>

@@ -49,7 +49,7 @@
         </div>
     </nav>
 
-    <div class="container mt-4 mb-4 p-4">
+    <div class="container mt-4 mb-4 p-4 border border-dark">
         <div class="d-flex align-items-center mb-4">
             <div class="flex-shrink-0">
                 <a href="{{ route('admin.panel') }}" class="btn btn-outline-primary me-3">
@@ -57,7 +57,7 @@
                 </a>
             </div>
             <div class="flex-grow-1 text-center">
-                <h2 class="mb-0"><i class="fas fa-ban me-2"></i>Gerenciar Palavras Proibidas</h2>
+                <h2 class="mb-0"><i class="fas fa-ban text-danger me-2"></i>Gerenciar Palavras Proibidas</h2>
             </div>
             <div class="flex-shrink-0">
                 <form action="{{ route('forbidden_words.store') }}" method="POST" class="d-inline">
@@ -83,11 +83,32 @@
                 @foreach ($words as $word)
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         {{ $word->word }}
-                        <form action="{{ route('forbidden_words.destroy', $word->id) }}" method="POST" onsubmit="return confirm('Deseja remover esta palavra?');">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-sm btn-outline-danger">Remover</button>
-                        </form>
+                        <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modalExcluirForbidden-{{ $word->id }}">
+    Remover
+</button>
+<!-- Modal de confirmação de exclusão da palavra proibida -->
+<div class="modal fade" id="modalExcluirForbidden-{{ $word->id }}" tabindex="-1" aria-labelledby="modalExcluirForbiddenLabel-{{ $word->id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="modalExcluirForbiddenLabel-{{ $word->id }}">Excluir Palavra Proibida</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <strong>ATENÇÃO:</strong> Esta ação é <span class="text-danger">permanente e irreversível</span>.<br>
+                Tem certeza que deseja excluir a palavra "{{ $word->word }}"?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Cancelar</button>
+                <form action="{{ route('forbidden_words.destroy', $word->id) }}" method="POST" class="d-inline m-0 p-0">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Excluir definitivamente</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
                     </li>
                 @endforeach
             </ul>

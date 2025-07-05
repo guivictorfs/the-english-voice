@@ -49,7 +49,7 @@
         </div>
     </nav>
 
-    <div class="container mt-4 mb-4 p-4">
+    <div class="container mt-4 mb-4 p-4 border border-dark">
         <div class="d-flex align-items-center mb-4">
             <div class="flex-shrink-0">
                 <a href="{{ route('admin.panel') }}" class="btn btn-outline-primary me-3">
@@ -57,7 +57,7 @@
                 </a>
             </div>
             <div class="flex-grow-1 text-center">
-                <h3 class="mb-0"><i class="fas fa-graduation-cap me-2"></i>Gerenciar Cursos</h3>
+                <h3 class="mb-0"><i class="fas fa-graduation-cap text-info me-2"></i>Gerenciar Cursos</h3>
             </div>
         </div>
 
@@ -120,7 +120,7 @@
                                             Tem certeza que deseja excluir o curso "{{ $course->course_name }}"?
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                            <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Cancelar</button>
                                             <form action="{{ route('admin.courses.destroy', $course->course_id) }}" method="POST" class="d-inline m-0 p-0">
                                                 @csrf
                                                 @method('DELETE')
@@ -160,8 +160,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Salvar</button>
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Salvar</button>
                 </div>
             </div>
         </form>

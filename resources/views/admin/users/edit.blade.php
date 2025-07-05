@@ -87,7 +87,7 @@
         </div>
     </nav>
     
-    <div class="container text-start mt-4 mb-4 p-4" style="max-width: 600px;">
+    <div class="container text-start mt-4 mb-4 p-4 border border-dark" style="max-width: 600px;">
     <h3 class="mb-4"><i class="fas fa-user-edit text-primary me-2"></i>Editar Usuário {{ $user->name }}</h3>
 
     @if(session('success'))

@@ -88,7 +88,7 @@
         </div>
     </nav>
     <div class="flex-grow-1">
-        <div class="container admin-panel-main mt-4 mb-4 p-4">
+        <div class="container admin-panel-main mt-4 mb-4 p-4 border border-dark">
             @php $role = strtolower(Auth::user()->role ?? ''); @endphp
             <h1 class="mb-5 text-center"><i class="fas fa-tachometer-alt me-2 text-primary"></i>Painel do Administrador</h1>
 
@@ -96,7 +96,7 @@
             <!-- Ranking de Postagens -->
             <div class="col-md-4">
                 <a href="{{ route('artigos.melhores') }}" class="text-decoration-none text-dark">
-                    <div class="card card-hover shadow-sm h-100 text-center p-4">
+                    <div class="card card-hover shadow-sm h-100 text-center p-4 border border-dark">
                         <i class="fas fa-trophy fa-3x text-warning mb-3"></i>
                         <h5 class="card-title">Ranking de Artigos</h5>
                     </div>
@@ -105,7 +105,7 @@
             <!-- Artigos -->
             <div class="col-md-4">
                 <a href="{{ route('dashboard') }}" class="text-decoration-none text-dark">
-                    <div class="card card-hover shadow-sm h-100 text-center p-4">
+                    <div class="card card-hover shadow-sm h-100 text-center p-4 border border-dark">
                         <i class="fas fa-newspaper fa-3x text-success mb-3"></i>
                         <h5 class="card-title">Artigos</h5>
                     </div>
@@ -115,7 +115,7 @@
             <div class="col-md-4">
                 @if($role === 'admin')
                     <a href="{{ route('admin.users.index') }}" class="text-decoration-none text-dark">
-                        <div class="card card-hover shadow-sm h-100 text-center p-4">
+                        <div class="card card-hover shadow-sm h-100 text-center p-4 border border-dark">
                             <i class="fas fa-user-cog fa-3x text-primary mb-3"></i>
                             <h5 class="card-title">Gerenciar Usuários</h5>
                         </div>
@@ -131,7 +131,7 @@
             <!-- Denúncias -->
             <div class="col-md-4">
                 <a href="{{ route('admin.artigos.pendentes') }}" class="text-decoration-none text-dark">
-                    <div class="card card-hover shadow-sm h-100 text-center p-4">
+                    <div class="card card-hover shadow-sm h-100 text-center p-4 border border-dark">
                         <i class="fas fa-flag fa-3x text-danger mb-3"></i>
                         <h5 class="card-title">Denúncias</h5>
                     </div>
@@ -141,7 +141,7 @@
             <div class="col-md-4">
                 @if($role === 'admin')
                     <a href="{{ url('/admin/courses') }}" class="text-decoration-none text-dark">
-                        <div class="card card-hover shadow-sm h-100 text-center p-4">
+                        <div class="card card-hover shadow-sm h-100 text-center p-4 border border-dark">
                             <i class="fas fa-graduation-cap fa-3x text-info mb-3"></i>
                             <h5 class="card-title">Cursos</h5>
                         </div>
@@ -157,7 +157,7 @@
             <!-- Palavras-chave -->
             <div class="col-md-4">
                 <a href="{{ route('keywords.index') }}" class="text-decoration-none text-dark">
-                    <div class="card card-hover shadow-sm h-100 text-center p-4">
+                    <div class="card card-hover shadow-sm h-100 text-center p-4 border border-dark">
                         <i class="fas fa-tags fa-3x text-warning mb-3"></i>
                         <h5 class="card-title">Tags</h5>
                     </div>
@@ -166,7 +166,7 @@
             <!-- Palavras Proibidas -->
             <div class="col-md-4">
                 <a href="{{ route('forbidden_words.index') }}" class="text-decoration-none text-dark">
-                    <div class="card card-hover shadow-sm h-100 text-center p-4">
+                    <div class="card card-hover shadow-sm h-100 text-center p-4 border border-dark">
                         <i class="fas fa-ban fa-3x text-danger mb-3"></i>
                         <h5 class="card-title">Palavras Proibidas</h5>
                     </div>
@@ -176,7 +176,7 @@
             <div class="col-md-4">
                 @if($role === 'admin')
                     <a href="{{ route('admin.logs.index') }}" class="text-decoration-none text-dark">
-                        <div class="card card-hover shadow-sm h-100 text-center p-4">
+                        <div class="card card-hover shadow-sm h-100 text-center p-4 border border-dark">
                             <i class="fas fa-clipboard-list fa-3x text-secondary mb-3"></i>
                             <h5 class="card-title">Logs do Sistema</h5>
                         </div>
@@ -193,7 +193,7 @@
 <div class="col-md-4">
     @if($role === 'admin')
         <a href="{{ route('admin.suspicious_activities.index') }}" class="text-decoration-none text-dark">
-            <div class="card card-hover shadow-sm h-100 text-center p-4">
+            <div class="card card-hover shadow-sm h-100 text-center p-4 border border-dark">
                 <i class="fas fa-user-secret fa-3x text-dark mb-3"></i>
                 <h5 class="card-title">Atividades Suspeitas</h5>
             </div>
