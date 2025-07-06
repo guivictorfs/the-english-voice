@@ -42,4 +42,12 @@ class Article extends Model
     {
         return $this->hasMany(\App\Models\Avaliacao::class, 'artigo_id', 'article_id');
     }
+
+    /**
+     * Comentários deste artigo
+     */
+    public function comments()
+    {
+        return $this->hasMany(\App\Models\Comment::class, 'article_id', 'article_id');
+    }
 }

@@ -255,6 +255,239 @@ $(document).ready(function() {
     </div>
 </div>
 <!-- FIM do conteúdo principal -->
+<div class="container mt-4 mb-4 p-4 border border-dark">
+    <h4 class="mb-3"><i class="fas fa-comments text-primary me-2"></i>Comentários</h4>
+    @if(session('error'))
+        <div class="alert alert-danger">{{ session('error') }}</div>
+    @endif
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+    @auth
+        <form action="{{ route('comentarios.store', $artigo->article_id) }}" method="POST" class="mb-4">
+            @csrf
+            <div class="mb-2">
+                <textarea name="content" class="form-control" rows="3" maxlength="2000" required placeholder="Escreva seu comentário..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-paper-plane me-1"></i> Enviar comentário
+            </button>
+        </form>
+    @else
+        <p class="text-muted">Faça login para comentar.</p>
+    @endauth
+    <hr>
+    @foreach($artigo->comments()->where('hidden', false)->latest()->get() as $comment)
+        <div class="d-flex align-items-start mb-4">
+            <img src="{{ $comment->user->profile_photo ? asset('storage/' . $comment->user->profile_photo) : 'https://ui-avatars.com/api/?name=' . urlencode($comment->user->name) . '&size=64&background=cccccc&color=222222' }}" class="rounded-circle me-3" alt="Foto de {{ $comment->user->name }}" width="48" height="48">
+            <div class="flex-grow-1">
+                <div class="d-flex align-items-center mb-1">
+                    <strong>{{ $comment->user->name }}</strong>
+                    <span class="text-muted ms-2" style="font-size:0.9em;">{{ $comment->created_at->diffForHumans() }}</span>
+                </div>
+                <div class="bg-white border rounded p-4 text-start position-relative">
+    <div class="d-flex justify-content-end gap-2 mb-2" style="position: absolute; top: 0.5rem; right: 0.75rem;" id="comment-actions-{{ $comment->id }}">
+        @auth
+            @if(Auth::id() === $comment->user_id || (auth()->check() && in_array(auth()->user()->role, ['Admin', 'Professor'])))
+                <a href="#" class="btn btn-sm btn-outline-primary edit-btn" title="Editar comentário" data-id="{{ $comment->id }}"><i class="fas fa-edit"></i></a>
+                <button type="button" class="btn btn-sm btn-outline-danger" title="Excluir comentário" data-bs-toggle="modal" data-bs-target="#modalExcluirComentario-{{ $comment->id }}">
+    <i class="fas fa-trash-alt"></i>
+</button>
+<!-- Modal de confirmação de exclusão do comentário -->
+<div class="modal fade" id="modalExcluirComentario-{{ $comment->id }}" tabindex="-1" aria-labelledby="modalExcluirComentarioLabel-{{ $comment->id }}" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="modalExcluirComentarioLabel-{{ $comment->id }}">Excluir Comentário</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <strong>ATENÇÃO:</strong> Esta ação é <span class="text-danger">permanente e irreversível</span>.<br>
+        Tem certeza que deseja excluir este comentário para sempre?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Cancelar</button>
+        <form action="{{ route('comentarios.excluir', $comment->id) }}" method="POST" class="d-inline m-0 p-0">
+            @csrf
+            <button type="submit" class="btn btn-danger">Excluir definitivamente</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+            @else
+                <button type="button" class="btn btn-sm btn-outline-danger" title="Denunciar comentário" data-bs-toggle="modal" data-bs-target="#modalDenunciarComentario-{{ $comment->id }}">
+                    <i class="fas fa-flag"></i>
+                </button>
+                <!-- Modal de denúncia do comentário -->
+                <div class="modal fade" id="modalDenunciarComentario-{{ $comment->id }}" tabindex="-1" aria-labelledby="modalDenunciarComentarioLabel-{{ $comment->id }}" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                      <div class="modal-header bg-warning text-dark">
+                        <h5 class="modal-title" id="modalDenunciarComentarioLabel-{{ $comment->id }}">Denunciar Comentário</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                      </div>
+                      <div class="modal-body">
+                        Tem certeza que deseja denunciar este comentário?<br>
+                        <small class="text-muted">O comentário será encaminhado para análise da equipe.</small>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <form action="{{ route('comentarios.report', $comment->id) }}" method="POST" class="d-inline m-0 p-0">
+                            @csrf
+                            <button type="submit" class="btn btn-warning">Denunciar</button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            @endif
+        @endauth
+    </div>
+<script>
+function toggleEdit(id, show) {
+    document.getElementById('comment-content-' + id).style.display = show ? 'none' : '';
+    document.getElementById('edit-form-' + id).style.display = show ? '' : 'none';
+    // Esconde ou mostra os ícones de ação
+    var actions = document.getElementById('comment-actions-' + id);
+    if (actions) {
+        if (show) {
+            actions.classList.add('d-none');
+        } else {
+            actions.classList.remove('d-none');
+        }
+    }
+}
+document.querySelectorAll('.edit-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const id = this.dataset.id;
+        toggleEdit(id, true);
+    });
+});
+</script>
+    <div id="comment-content-{{ $comment->id }}">{{ $comment->content }}</div>
+<form id="edit-form-{{ $comment->id }}" action="{{ route('comentarios.update', $comment->id) }}" method="POST" class="needs-validation" novalidate style="display:none;" data-comment-id="{{ $comment->id }}" onsubmit="return updateCommentViaAjax(this)">
+    @csrf
+    <div class="mb-2">
+        <textarea name="content" class="form-control" style="max-width:900px;" rows="3" maxlength="2000" required>{{ $comment->content }}</textarea>
+    </div>
+    <button type="button" class="btn btn-outline-danger btn-sm" onclick="toggleEdit({{ $comment->id }}, false)">Cancelar</button>
+    <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-save"></i> Salvar</button>
+</form>
+<script>
+function toggleEdit(id, show) {
+    document.getElementById('comment-content-' + id).style.display = show ? 'none' : '';
+    document.getElementById('edit-form-' + id).style.display = show ? '' : 'none';
+}
+document.querySelectorAll('.edit-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const id = this.dataset.id;
+        toggleEdit(id, true);
+    });
+});
+</script>
+</div>
+            </div>
+        </div>
+    @endforeach
+</div>
+
+<script>
+    // Função para atualizar comentário via AJAX
+    function updateCommentViaAjax(form) {
+        const formData = new FormData(form);
+        const commentId = form.dataset.commentId;
+        
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro na requisição');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Atualiza o conteúdo do comentário
+                const commentContent = document.getElementById('comment-content-' + commentId);
+                if (commentContent) {
+                    commentContent.innerHTML = data.comment.content;
+                }
+                
+                // Fecha o formulário de edição
+                toggleEdit(commentId, false);
+                
+                // Mostra mensagem de sucesso
+                const successAlert = document.createElement('div');
+                successAlert.className = 'alert alert-success mt-2';
+                successAlert.textContent = 'Comentário atualizado com sucesso!';
+                form.parentElement.insertBefore(successAlert, form);
+                
+                // Remove a mensagem após 3 segundos
+                setTimeout(() => {
+                    successAlert.remove();
+                }, 3000);
+            } else {
+                // Mostra mensagem de erro
+                const errorAlert = document.createElement('div');
+                errorAlert.className = 'alert alert-danger mt-2';
+                errorAlert.textContent = data.error || 'Erro ao atualizar comentário.';
+                form.parentElement.insertBefore(errorAlert, form);
+                
+                // Remove a mensagem após 3 segundos
+                setTimeout(() => {
+                    errorAlert.remove();
+                }, 3000);
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao atualizar comentário:', error);
+            const errorAlert = document.createElement('div');
+            errorAlert.className = 'alert alert-danger mt-2';
+            errorAlert.textContent = 'Erro ao atualizar comentário. Por favor, tente novamente.';
+            form.parentElement.insertBefore(errorAlert, form);
+            
+            // Remove a mensagem após 3 segundos
+            setTimeout(() => {
+                errorAlert.remove();
+            }, 3000);
+        });
+        
+        // Previne o envio padrão do formulário
+        return false;
+    }
+
+    // Função para alternar entre visualização e edição
+    function toggleEdit(id, show) {
+        document.getElementById('comment-content-' + id).style.display = show ? 'none' : '';
+        document.getElementById('edit-form-' + id).style.display = show ? '' : 'none';
+        // Esconde ou mostra os ícones de ação
+        var actions = document.getElementById('comment-actions-' + id);
+        if (actions) {
+            if (show) {
+                actions.classList.add('d-none');
+            } else {
+                actions.classList.remove('d-none');
+            }
+        }
+    }
+
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const id = this.dataset.id;
+            toggleEdit(id, true);
+        });
+    });
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Footer -->
 <footer class="footer bg-light py-2">

@@ -44,6 +44,9 @@ Route::middleware(['auth', \App\Http\Middleware\VerifyAdminAccess::class])->grou
     Route::get('/forbidden_words', [\App\Http\Controllers\ForbiddenWordController::class, 'index'])->name('forbidden_words.index');
     Route::post('/forbidden_words', [\App\Http\Controllers\ForbiddenWordController::class, 'store'])->name('forbidden_words.store');
     Route::delete('/forbidden_words/{id}', [\App\Http\Controllers\ForbiddenWordController::class, 'destroy'])->name('forbidden_words.destroy');
+    
+    // Rota para exportação de logs
+    Route::get('/logs/export/{format}', [\App\Http\Controllers\SystemLogController::class, 'export'])->name('admin.logs.export');
 });
 
 // Rota de teste para diagnóstico do middleware
@@ -98,12 +101,29 @@ Route::middleware(['auth', \App\Http\Middleware\CheckAdminAccess::class])->group
     })->name('password.reset.ajax');
 });
 
+// Rotas públicas
+use App\Http\Controllers\CommentController;
+Route::middleware(['auth'])->group(function () {
+    Route::post('/artigos/{article}/comentarios', [CommentController::class, 'store'])->name('comentarios.store');
+    Route::post('/comentarios/{comment}/update', [CommentController::class, 'update'])->name('comentarios.update');
+    Route::post('/comentarios/{comment}/report', [CommentController::class, 'report'])->name('comentarios.report');
+    Route::post('/comentarios/{comment}/excluir', [CommentController::class, 'excluirComentario'])->name('comentarios.excluir');
+});
+
+// Rotas de comentários (admin)
+Route::middleware(['auth', \App\Http\Middleware\VerifyAdminAccess::class])->prefix('admin')->name('admin.')->group(function(){
+    Route::post('/comentarios/{comment}/ocultar', [CommentController::class, 'ocultarComentario'])->name('comentarios.ocultar');
+    Route::post('/comentarios/{comment}/aprovar', [CommentController::class, 'aprovarComentario'])->name('comentarios.aprovar');
+    Route::post('/comentarios/{comment}/excluir', [CommentController::class, 'excluirComentario'])->name('comentarios.excluir');
+    Route::post('/comentarios/{comment}/update', [CommentController::class, 'update'])->name('comentarios.update');
+});
+
 // Rotas padrão (backend Laravel)
 Route::get('forgot-password', [PasswordResetController::class, 'showLinkRequestForm'])->name('password.request');
 Route::post('forgot-password', [PasswordResetController::class, 'sendResetLinkEmail'])->name('password.email');
 Route::get('reset-password/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
 Route::post('reset-password', [PasswordResetController::class, 'update'])->name('password.update');
-Route::get('/artigos', [App\Http\Controllers\ArtigoController::class, 'index'])->name('dashboard');
+Route::get('/artigos/{article}', [App\Http\Controllers\ArtigoController::class, 'show'])->name('artigos.show')->middleware('auth');
 
 // Painel do aluno - Meus Artigos
 use App\Http\Controllers\StudentController;
@@ -156,18 +176,20 @@ Route::middleware(['auth', \App\Http\Middleware\VerifyAdminAccess::class])->pref
     Route::post('/forbidden_words', [ForbiddenWordController::class, 'store'])->name('forbidden_words.store');
     Route::delete('/forbidden_words/{id}', [ForbiddenWordController::class, 'destroy'])->name('forbidden_words.destroy');
 
-    // Adicionando a rota de palavras proibidas dentro do grupo admin
-    // (Grupo duplicado removido, mantenha todas as rotas admin apenas no grupo acima)
+    Route::post('/artigos/{article}/comentarios', [CommentController::class, 'store'])->name('comentarios.store');
+Route::delete('/comentarios/{comment}', [CommentController::class, 'destroy'])->name('comentarios.destroy');
+Route::post('/comentarios/{comment}/report', [CommentController::class, 'report'])->name('comentarios.report');
 
 });
 
 // Página para postar artigo
 Route::get('/artigos/postar', function () {
-    return view('artigo_postar');
+    return view('artigos_postar');
 })->name('artigos.postar');
 
 // Lista de artigos
 Route::get('/artigos', [App\Http\Controllers\ArtigoController::class, 'index'])->name('artigos.index');
+Route::get('/artigos/{article}', [App\Http\Controllers\ArtigoController::class, 'show'])->name('artigos.show')->middleware('auth');
 
 // Lista de melhores artigos
 Route::get('/artigos/melhores', [App\Http\Controllers\ArtigoController::class, 'melhores'])->name('artigos.melhores');

@@ -92,7 +92,12 @@ class ArtigoController extends Controller
     ->latest('created_at')
     ->first();
 $jaDenunciou = $ultimaDenuncia && $ultimaDenuncia->created_at > $article->updated_at;
-return view('artigos.show', compact('article', 'notaUsuario', 'jaDenunciou'));
+        $isAdmin = false;
+        if (auth()->check()) {
+            $user = auth()->user();
+            $isAdmin = in_array($user->role, ['Admin', 'Professor']);
+        }
+        return view('artigo_visualizar', compact('article', 'notaUsuario', 'jaDenunciou', 'isAdmin'));
     }
     /**
      * Exibe o formulário de edição do artigo
@@ -236,7 +241,9 @@ return view('artigos.show', compact('article', 'notaUsuario', 'jaDenunciou'));
             ->get();
         // Buscar denúncias agrupadas por artigo
         $reports = \App\Models\ArticleReport::with('user')->get()->groupBy('article_id');
-        return view('admin.artigos_pendentes', compact('articles', 'reports'));
+        // Buscar comentários denunciados (ex: reported = true)
+        $reportedComments = \App\Models\Comment::where('reported', true)->with(['user', 'article'])->get();
+        return view('admin.artigos_pendentes', compact('articles', 'reports', 'reportedComments'));
     }
 
     /**

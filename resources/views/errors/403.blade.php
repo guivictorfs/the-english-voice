@@ -106,7 +106,7 @@
     </nav>
 
     <div class="content-wrapper">
-        <div class="container text-center mt-4 mb-4 p-4">
+        <div class="container text-center mt-4 mb-4 p-4 border border-dark">
             <h1 class="display-4 text-danger">
                 <i class="fas fa-ban me-2"></i>403
             </h1>
