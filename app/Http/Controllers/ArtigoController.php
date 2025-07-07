@@ -438,41 +438,46 @@ $jaDenunciou = $ultimaDenuncia && $ultimaDenuncia->created_at > $article->update
             ->first();
 
         return view('artigo_visualizar', [
-            'artigo' => $artigo,
+            'article' => $artigo,
             'pdfPath' => $file ? $file->file_path : null
         ]);
     }
 
-    /**
-     * Denunciar artigo: incrementa denuncias e coloca status 'Pendente' se chegar a 5
-     */
     public function denunciar(Request $request, $article_id)
     {
         $article = Article::findOrFail($article_id);
         $motivo = $request->input('motivo', 'Motivo não informado');
         $userId = Auth::id();
+
         // Checa se já existe denúncia desse aluno para esse artigo
-        $jaDenunciou = ArticleReport::where('article_id', $article_id)->where('user_id', $userId)->exists();
+        $jaDenunciou = ArticleReport::where('article_id', $article_id)
+            ->where('user_id', $userId)
+            ->exists();
         if ($jaDenunciou) {
             return redirect()->back()->withErrors(['Você já denunciou este artigo.']);
         }
+
         // Salva a denúncia
         ArticleReport::create([
             'article_id' => $article_id,
             'user_id' => $userId,
             'motivo' => $motivo,
         ]);
-        // Incrementa contador e notifica autores
+
+        // Incrementa contador e atualiza status se necessário
         $article->denuncias = $article->denuncias + 1;
         if ($article->denuncias >= 5) {
             $article->status = 'Pendente';
         }
         $article->save();
+
+        // Notifica autores
         $autorIds = DB::table('article_author')->where('article_id', $article_id)->pluck('id');
         $autores = User::whereIn('id', $autorIds)->get();
         foreach ($autores as $autor) {
             $autor->notify(new ArtigoDenunciadoNotification($article->title, $motivo, $article->article_id));
         }
+
         return redirect()->back()->with('success', 'Artigo denunciado com sucesso!');
     }
 

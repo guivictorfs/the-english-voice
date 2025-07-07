@@ -1,5 +1,5 @@
 import "./bootstrap";
-import Filter from "bad-words/lib/filter";
+import Filter from "bad-words";
 
 // Filtro de palavras ofensivas
 const filter = new Filter();

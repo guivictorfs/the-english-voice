@@ -319,24 +319,8 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
     <hr class="my-2">
     @if($article->content && trim($article->content) !== '')
-        @php
-    $plainContent = strip_tags($article->content);
-    $isLong = mb_strlen($plainContent) > 400;
-    $shortContent = Str::limit($plainContent, 400);
-@endphp
-<div class="mb-3 text-break text-start ps-3 pe-3">
-    <span id="conteudo-curto-{{ $article->article_id }}" style="display: {{ $isLong ? 'inline' : 'block' }};">
-        {!! highlight($shortContent, $highlight) !!}
-        @if($isLong)
-            ...<br><div class="w-100 text-center"><a href="javascript:void(0);" class="ver-mais btn btn-link p-0 align-baseline fw-semibold mt-1" data-id="{{ $article->article_id }}"><i class="fas fa-chevron-down me-1"></i>Ver mais</a></div>
-        @endif
-    </span>
-    @if($isLong)
-    <span id="conteudo-completo-{{ $article->article_id }}" style="display: none;">
-        {!! highlight($plainContent, $highlight) !!}
-        <br><div class="w-100 text-center"><a href="javascript:void(0);" class="ver-menos btn btn-link p-0 align-baseline fw-semibold mt-1" data-id="{{ $article->article_id }}"><i class="fas fa-chevron-up me-1"></i>Ver menos</a></div>
-    </span>
-    @endif
+        <div class="mb-3 text-break text-start ps-3 pe-3 quill-content">
+    {!! $article->content !!}
 </div>
     @else
         @php
@@ -399,8 +383,12 @@ document.addEventListener('DOMContentLoaded', function() {
               </div>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-              <button type="submit" class="btn btn-danger" id="btnEnviarDenuncia-{{ $article->article_id }}">Enviar denúncia</button>
+              <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">
+  <i class="fas fa-times"></i> Cancelar
+</button>
+<button type="submit" class="btn btn-danger" id="btnEnviarDenuncia-{{ $article->article_id }}">
+  <i class="fas fa-flag"></i> Enviar denúncia
+</button>
             </div>
           </form>
         </div>
