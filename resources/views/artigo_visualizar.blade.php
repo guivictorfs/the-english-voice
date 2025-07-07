@@ -90,48 +90,48 @@
             <div class="artigo-card p-4 shadow-sm border border-dark rounded mb-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
     <button onclick="window.history.back()" class="btn btn-outline-primary me-2"><i class="fas fa-arrow-left"></i> Voltar</button>
-    @php $firstAuthor = $artigo->authors->first(); @endphp
+    @php $firstAuthor = $article->authors->first(); @endphp
     @if(auth()->check() && $firstAuthor && auth()->user()->id == $firstAuthor->id)
-        <a href="{{ route('artigos.edit', $artigo->article_id) }}" class="btn btn-outline-primary">
+        <a href="{{ route('artigos.edit', $article->article_id) }}" class="btn btn-outline-primary">
             <i class="fas fa-edit"></i> Editar Artigo
         </a>
     @endif
 </div>
                 <div class="mb-3">
-                    <div class="fs-3 mb-0 fw-bold text-start">Título: {{ $artigo->title }}</div>
+                    <div class="fs-3 mb-0 fw-bold text-start">Título: {{ $article->title }}</div>
 <hr class="my-2">
                 </div>
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <div class="d-flex align-items-center">
-                        @php $firstAuthor = $artigo->authors->first(); @endphp
+                        @php $firstAuthor = $article->authors->first(); @endphp
                         <img src="{{ $firstAuthor && $firstAuthor->profile_photo ? asset('storage/' . $firstAuthor->profile_photo) : 'https://ui-avatars.com/api/?name=' . urlencode($firstAuthor ? $firstAuthor->name : 'A') . '&size=96&background=cccccc&color=555555' }}" alt="Avatar" class="rounded-circle me-3" width="54" height="54">
                         <div>
                                                         <div class="text-muted" style="font-size:1rem;">
                                 Por
-                                @if($artigo->authors && $artigo->authors->count())
-                                    @foreach($artigo->authors as $i => $author)
-                                        <a href="{{ route('dashboard', ['author' => $author->name]) }}" class="fw-bold text-success text-decoration-none" title="Filtrar por {{ $author->name }}">{{ $author->name }}</a>@if($i < $artigo->authors->count() - 1), @endif
+                                @if($article->authors && $article->authors->count())
+                                    @foreach($article->authors as $i => $author)
+                                        <a href="{{ route('dashboard', ['author' => $author->name]) }}" class="fw-bold text-success text-decoration-none" title="Filtrar por {{ $author->name }}">{{ $author->name }}</a>@if($i < $article->authors->count() - 1), @endif
                                     @endforeach
                                 @else
                                     <span>Autor desconhecido</span>
                                 @endif
-                                em {{ $artigo->created_at->setTimezone('America/Sao_Paulo')->format('d/m/Y') }}, às {{ $artigo->created_at->setTimezone('America/Sao_Paulo')->format('H:i') }}
+                                em {{ $article->created_at->setTimezone('America/Sao_Paulo')->format('d/m/Y') }}, às {{ $article->created_at->setTimezone('America/Sao_Paulo')->format('H:i') }}
                             </div>
                         </div>
                     </div>
                     <div class="d-flex align-items-center gap-2">
-                        @can('update', $artigo)
-                            <a href="{{ route('artigos.edit', $artigo->article_id) }}" class="btn btn-sm btn-outline-primary" title="Editar"><i class="fas fa-edit"></i> Editar</a>
+                        @can('update', $article)
+                            <a href="{{ route('artigos.edit', $article->article_id) }}" class="btn btn-sm btn-outline-primary" title="Editar"><i class="fas fa-edit"></i> Editar</a>
                         @endcan
-                        @include('components.favorito_button', ['article' => $artigo])
+                        @include('components.favorito_button', ['article' => $article])
                     </div>
                 </div>
                 <div class="mb-3 text-break text-start" style="white-space: pre-line;">
-                    @if($artigo->content && trim($artigo->content) !== '')
-                        {!! $artigo->content !!}
+                    @if($article->content && trim($article->content) !== '')
+                        {!! $article->content !!}
                     @else
                         @php
-                            $file = isset($pdfPath) && $pdfPath ? (object)['file_path' => $pdfPath] : DB::table('file_upload')->where('article_id', $artigo->article_id)->orderByDesc('created_at')->first();
+                            $file = isset($pdfPath) && $pdfPath ? (object)['file_path' => $pdfPath] : DB::table('file_upload')->where('article_id', $article->article_id)->orderByDesc('created_at')->first();
                         @endphp
                         @if($file && $file->file_path)
                             <hr class="my-2">
@@ -152,32 +152,32 @@
                     @endif
                 </div>
                 <div class="mb-3">
-                    <x-avaliacao-estrelas :artigo="$artigo" :notaUsuario="$notaUsuario ?? null" />
+                    <x-avaliacao-estrelas :artigo="$article" :notaUsuario="$notaUsuario ?? null" />
                 </div>                
                 @include('components.ja_denunciado', ['jaDenunciou' => $jaDenunciou ?? false])
                 <div class="denuncia-bloco mb-2">
                     <hr class="my-2">
-                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#modalDenuncia-{{ $artigo->article_id }}" title="Denunciar artigo">
+                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#modalDenuncia-{{ $article->article_id }}" title="Denunciar artigo">
                         <i class="fas fa-flag"></i> Denunciar
                     </button>
                     <hr class="my-2">
-                    @if(isset($artigo->denuncias) && $artigo->denuncias > 0)
-                        <span class="badge bg-warning text-dark ms-2">{{ $artigo->denuncias }} denúncia{{ $artigo->denuncias > 1 ? 's' : '' }}</span>
+                    @if(isset($article->denuncias) && $article->denuncias > 0)
+                        <span class="badge bg-warning text-dark ms-2">{{ $article->denuncias }} denúncia{{ $article->denuncias > 1 ? 's' : '' }}</span>
                     @endif
                     <!-- Modal Denúncia -->
-                    <div class="modal fade" id="modalDenuncia-{{ $artigo->article_id }}" tabindex="-1" aria-labelledby="modalDenunciaLabel-{{ $artigo->article_id }}" aria-hidden="true">
+                    <div class="modal fade" id="modalDenuncia-{{ $article->article_id }}" tabindex="-1" aria-labelledby="modalDenunciaLabel-{{ $article->article_id }}" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
-                                <form method="POST" action="{{ route('artigos.denunciar', $artigo->article_id) }}">
+                                <form method="POST" action="{{ route('artigos.denunciar', $article->article_id) }}">
                                     @csrf
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="modalDenunciaLabel-{{ $artigo->article_id }}"><i class="fas fa-flag text-danger me-2"></i>Motivo da denúncia</h5>
+                                        <h5 class="modal-title" id="modalDenunciaLabel-{{ $article->article_id }}"><i class="fas fa-flag text-danger me-2"></i>Motivo da denúncia</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                                     </div>
                                     <div class="modal-body">
                                         <div class="mb-3">
-                                            <label for="motivo-{{ $artigo->article_id }}" class="form-label">Selecione o motivo:</label>
-                                            <select class="form-select" name="motivo" id="motivo-{{ $artigo->article_id }}" required>
+                                            <label for="motivo-{{ $article->article_id }}" class="form-label">Selecione o motivo:</label>
+                                            <select class="form-select" name="motivo" id="motivo-{{ $article->article_id }}" required>
                                                 <option value="">Escolha...</option>
                                                 <option value="Palavra inadequada">Palavra inadequada</option>
                                                 <option value="Conteúdo ofensivo">Conteúdo ofensivo</option>
@@ -185,14 +185,14 @@
                                                 <option value="Outro">Outro</option>
                                             </select>
                                         </div>
-                                        <div class="mb-3" id="outroMotivoDiv-{{ $artigo->article_id }}">
-                                            <label for="outroMotivo-{{ $artigo->article_id }}" class="form-label">Descreva o motivo (opcional):</label>
-                                            <textarea class="form-control" name="outro_motivo" id="outroMotivo-{{ $artigo->article_id }}" rows="3"></textarea>
+                                        <div class="mb-3" id="outroMotivoDiv-{{ $article->article_id }}">
+                                            <label for="outroMotivo-{{ $article->article_id }}" class="form-label">Descreva o motivo (opcional):</label>
+                                            <textarea class="form-control" name="outro_motivo" id="outroMotivo-{{ $article->article_id }}" rows="3"></textarea>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                        <button type="submit" class="btn btn-danger" id="btnEnviarDenuncia-{{ $artigo->article_id }}">Enviar denúncia</button>
+                                        <button type="submit" class="btn btn-danger" id="btnEnviarDenuncia-{{ $article->article_id }}">Enviar denúncia</button>
                                     </div>
                                 </form>
                             </div>
@@ -203,22 +203,22 @@
 <script>
 $(document).ready(function() {
     // Mostra/esconde textarea se motivo for "Outro"
-    $('#motivo-{{ $artigo->article_id }}').on('change', function() {
+    $('#motivo-{{ $article->article_id }}').on('change', function() {
         if ($(this).val() === 'Outro') {
-            $('#outroMotivoDiv-{{ $artigo->article_id }}').show();
+            $('#outroMotivoDiv-{{ $article->article_id }}').show();
         } else {
-            $('#outroMotivoDiv-{{ $artigo->article_id }}').hide();
-            $('#outroMotivo-{{ $artigo->article_id }}').val('');
+            $('#outroMotivoDiv-{{ $article->article_id }}').hide();
+            $('#outroMotivo-{{ $article->article_id }}').val('');
         }
     }).trigger('change');
 
     // Validação: se selecionou "Outro", textarea obrigatório
     $('form[action*="artigos/denunciar"]').on('submit', function(e) {
-        var motivo = $('#motivo-{{ $artigo->article_id }}').val();
-        var outroMotivo = $('#outroMotivo-{{ $artigo->article_id }}').val();
+        var motivo = $('#motivo-{{ $article->article_id }}').val();
+        var outroMotivo = $('#outroMotivo-{{ $article->article_id }}').val();
         if(motivo === 'Outro' && (!outroMotivo || !outroMotivo.trim())) {
             alert('Por favor, descreva o motivo da denúncia.');
-            $('#outroMotivo-{{ $artigo->article_id }}').focus();
+            $('#outroMotivo-{{ $article->article_id }}').focus();
             e.preventDefault();
             return false;
         }
@@ -238,10 +238,10 @@ $(document).ready(function() {
                 @if (session('success'))
                     <div class="alert alert-success mt-2">{{ session('success') }}</div>
                 @endif
-                @if($artigo->keywords && $artigo->keywords->count())
+                @if($article->keywords && $article->keywords->count())
                     <div class="mb-2">
                         <span class="text-secondary fw-bold me-2">Tags:</span>
-                        @foreach($artigo->keywords as $kw)
+                        @foreach($article->keywords as $kw)
                             <a href="{{ route('dashboard', ['tag' => $kw->name]) }}" class="badge bg-info text-dark me-1 text-decoration-none" title="Filtrar por tag: {{ $kw->name }}">{{ $kw->name }}</a>
                         @endforeach
                     </div>
@@ -249,7 +249,7 @@ $(document).ready(function() {
             </div>
             <div class="d-flex justify-content-center pb-3">
                 <a href="{{ route('dashboard') }}" class="btn btn-outline-success"><i class="fas fa-arrow-left"></i> Voltar para o Artigos</a>
-                <a href="{{ route('artigos.pdf', $artigo->article_id) }}" class="btn btn-outline-danger ms-3" target="_blank"><i class="fas fa-file-pdf"></i> Baixar PDF</a>
+                <a href="{{ route('artigos.pdf', $article->article_id) }}" class="btn btn-outline-danger ms-3" target="_blank"><i class="fas fa-file-pdf"></i> Baixar PDF</a>
             </div>
         </div>
     </div>
@@ -264,7 +264,7 @@ $(document).ready(function() {
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
     @auth
-        <form action="{{ route('comentarios.store', $artigo->article_id) }}" method="POST" class="mb-4">
+        <form action="{{ route('comentarios.store', $article->article_id) }}" method="POST" class="mb-4">
             @csrf
             <div class="mb-2">
                 <textarea name="content" class="form-control" rows="3" maxlength="2000" required placeholder="Escreva seu comentário..."></textarea>
@@ -277,7 +277,7 @@ $(document).ready(function() {
         <p class="text-muted">Faça login para comentar.</p>
     @endauth
     <hr>
-    @foreach($artigo->comments()->where('hidden', false)->latest()->get() as $comment)
+    @foreach($article->comments()->where('hidden', false)->latest()->get() as $comment)
         <div class="d-flex align-items-start mb-4">
             <img src="{{ $comment->user->profile_photo ? asset('storage/' . $comment->user->profile_photo) : 'https://ui-avatars.com/api/?name=' . urlencode($comment->user->name) . '&size=64&background=cccccc&color=222222' }}" class="rounded-circle me-3" alt="Foto de {{ $comment->user->name }}" width="48" height="48">
             <div class="flex-grow-1">

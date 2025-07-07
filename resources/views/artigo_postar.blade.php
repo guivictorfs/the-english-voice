@@ -161,7 +161,7 @@
         <div class="mb-4">
             <label for="autores" class="form-label fs-4"><b>Autores</b></label>
             <select id="autores" name="autores[]" class="form-control" multiple required style="width:100%">
-                @foreach(App\Models\User::orderBy('name')->get() as $user)
+                @foreach(App\Models\User::whereIn('role', ['Aluno', 'Professor'])->orderBy('name')->get() as $user)
                     <option value="{{ $user->id }}" {{ (collect(old('autores', []))->contains($user->id)) ? 'selected' : '' }}>{{ $user->name }} ({{ $user->role }})</option>
                 @endforeach
             </select>
@@ -201,7 +201,7 @@
         <div class="mb-4">
             <label for="autores-pdf" class="form-label fs-4"><b>Autores</b></label>
             <select id="autores-pdf" name="autores[]" class="form-control" multiple required style="width:100%">
-                @foreach(App\Models\User::orderBy('name')->get() as $user)
+                @foreach(App\Models\User::whereIn('role', ['Aluno', 'Professor'])->orderBy('name')->get() as $user)
                     <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->role }})</option>
                 @endforeach
             </select>

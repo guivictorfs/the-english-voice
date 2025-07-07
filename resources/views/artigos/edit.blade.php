@@ -149,7 +149,7 @@
             <div class="mb-4">
                 <label for="autores" class="form-label fs-4">Autores</label>
                 <select id="autores" name="autores[]" class="form-control" multiple required style="width:100%">
-                    @foreach(App\Models\User::orderBy('name')->get() as $user)
+                    @foreach(App\Models\User::whereIn('role', ['Aluno', 'Professor'])->orderBy('name')->get() as $user)
                         <option value="{{ $user->id }}" {{ (collect(old('autores', $article->authors->pluck('id')->toArray()))->contains($user->id)) ? 'selected' : '' }}>{{ $user->name }} ({{ $user->role }})</option>
                     @endforeach
                 </select>

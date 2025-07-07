@@ -130,8 +130,12 @@
                             <td>{{ isset($artigo->created_at) ? Carbon::parse($artigo->created_at)->format('d/m/Y H:i') : '-' }}</td>
                             <td>{{ $artigo->status ?? '-' }}</td>
                             <td>
-                                @if(isset($artigo->article_id))
-                                <a href="{{ route('artigos.show', $artigo->article_id) }}" class="btn btn-sm btn-outline-primary" target="_blank"><i class="fas fa-external-link-alt"></i> Ver</a>
+                                @if($artigo && isset($artigo->article_id))
+                                    <a href="{{ route('artigos.show', $artigo->article_id) }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                                        <i class="fas fa-external-link-alt"></i> Ver
+                                    </a>
+                                @else
+                                    <span class="text-muted">Artigo não encontrado</span>
                                 @endif
                             </td>
                         </tr>

@@ -287,10 +287,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <button type="submit" class="btn btn-sm btn-outline-warning px-2 py-1 favorito-btn" title="Remover dos favoritos">
             <i class="fas fa-star text-warning"></i>
         </button>
-    </form>.bg-gold {
-    background-color: #ecb500 !important; /* dourado mais claro */
-    color: #fff !important;
-}
+    </form>
 @else
     <form action="{{ route('articles.favorite', $article->article_id) }}" method="POST" class="form-favorito d-inline" data-artigo="{{ $article->article_id }}">
         @csrf
@@ -615,6 +612,12 @@ $(document).ready(function() {
 }
 .ver-menos:hover i {
     transform: translateY(-2px) scale(1.15);
+}
+</style>
+<style>
+.bg-gold {
+    background-color: #ecb500 !important; /* dourado mais claro */
+    color: #fff !important;
 }
 </style>
 <script>

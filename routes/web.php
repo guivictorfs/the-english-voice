@@ -39,6 +39,10 @@ Route::middleware(['auth', \App\Http\Middleware\VerifyAdminAccess::class])->grou
     Route::delete('/keywords/{id}', [\App\Http\Controllers\KeywordController::class, 'destroy'])->name('keywords.destroy');
 });
 // Rotas de admin já agrupadas
+// Rotas de artigos
+Route::get('/artigos/postar', [App\Http\Controllers\ArtigoController::class, 'postar'])->name('artigos.postar');
+Route::post('/artigos/store', [App\Http\Controllers\ArtigoController::class, 'store'])->name('artigos.store');
+Route::get('/artigos/melhores', [App\Http\Controllers\ArtigoController::class, 'melhores'])->name('artigos.melhores');
 // Rotas de palavras proibidas (apenas para admin)
 Route::middleware(['auth', \App\Http\Middleware\VerifyAdminAccess::class])->group(function () {
     Route::get('/forbidden_words', [\App\Http\Controllers\ForbiddenWordController::class, 'index'])->name('forbidden_words.index');
@@ -184,7 +188,7 @@ Route::post('/comentarios/{comment}/report', [CommentController::class, 'report'
 
 // Página para postar artigo
 Route::get('/artigos/postar', function () {
-    return view('artigos_postar');
+    return view('artigo_postar');
 })->name('artigos.postar');
 
 // Lista de artigos

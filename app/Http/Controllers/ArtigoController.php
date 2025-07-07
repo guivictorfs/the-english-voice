@@ -22,6 +22,14 @@ use Illuminate\Support\Facades\Storage;
 class ArtigoController extends Controller
 {
     /**
+     * Exibe o formulário de postagem de artigo
+     */
+    public function postar()
+    {
+        return view('artigo_postar');
+    }
+
+    /**
      * Exibe a lista de artigos favoritos com filtros
      */
     public function favorites()
