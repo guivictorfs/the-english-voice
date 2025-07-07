@@ -10,6 +10,14 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    /**
+     * Envia notificação customizada de redefinição de senha
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new \App\Notifications\CustomResetPasswordNotification($token));
+    }
+
 
     /**
      * Atributos que podem ser preenchidos em massa.

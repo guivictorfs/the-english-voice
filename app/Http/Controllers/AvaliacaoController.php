@@ -27,6 +27,16 @@ class AvaliacaoController extends Controller
         $media = Avaliacao::where('artigo_id', $request->artigo_id)->avg('nota');
         $total = Avaliacao::where('artigo_id', $request->artigo_id)->count();
 
+        // Notifica autores do artigo (exceto o avaliador)
+        $article = \App\Models\Article::with('authors')->find($request->artigo_id);
+        $user = auth()->user();
+        if ($article) {
+            foreach ($article->authors as $author) {
+                if ($author->id != $user->id) {
+                    $author->notify(new \App\Notifications\ArtigoAvaliadoNotification($article->title, $user->name, $request->nota, $article->article_id));
+                }
+            }
+        }
         if ($request->ajax()) {
             return response()->json([
                 'message' => 'Avaliação registrada com sucesso!',

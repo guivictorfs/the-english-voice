@@ -32,6 +32,14 @@ Route::post('/api/check-forbidden-words', [ForbiddenWordController::class, 'chec
 Route::get('/help', function () {
     return view('help');
 })->name('help');
+
+// Página Sobre
+Route::view('/sobre', 'sobre')->name('sobre');
+
+// Página Contato
+Route::get('/contato', function () { return view('contato'); })->name('contato');
+Route::post('/contato', [App\Http\Controllers\ContatoController::class, 'enviar'])->name('contato.enviar');
+
 // Rotas de keywords (apenas para admin)
 Route::middleware(['auth', \App\Http\Middleware\VerifyAdminAccess::class])->group(function () {
     Route::get('/keywords', [\App\Http\Controllers\KeywordController::class, 'index'])->name('keywords.index');

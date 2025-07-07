@@ -99,6 +99,7 @@ DB::raw('(SELECT ROUND(AVG(rating),1) FROM vote WHERE vote.article_id = article.
             $data['password'] = bcrypt($request->password);
         }
         // Detecta alterações para log
+        $camposAlterados = [];
         foreach ($data as $field => $newValue) {
             $oldValue = $user->{$field};
             if ($oldValue != $newValue) {
@@ -109,9 +110,14 @@ DB::raw('(SELECT ROUND(AVG(rating),1) FROM vote WHERE vote.article_id = article.
                     'new_value' => $newValue,
                     'changed_at'=> now(),
                 ]);
+                $camposAlterados[] = $field;
             }
         }
         DB::table('users')->where('id', $user->id)->update($data);
+        // Notifica usuário se houve alteração sensível
+        if (!empty($camposAlterados)) {
+            $user->notify(new \App\Notifications\PerfilAlteradoNotification($camposAlterados));
+        }
         return redirect()->route('students.profile')->with('success', 'Perfil atualizado com sucesso!');
     }
 }

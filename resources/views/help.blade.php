@@ -15,80 +15,107 @@ use Illuminate\Support\Facades\Auth;
 <body>
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm pb-3 pt-3">
-    @php $role = strtolower(Auth::user()->role ?? ''); @endphp
-        <div class="container">
-            <a class="navbar-brand fw-bold text-primary" href="#">The English Voice</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-    @if($role === 'admin')
-        <ul class="navbar-nav ms-auto align-items-center">
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.panel') }}">Painel</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.users.index') }}">Usuários</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.artigos.pendentes') }}">Denúncias</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ url('/admin/courses') }}">Cursos</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('keywords.index') }}">Tags</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('forbidden_words.index') }}">Palavras Proibidas</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.logs.index') }}">Logs</a>
-            </li>
-        </ul>
-    @else
-        <ul class="navbar-nav ms-auto align-items-center">
-            <li class="nav-item underline">
-                <a class="nav-link" href="{{ route('dashboard') }}">Artigos</a>
-            </li>
-            <li class="nav-item underline">
-                <a class="nav-link" href="{{ route('students.account') }}">Meus Artigos</a>
-            </li>
-            <li class="nav-item underline">
-                <a class="nav-link" href="{{ route('artigos.postar') }}">Postar Artigo</a>
-            </li>
-            <li class="nav-item underline">
-                <a class="nav-link" href="{{ route('articles.favorites') }}">Favoritos</a>
-            </li>
-            <li class="nav-item underline">
-                <a class="nav-link active" href="{{ route('help') }}">Ajuda</a>
-            </li>
-            <li class="nav-item underline">
-                <a class="nav-link" href="{{ route('students.profile') }}">Conta</a>
-            </li>
-        </ul>
-    @endif
-    <ul class="navbar-nav ms-auto align-items-center">
-        <li class="nav-item me-2">
-            <form class="d-flex align-items-center" method="GET" action="{{ route('dashboard') }}" style="gap:0.25rem;">
-                <input class="form-control form-control-sm me-2" type="search" name="q" placeholder="Pesquisar artigos..." aria-label="Pesquisar" value="{{ request('q') }}" style="min-width: 180px;">
-                <button class="btn btn-sm btn-outline-primary" type="submit"><i class="fas fa-search"></i></button>
-                @if(request('q'))
-                    @php
-                        $query = request()->except('q');
-                        $url = route('dashboard') . ($query ? ('?' . http_build_query($query)) : '');
-                    @endphp
-                    <a href="{{ $url }}" class="btn btn-sm btn-outline-danger ms-1" title="Limpar pesquisa"><i class="fas fa-times"></i></a>
+    <div class="container">
+        <a class="navbar-brand fw-bold text-primary" href="#">The English Voice</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            @guest
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item underline">
+                        <a class="nav-link" href="{{ url('/') }}">Início</a>
+                    </li>
+                    <li class="nav-item underline">
+                        <a class="nav-link" href="{{ route('artigos.index') }}">Artigos</a>
+                    </li>
+                    <li class="nav-item underline">
+                        <a class="nav-link" href="{{ route('help') }}">Ajuda</a>
+                    </li>
+                    <li class="nav-item underline">
+                        <a class="nav-link" href="{{ route('sobre') }}">Sobre</a>
+                    </li>
+                    <li class="nav-item underline">
+                        <a class="nav-link active" href="{{ route('contato') }}">Contato</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-primary ms-2" href="{{ route('login') }}">Entrar</a>
+                        <a class="btn btn-success ms-2" href="{{ route('register') }}">Criar Conta</a>
+                    </li>
+                </ul>
+            @endguest
+            @auth
+                @php $role = strtolower(Auth::user()->role ?? ''); @endphp
+                @if($role === 'admin')
+                    <ul class="navbar-nav ms-auto align-items-center">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.panel') }}">Painel</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.users.index') }}">Usuários</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.artigos.pendentes') }}">Denúncias</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('/admin/courses') }}">Cursos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('keywords.index') }}">Tags</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('forbidden_words.index') }}">Palavras Proibidas</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.logs.index') }}">Logs</a>
+                        </li>
+                    </ul>
+                @else
+                    <ul class="navbar-nav ms-auto align-items-center">
+                        <li class="nav-item underline">
+                            <a class="nav-link" href="{{ route('dashboard') }}">Artigos</a>
+                        </li>
+                        <li class="nav-item underline">
+                            <a class="nav-link" href="{{ route('students.account') }}">Meus Artigos</a>
+                        </li>
+                        <li class="nav-item underline">
+                            <a class="nav-link" href="{{ route('artigos.postar') }}">Postar Artigo</a>
+                        </li>
+                        <li class="nav-item underline">
+                            <a class="nav-link" href="{{ route('articles.favorites') }}">Favoritos</a>
+                        </li>
+                        <li class="nav-item underline">
+                            <a class="nav-link active" href="{{ route('help') }}">Ajuda</a>
+                        </li>
+                        <li class="nav-item underline">
+                            <a class="nav-link" href="{{ route('students.profile') }}">Conta</a>
+                        </li>
+                    </ul>
                 @endif
-            </form>
-        </li>
-        <li class="nav-item">
-            <a class="btn btn-outline-danger ms-2" href="{{ route('logout') }}">Sair</a>
-        </li>
-    </ul>
-            </div>
+            @endauth
+            @auth
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item me-2">
+                    <form class="d-flex align-items-center" method="GET" action="{{ route('dashboard') }}" style="gap:0.25rem;">
+                        <input class="form-control form-control-sm me-2" type="search" name="q" placeholder="Pesquisar artigos..." aria-label="Pesquisar" value="{{ request('q') }}" style="min-width: 180px;">
+                        <button class="btn btn-sm btn-outline-primary" type="submit"><i class="fas fa-search"></i></button>
+                        @if(request('q'))
+                            @php
+                                $query = request()->except('q');
+                                $url = route('dashboard') . ($query ? ('?' . http_build_query($query)) : '');
+                            @endphp
+                            <a href="{{ $url }}" class="btn btn-sm btn-outline-danger ms-1" title="Limpar pesquisa"><i class="fas fa-times"></i></a>
+                        @endif
+                    </form>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-outline-danger ms-2" href="{{ route('logout') }}">Sair</a>
+                </li>
+            </ul>
+            @endauth
         </div>
-    </nav>
+    </div>
+</nav>
 
 
     <div class="help-section container p-4 mt-4 mb-4 border border-dark">

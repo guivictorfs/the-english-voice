@@ -39,6 +39,16 @@ class CommentController extends Controller
         $comment->article_id = $article_id;
         $comment->content = $request->content;
         $comment->save();
+        // Notifica autores do artigo (exceto o comentarista)
+        $article = \App\Models\Article::with('authors')->find($article_id);
+        $user = Auth::user();
+        if ($article) {
+            foreach ($article->authors as $author) {
+                if ($author->id != $user->id) {
+                    $author->notify(new \App\Notifications\NovoComentarioNotification($article->title, $user->name, $comment->content, $article->article_id));
+                }
+            }
+        }
         return back()->with('success', 'Comentário enviado com sucesso!');
     }
 

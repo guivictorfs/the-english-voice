@@ -72,7 +72,7 @@
             <hr>
             <!-- Coluna da Imagem -->
             <div class="col-md-4 text-center me-5">
-                <img src="{{ asset('img/access-account.svg') }}" alt="Acessar conta" class="img-fluid img-svg" style="max-width: 100%;">
+                <img src="{{ asset('img/authentication.svg') }}" alt="Acessar conta" class="img-fluid img-svg" style="max-width: 100%;">
             </div>
             <!-- HR vertical -->
             <div class="d-none d-md-block" style="width:40px;">

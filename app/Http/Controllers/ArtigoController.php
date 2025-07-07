@@ -235,6 +235,15 @@ $jaDenunciou = $ultimaDenuncia && $ultimaDenuncia->created_at > $article->update
             'created_at' => now()
         ]);
 
+        // Notifica autores se editor não for o próprio autor
+        if ($isProfessorOrAdmin && !$isAuthor) {
+            foreach ($article->authors as $author) {
+                if ($author->id != $user->id) {
+                    $author->notify(new \App\Notifications\ArtigoEditadoNotification($article->title, $user->name, $article->article_id));
+                }
+            }
+        }
+
         return redirect()->route('dashboard')->with('success', 'Artigo editado com sucesso!');
     }
     /**
